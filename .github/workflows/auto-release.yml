@@ -1,0 +1,56 @@
+# Maintained in moderation-api/sdk-generator (custom/cli). Edits here are overwritten.
+# Every push to main whose CLI version has no release tag yet tags it and builds
+# the release with GoReleaser (a tag pushed from a workflow does not start
+# release.yaml). Notes: .github/release-notes/vX.Y.Z.md if present.
+name: Auto release
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency: release
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+      - name: Read the version
+        run: |
+          echo "VERSION=$(sed -n 's/^var Version = "\(.*\)"$/\1/p' internal/cli/version.go)" >> "$GITHUB_ENV"
+      - name: Check for an unreleased version
+        id: version
+        run: |
+          if git rev-parse -q --verify "refs/tags/v${VERSION}" >/dev/null; then
+            echo "v${VERSION} is already released."
+            echo "release=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "release=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Tag the version
+        if: steps.version.outputs.release == 'true'
+        run: |
+          git tag "v${VERSION}"
+          git push origin "v${VERSION}"
+      - uses: actions/setup-go@v5
+        if: steps.version.outputs.release == 'true'
+        with:
+          go-version-file: go.mod
+      - uses: goreleaser/goreleaser-action@v6
+        if: steps.version.outputs.release == 'true'
+        with:
+          distribution: goreleaser
+          version: "~> v2"
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: Set the release notes
+        if: steps.version.outputs.release == 'true' && hashFiles(format('.github/release-notes/v{0}.md', env.VERSION)) != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release edit "v${VERSION}" --notes-file ".github/release-notes/v${VERSION}.md"
