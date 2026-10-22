@@ -89,6 +89,8 @@ type ListAuthorsRequest struct {
 	MemberSinceDate *string                   `queryParam:"style=form,explode=true,name=memberSinceDate"`
 	LastActiveDate  *string                   `queryParam:"style=form,explode=true,name=lastActiveDate"`
 	ContentTypes    []string                  `queryParam:"style=form,explode=true,name=contentTypes"`
+	// The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.
+	ProjectID *string `header:"style=simple,explode=false,name=Project-Id"`
 }
 
 func (l ListAuthorsRequest) MarshalJSON() ([]byte, error) {
@@ -149,6 +151,13 @@ func (l *ListAuthorsRequest) GetContentTypes() []string {
 		return nil
 	}
 	return l.ContentTypes
+}
+
+func (l *ListAuthorsRequest) GetProjectID() *string {
+	if l == nil {
+		return nil
+	}
+	return l.ProjectID
 }
 
 // ListAuthorsResponseBody - Successful response

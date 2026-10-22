@@ -7,6 +7,18 @@ import (
 	"github.com/moderation-api/cli/internal/sdk/sdkinternal/utils"
 )
 
+type GetWebhookSecretRequest struct {
+	// The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.
+	ProjectID *string `header:"style=simple,explode=false,name=Project-Id"`
+}
+
+func (g *GetWebhookSecretRequest) GetProjectID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.ProjectID
+}
+
 // GetWebhookSecretResponseBody - Signing secret retrieved successfully
 type GetWebhookSecretResponseBody struct {
 	// The signing secret for this project. Every webhook delivery is signed with HMAC-SHA256 over the raw JSON body, hex-encoded in the `modapi-signature` header.

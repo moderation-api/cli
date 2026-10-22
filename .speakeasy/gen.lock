@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: f6fec850-ef66-45dd-9a18-cec7cc0801ce
 management:
-  docChecksum: 9e61a5512adcd4b1e0a74112ed775731
+  docChecksum: c27787b45fc5b72aafff31ba945a9e61
   docVersion: 1.1.0
   speakeasyVersion: internal
   generationVersion: internal
-  releaseVersion: 0.1.0
-  configChecksum: d618a0131588ca2c929c722d703a9b35
+  releaseVersion: 0.2.0
+  configChecksum: 2c70a677029e7ca5879af3f62ad39ff5
   repoURL: https://github.com/moderation-api/cli
   installationURL: https://github.com/moderation-api/cli
   published: true
@@ -43,37 +43,37 @@ trackedFiles:
   go.mod:
     last_write_checksum: sha1:bace033339263bf3ea1b3f6cb031f41f52526059
   internal/cli/account/retrieve.go:
-    last_write_checksum: sha1:9a33de887810523a9832ba06a48a3be3fd0917f8
+    last_write_checksum: sha1:b8d3cb35e22d780d3b583f35e25fe773b1ff0ce5
   internal/cli/account/root.go:
     last_write_checksum: sha1:aa12668d14acb9eabe91fd5232123b0a364ef721
   internal/cli/actions/create.go:
-    last_write_checksum: sha1:0185a3ca8da599ac57a8bd5fc8c3e9a7c138d42d
+    last_write_checksum: sha1:14b4dcb989a3a194d755eacd61eaf5e869822798
   internal/cli/actions/delete.go:
-    last_write_checksum: sha1:7f6eb6794934fdd6108a9dea60b93adc048cece0
+    last_write_checksum: sha1:e8f90364d427e3d9ab4807b3b83e749c27abf512
   internal/cli/actions/execute.go:
-    last_write_checksum: sha1:f0df86ee20fd30b2538e9def5b4c59bc8aaab593
+    last_write_checksum: sha1:128043625871639bab70d768b6fd2547fec012d8
   internal/cli/actions/list.go:
-    last_write_checksum: sha1:f1641816cc677a23fc6c82faf15d20492be03b43
+    last_write_checksum: sha1:e2bef7a6a64c878a1fbe171ee1886194e1f63fe9
   internal/cli/actions/retrieve.go:
-    last_write_checksum: sha1:9c723a420ded6060e59b4156cb4ff53ff3b7c41e
+    last_write_checksum: sha1:6de8c93da695f1b64e3037cc5c77a8ebb0fa06c4
   internal/cli/actions/root.go:
     last_write_checksum: sha1:bfc573f85ebfb3ddd27c0168b84918d3bed46899
   internal/cli/actions/update.go:
-    last_write_checksum: sha1:1fd7afe9ad56b4cd0e7da1fd9992980af553882e
+    last_write_checksum: sha1:8ad23d17586fda8edfc323ae8fa367aaf4504ea4
   internal/cli/auth.go:
     last_write_checksum: sha1:b4a5f6a9339e2f0c230ecdab7a4da8a907feb0d8
   internal/cli/authors/create.go:
-    last_write_checksum: sha1:d68d29aca096f66648cdfccdc836b77d3985d762
+    last_write_checksum: sha1:46858ec5c510ebdd1f14ba779e1ad7e9a2848b2e
   internal/cli/authors/delete.go:
-    last_write_checksum: sha1:097bd17b555c68f663c1a63056b06f95da9594c6
+    last_write_checksum: sha1:2706765b2e65e7caade26de1cfcfd8f76a961727
   internal/cli/authors/list.go:
-    last_write_checksum: sha1:26402ae773b51310765434c98c5722439000e3b2
+    last_write_checksum: sha1:452353ae2606ab7efb99e773c7a5f440d6d171dc
   internal/cli/authors/retrieve.go:
-    last_write_checksum: sha1:4ba13323c198957cbf181514bec38eb4ecc7beb4
+    last_write_checksum: sha1:0d5b26a3cacc5f22650ca4b402a36b6e661f608b
   internal/cli/authors/root.go:
     last_write_checksum: sha1:95705c7a4cfdae581b8627ab77fbdabc9817504d
   internal/cli/authors/update.go:
-    last_write_checksum: sha1:768bfe84e56b3a23a7d824f66f7804fa4a159bd1
+    last_write_checksum: sha1:6a0556e4adee759e69590ba806217c28d2ca2762
   internal/cli/channels/create.go:
     last_write_checksum: sha1:c7bdd4f235f89f3839925dc387f8a1b0539bb72a
   internal/cli/channels/delete.go:
@@ -93,7 +93,7 @@ trackedFiles:
   internal/cli/content/root.go:
     last_write_checksum: sha1:3c9d297eb0c6908e4efa9ab881dfefd9909c1595
   internal/cli/content/submit.go:
-    last_write_checksum: sha1:9ce5fb1cc1f56efdc809b331b255354a129a59e1
+    last_write_checksum: sha1:bb0b9cdbf035765612557b594c4560dc5bdd8ed9
   internal/cli/masking.go:
     last_write_checksum: sha1:5a69fa055d628c1b8507cd123f3cd18309aa9a53
   internal/cli/projects/create.go:
@@ -111,55 +111,55 @@ trackedFiles:
   internal/cli/projects/update.go:
     last_write_checksum: sha1:86360b44e47dfff918db06784b723a60a2892fe7
   internal/cli/queue/getstats.go:
-    last_write_checksum: sha1:ee5c892d821f04b9b94101f858a8751d8fa94e33
+    last_write_checksum: sha1:987d1eb38c371d77bcfb294f6a4f8d9b83d2642b
   internal/cli/queue/items/list.go:
-    last_write_checksum: sha1:06c1a401136eda7d70915d3b646308c6d8809d18
+    last_write_checksum: sha1:a5cdcc0707a05648fa794efdc9dd0ab5e3ee18af
   internal/cli/queue/items/resolve.go:
-    last_write_checksum: sha1:29e133b355a257c81db34f571f986626cf2b196d
+    last_write_checksum: sha1:43cd7c5fcc09c002f095ee56c8ab76cd75e61667
   internal/cli/queue/items/root.go:
     last_write_checksum: sha1:b4227abd36f2ccd8ae59fa31c6a56b41fa071f81
   internal/cli/queue/items/unresolve.go:
-    last_write_checksum: sha1:9605a9a785faf8ed58e5ef6c96618729b5e81ff8
+    last_write_checksum: sha1:cad7d79bab5f9e93dede0dd04912c6c6ce6d05c6
   internal/cli/queue/retrieve.go:
-    last_write_checksum: sha1:6f674fbe9081374ccdc5cd605379e862e7f2ee04
+    last_write_checksum: sha1:6222996bb17b5874e2f4fbbd0ca7a055d2bb2f48
   internal/cli/queue/root.go:
     last_write_checksum: sha1:f0bee830cf9df88a62014a13e4b2992d6a4a4b33
   internal/cli/root.go:
     last_write_checksum: sha1:d00799a3804f87479242f16bf520cb593f79ba8e
   internal/cli/version.go:
-    last_write_checksum: sha1:52155b0d462a28be2baaee90642dfcdd6706771b
+    last_write_checksum: sha1:79b7a4ddc9ac7f8ceaa8f0294d71ea2b42630d8f
   internal/cli/webhooks/create.go:
-    last_write_checksum: sha1:ba4e36d4f234863a59bb752a18c9a601263d157a
+    last_write_checksum: sha1:aeee8ed3b7b667e33ea80f2288b4391962e6f263
   internal/cli/webhooks/delete.go:
-    last_write_checksum: sha1:bae19845b175110825456717c29a2faf897d06da
+    last_write_checksum: sha1:97fd9aa05c532ff7c6f24fa815b7edd0e2d276ab
   internal/cli/webhooks/list.go:
-    last_write_checksum: sha1:9b9b1aee7d8e80ef769ce1bb1ff888cdd5ffdab1
+    last_write_checksum: sha1:0b40c58f7e74b5a05a095e6ebb7bc9b9b63321e4
   internal/cli/webhooks/retrieve.go:
-    last_write_checksum: sha1:34a9c5f9e4dbe9e21490ca6824d95c49a8774579
+    last_write_checksum: sha1:fbf89cc4e34211842dde033f07b4375bd22ed5a9
   internal/cli/webhooks/root.go:
     last_write_checksum: sha1:3d923279657207b20eef6bf2e719a1a17fef43e6
   internal/cli/webhooks/update.go:
-    last_write_checksum: sha1:304c990d33ee7e53fda0f56ee0502942bbaca95b
+    last_write_checksum: sha1:4c8637b704dfe9149e2a74d41ea96aa052fb8391
   internal/cli/webhooksecret/retrieve.go:
-    last_write_checksum: sha1:d81a82ee291808b01779b86d91af521dfb62b839
+    last_write_checksum: sha1:97bf4a79fa6c71285cacc8589867682514036b5c
   internal/cli/webhooksecret/root.go:
     last_write_checksum: sha1:9745a1744bf952513bfc6a014f526425190bc81b
   internal/cli/whoami.go:
     last_write_checksum: sha1:1cf0058687544cf792329d1944330e3a86b2bb7d
   internal/cli/wordlist/getembeddingstatus.go:
-    last_write_checksum: sha1:c54aef3e2342950aec299597fa8d42cde96b95c7
+    last_write_checksum: sha1:b9551fda2a8ff892736c0d4f76f2d89431255fc2
   internal/cli/wordlist/list.go:
-    last_write_checksum: sha1:5f2c79288e31afafc6e3f2da3d9fd32977c31dd8
+    last_write_checksum: sha1:4ad71cf8d7db4f556399b388583e9257ce69d624
   internal/cli/wordlist/retrieve.go:
-    last_write_checksum: sha1:0134100a3e25aca300cf93a828ed134b1a173be3
+    last_write_checksum: sha1:284372724a3ec6ffd38b02ced441d3fdcf49afb9
   internal/cli/wordlist/root.go:
     last_write_checksum: sha1:cfe134c26636229d8a209301922a0cbd1127df79
   internal/cli/wordlist/update.go:
-    last_write_checksum: sha1:1715c484984bf07a919e18fb957be0bd059c1f51
+    last_write_checksum: sha1:df35741e4094aeaa5e9449e01e4115820dd216c7
   internal/cli/wordlist/words/add.go:
-    last_write_checksum: sha1:d11a28c7535089d2be3b82f2ddd716a77a6a095a
+    last_write_checksum: sha1:cf934909247a1ec678d8081424491903f043fc26
   internal/cli/wordlist/words/remove.go:
-    last_write_checksum: sha1:debceade9a5e36761a737cafe01403a837a51160
+    last_write_checksum: sha1:f801e625573d438a33985c22ca921e5431674801
   internal/cli/wordlist/words/root.go:
     last_write_checksum: sha1:8b833bf6b8d0e14fde4d82844ff21e762f72df66
   internal/client/client.go:
@@ -221,21 +221,21 @@ trackedFiles:
   internal/sdk/.gitattributes:
     last_write_checksum: sha1:84b0115789fc3ea52e31df701d8a27f76077e29f
   internal/sdk/account.go:
-    last_write_checksum: sha1:e7cfb8f79159122d36ba54c8d578cded87c9febb
+    last_write_checksum: sha1:c73d83f641b59a97479506597334a95539d34e16
   internal/sdk/actions.go:
-    last_write_checksum: sha1:87f0e708ce58ed6ec25f3c1d9fad7f7f0e723756
+    last_write_checksum: sha1:d6f0d54d24673ae13bd908680018b71e7d520820
   internal/sdk/authors.go:
-    last_write_checksum: sha1:8b077c4e50da5b2448ca0d8d5e5cb6d98cfccd9b
+    last_write_checksum: sha1:01eb0e9f6fa3fd9987edb54429293271203c7ec6
   internal/sdk/channels.go:
     last_write_checksum: sha1:9725f5e3d5a0f5de727883345c47910195549294
   internal/sdk/content.go:
-    last_write_checksum: sha1:f9eb30fd5b6187b64e913b0dc1daed441f04da73
+    last_write_checksum: sha1:e8867fac2baae5fb6d85d330f8411add76c594e7
   internal/sdk/items.go:
-    last_write_checksum: sha1:8f47bd754af1c8b11448fca1638cdaa644fd54cf
+    last_write_checksum: sha1:269a7cd14e98c407bd146153ae55af2f38918a8c
   internal/sdk/models/components/authenticationerror.go:
     last_write_checksum: sha1:a3e65f0561efe3e332c01c0966f9b34f017e92eb
   internal/sdk/models/components/badrequesterror.go:
-    last_write_checksum: sha1:1705d07a809bb195a407734b63e114c4e613c873
+    last_write_checksum: sha1:58962e61b7bf444c9a3fc02371f50d6295d18967
   internal/sdk/models/components/channel.go:
     last_write_checksum: sha1:c97e2bf2d613a5adcc801008f6895997873c59b7
   internal/sdk/models/components/conflicterror.go:
@@ -251,7 +251,7 @@ trackedFiles:
   internal/sdk/models/components/pagination.go:
     last_write_checksum: sha1:97f4268803fbaed3c171c608d9213ede63739940
   internal/sdk/models/components/permissiondeniederror.go:
-    last_write_checksum: sha1:9b6fc858f3c473493a77ed6432fb8be9fda52af1
+    last_write_checksum: sha1:99268e4c4433540e746d421b6a16be06e2458770
   internal/sdk/models/components/project.go:
     last_write_checksum: sha1:be428edb928147e28c4c15c0ebdef472b6c25461
   internal/sdk/models/components/projectwithkey.go:
@@ -263,95 +263,95 @@ trackedFiles:
   internal/sdk/models/components/security.go:
     last_write_checksum: sha1:510eb3e6e24062a550cb732ea312c8963882f0e2
   internal/sdk/models/operations/addwordlistwords.go:
-    last_write_checksum: sha1:05258bcb3fbc843b74c3b5e7661db9dd89a5e60d
+    last_write_checksum: sha1:d47e7746e8c0bb5f9818843ca1ec01aa0660b5f3
   internal/sdk/models/operations/createaction.go:
-    last_write_checksum: sha1:d23c4978354ac21eaef74d151ca639ab262ee160
+    last_write_checksum: sha1:1e6292e3ce2b68626fcb55944517f1bcea1fd450
   internal/sdk/models/operations/createauthor.go:
-    last_write_checksum: sha1:f3c6bd88f05709de5d0036f99e2f1114763c1778
+    last_write_checksum: sha1:110bad560dd84017a0a6f39a3529ac0efae1a706
   internal/sdk/models/operations/createchannel.go:
     last_write_checksum: sha1:7418ba8327dcfd0855b6e1eb972bd8581a468635
   internal/sdk/models/operations/createproject.go:
     last_write_checksum: sha1:1387c903814ffe16e3683916acff2216f912fa6a
   internal/sdk/models/operations/createwebhook.go:
-    last_write_checksum: sha1:51da889387c54e32e5a100f4175c5c191c154b8e
+    last_write_checksum: sha1:8916ceeb89138272b2644130e31536c7b7330f24
   internal/sdk/models/operations/deleteaction.go:
-    last_write_checksum: sha1:5ef01d4ff753c92e052420f49a7d93110a2d3789
+    last_write_checksum: sha1:8e6818dc45187e93bad12d134bc5585e13a86014
   internal/sdk/models/operations/deleteauthor.go:
-    last_write_checksum: sha1:b92974cbb4d41c1d63d5a641a82c5cf53257363c
+    last_write_checksum: sha1:91acb3b751a6f9bc9abd29b121bd242b4556defe
   internal/sdk/models/operations/deletechannel.go:
     last_write_checksum: sha1:56bc579ab3988828b4fb9b66cf8ffe62cd48e800
   internal/sdk/models/operations/deleteproject.go:
     last_write_checksum: sha1:f0c5345c149027a90591b4dedf592d321bb00162
   internal/sdk/models/operations/deletewebhook.go:
-    last_write_checksum: sha1:a498c07c24b135b2416fb88c750669550f45edab
+    last_write_checksum: sha1:5532cc831d983fc1d31a86b54e174bfff4740bf6
   internal/sdk/models/operations/duplicatechannel.go:
     last_write_checksum: sha1:80fb60a28f7301aae451e519ccdcafb734a92ade
   internal/sdk/models/operations/duplicateproject.go:
     last_write_checksum: sha1:f9f3c78f7ee05aa9cc2fa6bcc2f6fcb92611d643
   internal/sdk/models/operations/executeaction.go:
-    last_write_checksum: sha1:527fc8778bd9f64088d608c1d82184843fa6f0a1
+    last_write_checksum: sha1:a2a67e695dde34059e19f1e82436b001e2c12eea
   internal/sdk/models/operations/getaccount.go:
-    last_write_checksum: sha1:7e7a20123c2f8bbe1f86661a0e6c9639ea85a75b
+    last_write_checksum: sha1:84eb92ca728cb633008fb6384242eb4e5264311b
   internal/sdk/models/operations/getaction.go:
-    last_write_checksum: sha1:2a12c579ad84436f042f802cd38b787e84174eba
+    last_write_checksum: sha1:6f410f48d656f36da0b91af8a996c54ab1e019d4
   internal/sdk/models/operations/getauthor.go:
-    last_write_checksum: sha1:cdb6c9af1305708e1c18e53f8c3d336496a975d0
+    last_write_checksum: sha1:ea5398e6d51e0bbc9cd34c36cab3cdb409dd6228
   internal/sdk/models/operations/getchannel.go:
     last_write_checksum: sha1:ae540e0d8036024b76eb4df28a033eff7fe3296d
   internal/sdk/models/operations/getproject.go:
     last_write_checksum: sha1:48cc0fd6db458377c6d0ad3a91e1f198b10b8325
   internal/sdk/models/operations/getqueue.go:
-    last_write_checksum: sha1:32eb3532f432686b07731e1b3010b0a3d19c3fd1
+    last_write_checksum: sha1:b2d438af555a8f601632dc6e3d3c58bb2a12a434
   internal/sdk/models/operations/getqueuestats.go:
-    last_write_checksum: sha1:4946343a9d98bce1b5774443251a79b5cee2496c
+    last_write_checksum: sha1:74ccd49db3747c440abd9f122a395d032b0a0d79
   internal/sdk/models/operations/getwebhook.go:
-    last_write_checksum: sha1:36e644afdc9f963fc00873bd70aa76dd48d574a3
+    last_write_checksum: sha1:42f522e4eeb8fadb6e69497a460fe6d6c03148c5
   internal/sdk/models/operations/getwebhooksecret.go:
-    last_write_checksum: sha1:10831d3eba350b3101b303b838247b0482448fd6
+    last_write_checksum: sha1:477d01b001571837ae496e4c4a0c1450f72f2e86
   internal/sdk/models/operations/getwordlist.go:
-    last_write_checksum: sha1:cecd0d3c4986255e07622d002de4bd47bb884b1e
+    last_write_checksum: sha1:32ba83e9f74f702084e329511ce5a30ee3cc7728
   internal/sdk/models/operations/getwordlistembeddingstatus.go:
-    last_write_checksum: sha1:b7753e2fce5429fb429c3e6954648cb62d716651
+    last_write_checksum: sha1:2200ab26c040c8d415a4af371c4375c312720788
   internal/sdk/models/operations/listactions.go:
-    last_write_checksum: sha1:c89c66928d4a83143f5d8d0890844cf90f85f7f4
+    last_write_checksum: sha1:cf79ce6671220bc2bb198123566de9ddac862ca5
   internal/sdk/models/operations/listauthors.go:
-    last_write_checksum: sha1:cdd0484b61779fdd2ac5dc215572dd51d8ce103c
+    last_write_checksum: sha1:a81f735e5b25248dd59c79c7f0c4a30c2d201c9b
   internal/sdk/models/operations/listchannels.go:
     last_write_checksum: sha1:552e19679de72238e62a01a8e08d94a4c7663072
   internal/sdk/models/operations/listprojects.go:
     last_write_checksum: sha1:a67ec0268ac80f4769cdb6e8e64e786272701386
   internal/sdk/models/operations/listqueueitems.go:
-    last_write_checksum: sha1:bc8676242e0535be30353e00724a3751ee012f74
+    last_write_checksum: sha1:e48219eaa7122275fe87d8e4b0a2c435c871cd07
   internal/sdk/models/operations/listwebhooks.go:
-    last_write_checksum: sha1:73148fa4c5665d358860aa60b75de5d4d847d78e
+    last_write_checksum: sha1:c5f33afdbce2b3c8188a62dd37e4b1b756c713bf
   internal/sdk/models/operations/listwordlists.go:
-    last_write_checksum: sha1:641f3f27ddb4f4c04b0bc03e8eb4fc2f66179791
+    last_write_checksum: sha1:334ec5ed2cbae84d85869235f4054f9be344a956
   internal/sdk/models/operations/options.go:
     last_write_checksum: sha1:48bcab7f3327575bf6309176ee29015cc9477a74
   internal/sdk/models/operations/removewordlistwords.go:
-    last_write_checksum: sha1:543b31a47175d45fc94fecf1457232067a318234
+    last_write_checksum: sha1:d5d9965bdaa53260b41b73ea536949c988b483e2
   internal/sdk/models/operations/resolvequeueitem.go:
-    last_write_checksum: sha1:b5393856d44a65d90b0d0ab40993dd7fd822184d
+    last_write_checksum: sha1:ada7cf6141f694bfaed00478c154a830192669ab
   internal/sdk/models/operations/submitcontent.go:
-    last_write_checksum: sha1:838a8967d190c2451bcf43e486749cc856ddf7a4
+    last_write_checksum: sha1:8f2536f4975ea41d1664ba5ba9607992fb7f58ee
   internal/sdk/models/operations/unresolvequeueitem.go:
-    last_write_checksum: sha1:fdf7e02809341f6f22c83b6cc660c661737d3494
+    last_write_checksum: sha1:61bde016f2895decd652686e5ab25ce78f4412de
   internal/sdk/models/operations/updateaction.go:
-    last_write_checksum: sha1:2d049060bb3244e1ea9c2779bed84dd1d30884f1
+    last_write_checksum: sha1:f852d5274e048ae37f4ea1c390969f5d3b3d8f07
   internal/sdk/models/operations/updateauthor.go:
-    last_write_checksum: sha1:a64d12d0ae3a359c204154dc2615b1226c87c584
+    last_write_checksum: sha1:0d927c2c8af12a99c66e845655be7ebdee59d588
   internal/sdk/models/operations/updatechannel.go:
     last_write_checksum: sha1:6b365df7302ead7187e8155c1030695de420d44a
   internal/sdk/models/operations/updateproject.go:
     last_write_checksum: sha1:6f0947c24904d347c8ae8b9d4999c9ec4056c952
   internal/sdk/models/operations/updatewebhook.go:
-    last_write_checksum: sha1:30d03f849d78d460d568d5499921235b75628371
+    last_write_checksum: sha1:fa0e69e662ce4fe00d4468246e5d1acfedd3976a
   internal/sdk/models/operations/updatewordlist.go:
-    last_write_checksum: sha1:a7a780e62e8f05814eed45bf1972c0b64a57f8ef
+    last_write_checksum: sha1:d1026cded48312c6e53159faac3383e64f305e89
   internal/sdk/models/sdkerrors/authenticationerror.go:
     last_write_checksum: sha1:1c7b80e36e57c4cb1d617169c5c691ebec05cb09
   internal/sdk/models/sdkerrors/badrequesterror.go:
-    last_write_checksum: sha1:080573e557d96d7ab63958dd5730c08d56713e80
+    last_write_checksum: sha1:2c67ff5597113fc1af32ac8f267b169b77681a7e
   internal/sdk/models/sdkerrors/conflicterror.go:
     last_write_checksum: sha1:927af11c0c9a8f16a21efb5c49776b803ee972f2
   internal/sdk/models/sdkerrors/internalservererror.go:
@@ -359,7 +359,7 @@ trackedFiles:
   internal/sdk/models/sdkerrors/notfounderror.go:
     last_write_checksum: sha1:e41e2f80bc3f43feb8936430c20a68ec1feb9d54
   internal/sdk/models/sdkerrors/permissiondeniederror.go:
-    last_write_checksum: sha1:b562bf3b14073e2cb169d3349cea4395dc60738b
+    last_write_checksum: sha1:afab0d9afb5d6fd62e298cfa54fb56ad72f2f9b2
   internal/sdk/models/sdkerrors/ratelimiterror.go:
     last_write_checksum: sha1:bc050c6b9814ba070513049c74da02006ad1d2d0
   internal/sdk/models/sdkerrors/responsevalidationerror.go:
@@ -367,7 +367,7 @@ trackedFiles:
   internal/sdk/models/sdkerrors/sdkdefaulterror.go:
     last_write_checksum: sha1:437b3a3eacb54d8648a68f80b3cd38fa5019f006
   internal/sdk/moderationapi.go:
-    last_write_checksum: sha1:8a143472ffcb6505cedac910a109cadfade89733
+    last_write_checksum: sha1:b1efd304e20f5c422582d61f27b3a9c5e19ae12e
   internal/sdk/optionalnullable/optionalnullable.go:
     last_write_checksum: sha1:b828c94c45116e632925027e4e2c211e971e04e2
   internal/sdk/optionalnullable/optionalnullable_test.go:
@@ -375,7 +375,7 @@ trackedFiles:
   internal/sdk/projects.go:
     last_write_checksum: sha1:6c561630b561c50f8d0758c744f9006180e2e77b
   internal/sdk/queue.go:
-    last_write_checksum: sha1:80269b1ee5ec0dc08c4082db0d1122f019e1a261
+    last_write_checksum: sha1:e7ad9e07ed4c6f302ac8b7123a7c4e8d9b4e034e
   internal/sdk/retry/config.go:
     last_write_checksum: sha1:102d1953fbd7e9f312c4442c71ccca2eaaeaa27d
   internal/sdk/sdkinternal/config/sdkconfiguration.go:
@@ -417,19 +417,19 @@ trackedFiles:
   internal/sdk/types/pointers.go:
     last_write_checksum: sha1:fc2275ea006257ba9ba4ff6f2a2cdb6205371eef
   internal/sdk/webhooks.go:
-    last_write_checksum: sha1:5ae3011d70c4c40938eacacd813842dee94e8f89
+    last_write_checksum: sha1:f76e15e7c4aa65f6293368354a3662f10a0743ee
   internal/sdk/webhooksecret.go:
-    last_write_checksum: sha1:0bc5d9473da7c04e4f71fbea0923bbc0e0901149
+    last_write_checksum: sha1:dba657bf0d16c657a8dbca1ae9f620394a15b83c
   internal/sdk/wordlist.go:
-    last_write_checksum: sha1:4bef1150923975c8d0bb3bc54b9404d56db15c5a
+    last_write_checksum: sha1:cd1e1acbeeaf0fb982b518502442f316b6100e68
   internal/sdk/words.go:
-    last_write_checksum: sha1:78f7925f78596cdb07db69283126993c539f7b96
+    last_write_checksum: sha1:444eb505ec11550665c14531b19b6ef451b2f4cf
   internal/testclient/testclient.go:
     last_write_checksum: sha1:7107e59d336235c44af152c5a61ee3896a7841fa
   internal/usage/bodyschemas.go:
     last_write_checksum: sha1:d7e5d0638f49d0544a69056e1a66f53ee1655143
   internal/usage/schema.go:
-    last_write_checksum: sha1:14929ce58dd14458a2ad1dc32ac1505c4f8e688e
+    last_write_checksum: sha1:3b031bd7d4124624ba9c6e92608c1082a047e5eb
   scripts/install.ps1:
     last_write_checksum: sha1:bd3a52c28f647ed881c6e8d72abf2d84216976c9
   scripts/install.sh:

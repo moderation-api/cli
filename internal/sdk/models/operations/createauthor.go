@@ -67,7 +67,7 @@ func (c *CreateAuthorMetadata) GetAdditionalProperties() map[string]any {
 	return c.AdditionalProperties
 }
 
-type CreateAuthorRequest struct {
+type CreateAuthorRequestBody struct {
 	// URL of the author's profile picture
 	ProfilePicture optionalnullable.OptionalNullable[string] `json:"profile_picture,omitzero"`
 	// URL of the author's external profile
@@ -89,85 +89,105 @@ type CreateAuthorRequest struct {
 	ExternalID string `json:"external_id"`
 }
 
-func (c CreateAuthorRequest) MarshalJSON() ([]byte, error) {
+func (c CreateAuthorRequestBody) MarshalJSON() ([]byte, error) {
 	return utils.MarshalJSON(c, "", false)
 }
 
-func (c *CreateAuthorRequest) UnmarshalJSON(data []byte) error {
+func (c *CreateAuthorRequestBody) UnmarshalJSON(data []byte) error {
 	if err := utils.UnmarshalJSON(data, &c, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (c *CreateAuthorRequest) GetProfilePicture() optionalnullable.OptionalNullable[string] {
+func (c *CreateAuthorRequestBody) GetProfilePicture() optionalnullable.OptionalNullable[string] {
 	if c == nil {
 		return nil
 	}
 	return c.ProfilePicture
 }
 
-func (c *CreateAuthorRequest) GetExternalLink() optionalnullable.OptionalNullable[string] {
+func (c *CreateAuthorRequestBody) GetExternalLink() optionalnullable.OptionalNullable[string] {
 	if c == nil {
 		return nil
 	}
 	return c.ExternalLink
 }
 
-func (c *CreateAuthorRequest) GetName() optionalnullable.OptionalNullable[string] {
+func (c *CreateAuthorRequestBody) GetName() optionalnullable.OptionalNullable[string] {
 	if c == nil {
 		return nil
 	}
 	return c.Name
 }
 
-func (c *CreateAuthorRequest) GetEmail() optionalnullable.OptionalNullable[string] {
+func (c *CreateAuthorRequestBody) GetEmail() optionalnullable.OptionalNullable[string] {
 	if c == nil {
 		return nil
 	}
 	return c.Email
 }
 
-func (c *CreateAuthorRequest) GetCompany() optionalnullable.OptionalNullable[string] {
+func (c *CreateAuthorRequestBody) GetCompany() optionalnullable.OptionalNullable[string] {
 	if c == nil {
 		return nil
 	}
 	return c.Company
 }
 
-func (c *CreateAuthorRequest) GetMetadata() *CreateAuthorMetadata {
+func (c *CreateAuthorRequestBody) GetMetadata() *CreateAuthorMetadata {
 	if c == nil {
 		return nil
 	}
 	return c.Metadata
 }
 
-func (c *CreateAuthorRequest) GetFirstSeen() *float64 {
+func (c *CreateAuthorRequestBody) GetFirstSeen() *float64 {
 	if c == nil {
 		return nil
 	}
 	return c.FirstSeen
 }
 
-func (c *CreateAuthorRequest) GetLastSeen() *float64 {
+func (c *CreateAuthorRequestBody) GetLastSeen() *float64 {
 	if c == nil {
 		return nil
 	}
 	return c.LastSeen
 }
 
-func (c *CreateAuthorRequest) GetManualTrustLevel() optionalnullable.OptionalNullable[float64] {
+func (c *CreateAuthorRequestBody) GetManualTrustLevel() optionalnullable.OptionalNullable[float64] {
 	if c == nil {
 		return nil
 	}
 	return c.ManualTrustLevel
 }
 
-func (c *CreateAuthorRequest) GetExternalID() string {
+func (c *CreateAuthorRequestBody) GetExternalID() string {
 	if c == nil {
 		return ""
 	}
 	return c.ExternalID
+}
+
+type CreateAuthorRequest struct {
+	// The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.
+	ProjectID *string                 `header:"style=simple,explode=false,name=Project-Id"`
+	Body      CreateAuthorRequestBody `request:"mediaType=application/json"`
+}
+
+func (c *CreateAuthorRequest) GetProjectID() *string {
+	if c == nil {
+		return nil
+	}
+	return c.ProjectID
+}
+
+func (c *CreateAuthorRequest) GetBody() CreateAuthorRequestBody {
+	if c == nil {
+		return CreateAuthorRequestBody{}
+	}
+	return c.Body
 }
 
 type CreateAuthorResponse struct {

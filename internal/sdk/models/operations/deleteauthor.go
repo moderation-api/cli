@@ -10,6 +10,8 @@ import (
 type DeleteAuthorRequest struct {
 	// Either external ID or the ID assigned by moderation API.
 	ID string `pathParam:"style=simple,explode=false,name=id"`
+	// The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.
+	ProjectID *string `header:"style=simple,explode=false,name=Project-Id"`
 }
 
 func (d *DeleteAuthorRequest) GetID() string {
@@ -17,6 +19,13 @@ func (d *DeleteAuthorRequest) GetID() string {
 		return ""
 	}
 	return d.ID
+}
+
+func (d *DeleteAuthorRequest) GetProjectID() *string {
+	if d == nil {
+		return nil
+	}
+	return d.ProjectID
 }
 
 // DeleteAuthorResponseBody - Successful response

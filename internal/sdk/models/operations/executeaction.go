@@ -7,8 +7,8 @@ import (
 	"github.com/moderation-api/cli/internal/sdk/sdkinternal/utils"
 )
 
-// ExecuteActionRequest - Input parameters
-type ExecuteActionRequest struct {
+// ExecuteActionRequestBody - Input parameters
+type ExecuteActionRequestBody struct {
 	// ID or key of the action to execute
 	ActionKey string `json:"actionKey"`
 	// IDs of the content items to apply the action to. Provide this or authorIds.
@@ -23,57 +23,77 @@ type ExecuteActionRequest struct {
 	Duration *float64 `json:"duration,omitzero"`
 }
 
-func (e ExecuteActionRequest) MarshalJSON() ([]byte, error) {
+func (e ExecuteActionRequestBody) MarshalJSON() ([]byte, error) {
 	return utils.MarshalJSON(e, "", false)
 }
 
-func (e *ExecuteActionRequest) UnmarshalJSON(data []byte) error {
+func (e *ExecuteActionRequestBody) UnmarshalJSON(data []byte) error {
 	if err := utils.UnmarshalJSON(data, &e, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (e *ExecuteActionRequest) GetActionKey() string {
+func (e *ExecuteActionRequestBody) GetActionKey() string {
 	if e == nil {
 		return ""
 	}
 	return e.ActionKey
 }
 
-func (e *ExecuteActionRequest) GetContentIds() []string {
+func (e *ExecuteActionRequestBody) GetContentIds() []string {
 	if e == nil {
 		return nil
 	}
 	return e.ContentIds
 }
 
-func (e *ExecuteActionRequest) GetAuthorIds() []string {
+func (e *ExecuteActionRequestBody) GetAuthorIds() []string {
 	if e == nil {
 		return nil
 	}
 	return e.AuthorIds
 }
 
-func (e *ExecuteActionRequest) GetValue() *string {
+func (e *ExecuteActionRequestBody) GetValue() *string {
 	if e == nil {
 		return nil
 	}
 	return e.Value
 }
 
-func (e *ExecuteActionRequest) GetQueueID() *string {
+func (e *ExecuteActionRequestBody) GetQueueID() *string {
 	if e == nil {
 		return nil
 	}
 	return e.QueueID
 }
 
-func (e *ExecuteActionRequest) GetDuration() *float64 {
+func (e *ExecuteActionRequestBody) GetDuration() *float64 {
 	if e == nil {
 		return nil
 	}
 	return e.Duration
+}
+
+type ExecuteActionRequest struct {
+	// The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.
+	ProjectID *string                  `header:"style=simple,explode=false,name=Project-Id"`
+	Body      ExecuteActionRequestBody `request:"mediaType=application/json"`
+}
+
+func (e *ExecuteActionRequest) GetProjectID() *string {
+	if e == nil {
+		return nil
+	}
+	return e.ProjectID
+}
+
+func (e *ExecuteActionRequest) GetBody() ExecuteActionRequestBody {
+	if e == nil {
+		return ExecuteActionRequestBody{}
+	}
+	return e.Body
 }
 
 // ExecuteActionResponseBody - Execution result

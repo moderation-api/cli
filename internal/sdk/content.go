@@ -30,6 +30,7 @@ func newContent(rootSDK *ModerationAPI, sdkConfig config.SDKConfiguration, hooks
 	}
 }
 
+// Submit content
 func (s *Content) Submit(ctx context.Context, request operations.SubmitContentRequest, opts ...operations.Option) (*operations.SubmitContentResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -62,7 +63,7 @@ func (s *Content) Submit(ctx context.Context, request operations.SubmitContentRe
 		OperationID:      "submitContent",
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
-	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "Request", "json", `request:"mediaType=application/json"`)
+	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "Body", "json", `request:"mediaType=application/json"`)
 	if err != nil {
 		return nil, err
 	}
@@ -94,6 +95,8 @@ func (s *Content) Submit(ctx context.Context, request operations.SubmitContentRe
 	if reqContentType != "" {
 		req.Header.Set("Content-Type", reqContentType)
 	}
+
+	utils.PopulateHeaders(ctx, req, request, nil)
 
 	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
 		return nil, err

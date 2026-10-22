@@ -14,12 +14,13 @@ import (
 )
 
 var executeCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "action-key", FieldPath: "ActionKey", Kind: flagutil.FlagKindString, Required: true, Description: "ID or key of the action to execute [required]"},
-	{FlagName: "content-ids", Shorthand: "c", FieldPath: "ContentIds", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "IDs of the content items to apply the action to. Provide this or authorIds."},
-	{FlagName: "author-ids", FieldPath: "AuthorIds", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "IDs of the authors to apply the action to. Provide this or contentIds."},
-	{FlagName: "value", Shorthand: "v", FieldPath: "Value", Kind: flagutil.FlagKindString, Optional: true, Description: "Optional value to provide with the action"},
-	{FlagName: "queue-id", FieldPath: "QueueID", Kind: flagutil.FlagKindString, Optional: true, Description: "Optional queue ID if the action is queue-specific"},
-	{FlagName: "duration", FieldPath: "Duration", Kind: flagutil.FlagKindFloat64, Optional: true, HasMinimum: true, Minimum: 0, Description: "Optional duration in milliseconds for actions with timeouts"},
+	{FlagName: "project-id", Shorthand: "p", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Optional: true, Description: "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error."},
+	{FlagName: "action-key", FieldPath: "Body.ActionKey", Kind: flagutil.FlagKindString, Required: true, Description: "ID or key of the action to execute [required]"},
+	{FlagName: "content-ids", Shorthand: "c", FieldPath: "Body.ContentIds", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "IDs of the content items to apply the action to. Provide this or authorIds."},
+	{FlagName: "author-ids", FieldPath: "Body.AuthorIds", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "IDs of the authors to apply the action to. Provide this or contentIds."},
+	{FlagName: "value", Shorthand: "v", FieldPath: "Body.Value", Kind: flagutil.FlagKindString, Optional: true, Description: "Optional value to provide with the action"},
+	{FlagName: "queue-id", FieldPath: "Body.QueueID", Kind: flagutil.FlagKindString, Optional: true, Description: "Optional queue ID if the action is queue-specific"},
+	{FlagName: "duration", FieldPath: "Body.Duration", Kind: flagutil.FlagKindFloat64, Optional: true, HasMinimum: true, Minimum: 0, Description: "Optional duration in milliseconds for actions with timeouts"},
 }
 
 // initExecuteCmd initializes the execute command.
@@ -42,7 +43,7 @@ func initExecuteCmd(parent *cobra.Command) error {
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF. Use --schema to print the exact JSON Schema.")
 	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
-	if err := flagutil.AnnotateBodyFields(cmd, executeCmdMeta, "", "body"); err != nil {
+	if err := flagutil.AnnotateBodyFields(cmd, executeCmdMeta, "Body", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for execute: %w", err)
 	}
 	cmd.Flags().Bool("schema", false, "Print the exact JSON Schema of the request body and exit")
@@ -59,7 +60,7 @@ func runExecuteCmd(cmd *cobra.Command, args []string) error {
 	if requested, _ := cmd.Flags().GetBool("schema"); requested {
 		return usage.EmitBodySchema(cmd.OutOrStdout(), "executeAction")
 	}
-	request, err := flagutil.BuildRequest[operations.ExecuteActionRequest](cmd, executeCmdMeta, "", "body")
+	req, err := flagutil.BuildRequest[operations.ExecuteActionRequest](cmd, executeCmdMeta, "Body", "body")
 	if err != nil {
 		return flagutil.WithCLIValidation(err)
 	}
@@ -84,7 +85,7 @@ func runExecuteCmd(cmd *cobra.Command, args []string) error {
 	}
 	stopProgress := output.StartRequestProgress(cmd)
 	defer stopProgress()
-	res, err := s.Actions.Execute(cmd.Context(), *request, sdkOpts...)
+	res, err := s.Actions.Execute(cmd.Context(), *req, sdkOpts...)
 	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)

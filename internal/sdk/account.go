@@ -32,7 +32,7 @@ func newAccount(rootSDK *ModerationAPI, sdkConfig config.SDKConfiguration, hooks
 
 // Retrieve - Get account details
 // Get account details
-func (s *Account) Retrieve(ctx context.Context, opts ...operations.Option) (*operations.GetAccountResponse, error) {
+func (s *Account) Retrieve(ctx context.Context, request *operations.GetAccountRequest, opts ...operations.Option) (*operations.GetAccountResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -89,6 +89,8 @@ func (s *Account) Retrieve(ctx context.Context, opts ...operations.Option) (*ope
 	}
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	utils.PopulateHeaders(ctx, req, request, nil)
 
 	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
 		return nil, err

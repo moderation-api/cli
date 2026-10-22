@@ -16,6 +16,7 @@ import (
 
 var updateCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "id", Shorthand: "i", FieldPath: "ID", Kind: flagutil.FlagKindString, Required: true, Description: "The ID of the webhook to update. [required]"},
+	{FlagName: "project-id", Shorthand: "p", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Optional: true, Description: "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error."},
 	{FlagName: "name", Shorthand: "n", FieldPath: "Body.Name", Kind: flagutil.FlagKindString, Optional: true, MinLength: 1, Description: "The webhook's name, used to identify it in the dashboard"},
 	{FlagName: "description", FieldPath: "Body.Description", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"description,omitempty"`, Description: "The webhook's description"},
 	{FlagName: "url", Shorthand: "u", FieldPath: "Body.URL", Kind: flagutil.FlagKindString, Optional: true, Description: "The webhook's URL. We'll call this URL when an event occurs."},

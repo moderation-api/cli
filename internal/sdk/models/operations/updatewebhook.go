@@ -115,8 +115,10 @@ func (u *UpdateWebhookRequestBody) GetEventTypes() []UpdateWebhookEventTypeReque
 
 type UpdateWebhookRequest struct {
 	// The ID of the webhook to update.
-	ID   string                   `pathParam:"style=simple,explode=false,name=id"`
-	Body UpdateWebhookRequestBody `request:"mediaType=application/json"`
+	ID string `pathParam:"style=simple,explode=false,name=id"`
+	// The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.
+	ProjectID *string                  `header:"style=simple,explode=false,name=Project-Id"`
+	Body      UpdateWebhookRequestBody `request:"mediaType=application/json"`
 }
 
 func (u *UpdateWebhookRequest) GetID() string {
@@ -124,6 +126,13 @@ func (u *UpdateWebhookRequest) GetID() string {
 		return ""
 	}
 	return u.ID
+}
+
+func (u *UpdateWebhookRequest) GetProjectID() *string {
+	if u == nil {
+		return nil
+	}
+	return u.ProjectID
 }
 
 func (u *UpdateWebhookRequest) GetBody() UpdateWebhookRequestBody {

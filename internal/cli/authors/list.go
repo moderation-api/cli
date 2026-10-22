@@ -21,6 +21,7 @@ var listCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "member-since-date", Shorthand: "m", FieldPath: "MemberSinceDate", Kind: flagutil.FlagKindString, Optional: true, Description: "string value"},
 	{FlagName: "last-active-date", Shorthand: "l", FieldPath: "LastActiveDate", Kind: flagutil.FlagKindString, Optional: true, Description: "string value"},
 	{FlagName: "content-types", Shorthand: "c", FieldPath: "ContentTypes", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "list of values"},
+	{FlagName: "project-id", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Optional: true, Description: "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error."},
 }
 
 // initListCmd initializes the list command.

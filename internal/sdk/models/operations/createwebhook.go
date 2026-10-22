@@ -63,7 +63,7 @@ func (e *CreateWebhookEventTypeRequest) UnmarshalJSON(data []byte) error {
 	}
 }
 
-type CreateWebhookRequest struct {
+type CreateWebhookRequestBody struct {
 	// The webhook's name, used to identify it in the dashboard
 	Name string `json:"name"`
 	// The webhook's description
@@ -74,32 +74,52 @@ type CreateWebhookRequest struct {
 	EventTypes []CreateWebhookEventTypeRequest `json:"eventTypes"`
 }
 
-func (c *CreateWebhookRequest) GetName() string {
+func (c *CreateWebhookRequestBody) GetName() string {
 	if c == nil {
 		return ""
 	}
 	return c.Name
 }
 
-func (c *CreateWebhookRequest) GetDescription() optionalnullable.OptionalNullable[string] {
+func (c *CreateWebhookRequestBody) GetDescription() optionalnullable.OptionalNullable[string] {
 	if c == nil {
 		return nil
 	}
 	return c.Description
 }
 
-func (c *CreateWebhookRequest) GetURL() string {
+func (c *CreateWebhookRequestBody) GetURL() string {
 	if c == nil {
 		return ""
 	}
 	return c.URL
 }
 
-func (c *CreateWebhookRequest) GetEventTypes() []CreateWebhookEventTypeRequest {
+func (c *CreateWebhookRequestBody) GetEventTypes() []CreateWebhookEventTypeRequest {
 	if c == nil {
 		return []CreateWebhookEventTypeRequest{}
 	}
 	return c.EventTypes
+}
+
+type CreateWebhookRequest struct {
+	// The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.
+	ProjectID *string                  `header:"style=simple,explode=false,name=Project-Id"`
+	Body      CreateWebhookRequestBody `request:"mediaType=application/json"`
+}
+
+func (c *CreateWebhookRequest) GetProjectID() *string {
+	if c == nil {
+		return nil
+	}
+	return c.ProjectID
+}
+
+func (c *CreateWebhookRequest) GetBody() CreateWebhookRequestBody {
+	if c == nil {
+		return CreateWebhookRequestBody{}
+	}
+	return c.Body
 }
 
 type CreateWebhookEventTypeResponse string

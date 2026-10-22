@@ -14,7 +14,8 @@ import (
 )
 
 var submitCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "content", FieldPath: "Content", Kind: flagutil.FlagKindUnion, Union: &flagutil.UnionMeta{Discriminated: true, DiscriminatorKey: "Type", TypeDescription: "JSON value (variants: text: { \"text\": string }, image: { \"url\": string, \"data\": string }, video: { \"url\": string }, audio: { \"url\": string }, object: { \"data\": object })", Variants: []flagutil.UnionVariantMeta{
+	{FlagName: "project-id", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Optional: true, Description: "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error."},
+	{FlagName: "content", FieldPath: "Body.Content", Kind: flagutil.FlagKindUnion, Union: &flagutil.UnionMeta{Discriminated: true, DiscriminatorKey: "Type", TypeDescription: "JSON value (variants: text: { \"text\": string }, image: { \"url\": string, \"data\": string }, video: { \"url\": string }, audio: { \"url\": string }, object: { \"data\": object })", Variants: []flagutil.UnionVariantMeta{
 		{DiscriminatorValue: "text", FlagName: "content.text", FieldName: "TextRequest", CanExpand: true, Description: "Text_request variant as JSON", Fields: []flagutil.FlagMeta{
 			{FlagName: "content.text.text", FieldPath: "Text", Kind: flagutil.FlagKindString, Required: true, HasMaxLength: true, MaxLength: 100000, Description: "The content text [required]"},
 		}},
@@ -30,24 +31,24 @@ var submitCmdMeta = []flagutil.FlagMeta{
 		}},
 		{DiscriminatorValue: "object", FlagName: "content.object", FieldName: "Object", CanExpand: false, Description: "Object variant as JSON"},
 	}}},
-	{FlagName: "timestamp", Shorthand: "t", FieldPath: "Timestamp", Kind: flagutil.FlagKindFloat64, Optional: true, Description: "Unix timestamp (in milliseconds) of when the content was created. Use if content is not submitted in real-time."},
-	{FlagName: "channel", FieldPath: "Channel", Kind: flagutil.FlagKindString, Optional: true, Description: "Provide a channel ID or key. Will use the project's default channel if not provided."},
-	{FlagName: "content-id", FieldPath: "ContentID", Kind: flagutil.FlagKindString, Optional: true, HasMaxLength: true, MaxLength: 100, Description: "The unique ID of the content in your database."},
-	{FlagName: "meta-type", FieldPath: "MetaType", Kind: flagutil.FlagKindEnum, Optional: true, EnumValues: []string{"profile", "message", "post", "comment", "event", "product", "review", "voice", "other"}, Description: "The meta type of content being moderated (options: profile, message, post, comment, event, product, review, voice, other)"},
-	{FlagName: "author-id", Shorthand: "a", FieldPath: "AuthorID", Kind: flagutil.FlagKindString, Optional: true, Description: "The author of the content."},
-	{FlagName: "conversation-id", FieldPath: "ConversationID", Kind: flagutil.FlagKindString, Optional: true, Description: "For example the ID of a chat room or a post"},
-	{FlagName: "metadata", FieldPath: "Metadata", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"metadata,omitempty"`, Description: "Any metadata you want to store with the content"},
-	{FlagName: "client-action", FieldPath: "ClientAction", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"clientAction,omitempty"`, Description: "A recommendation from your own client-side flagging (e.g. a banned-IP list or a third-party tool). Feeds the rules engine and can escalate or override the recommended action. Does not change whether our analysis flagged the content."},
-	{FlagName: "do-not-store", FieldPath: "DoNotStore", Kind: flagutil.FlagKindBool, Optional: true, Description: "Do not store the content. The content won't enter the review queue"},
-	{FlagName: "policies", Shorthand: "p", FieldPath: "Policies", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"policies,omitempty"`, Description: "(Enterprise) override the channel policies for this moderation request only. (JSON array)"},
+	{FlagName: "timestamp", Shorthand: "t", FieldPath: "Body.Timestamp", Kind: flagutil.FlagKindFloat64, Optional: true, Description: "Unix timestamp (in milliseconds) of when the content was created. Use if content is not submitted in real-time."},
+	{FlagName: "channel", FieldPath: "Body.Channel", Kind: flagutil.FlagKindString, Optional: true, Description: "Provide a channel ID or key. Will use the project's default channel if not provided."},
+	{FlagName: "content-id", FieldPath: "Body.ContentID", Kind: flagutil.FlagKindString, Optional: true, HasMaxLength: true, MaxLength: 100, Description: "The unique ID of the content in your database."},
+	{FlagName: "meta-type", FieldPath: "Body.MetaType", Kind: flagutil.FlagKindEnum, Optional: true, EnumValues: []string{"profile", "message", "post", "comment", "event", "product", "review", "voice", "other"}, Description: "The meta type of content being moderated (options: profile, message, post, comment, event, product, review, voice, other)"},
+	{FlagName: "author-id", Shorthand: "a", FieldPath: "Body.AuthorID", Kind: flagutil.FlagKindString, Optional: true, Description: "The author of the content."},
+	{FlagName: "conversation-id", FieldPath: "Body.ConversationID", Kind: flagutil.FlagKindString, Optional: true, Description: "For example the ID of a chat room or a post"},
+	{FlagName: "metadata", FieldPath: "Body.Metadata", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"metadata,omitempty"`, Description: "Any metadata you want to store with the content"},
+	{FlagName: "client-action", FieldPath: "Body.ClientAction", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"clientAction,omitempty"`, Description: "A recommendation from your own client-side flagging (e.g. a banned-IP list or a third-party tool). Feeds the rules engine and can escalate or override the recommended action. Does not change whether our analysis flagged the content."},
+	{FlagName: "do-not-store", FieldPath: "Body.DoNotStore", Kind: flagutil.FlagKindBool, Optional: true, Description: "Do not store the content. The content won't enter the review queue"},
+	{FlagName: "policies", FieldPath: "Body.Policies", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"policies,omitempty"`, Description: "(Enterprise) override the channel policies for this moderation request only. (JSON array)"},
 }
 
 // initSubmitCmd initializes the submit command.
 func initSubmitCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "submit",
-		Short:   "Submit",
-		Long:    "Submit",
+		Short:   "Submit content",
+		Long:    "Submit content",
 		Example: "  modapi content submit --content '{\"type\":\"text\",\"text\":\"Hey, check out my profile for a deal!\"}'",
 		Args:    cobra.NoArgs,
 		RunE:    runSubmitCmd,
@@ -62,7 +63,7 @@ func initSubmitCmd(parent *cobra.Command) error {
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF. Use --schema to print the exact JSON Schema.")
 	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
-	if err := flagutil.AnnotateBodyFields(cmd, submitCmdMeta, "", "body"); err != nil {
+	if err := flagutil.AnnotateBodyFields(cmd, submitCmdMeta, "Body", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for submit: %w", err)
 	}
 	cmd.Flags().Bool("schema", false, "Print the exact JSON Schema of the request body and exit")
@@ -79,7 +80,7 @@ func runSubmitCmd(cmd *cobra.Command, args []string) error {
 	if requested, _ := cmd.Flags().GetBool("schema"); requested {
 		return usage.EmitBodySchema(cmd.OutOrStdout(), "submitContent")
 	}
-	request, err := flagutil.BuildRequest[operations.SubmitContentRequest](cmd, submitCmdMeta, "", "body")
+	req, err := flagutil.BuildRequest[operations.SubmitContentRequest](cmd, submitCmdMeta, "Body", "body")
 	if err != nil {
 		return flagutil.WithCLIValidation(err)
 	}
@@ -104,7 +105,7 @@ func runSubmitCmd(cmd *cobra.Command, args []string) error {
 	}
 	stopProgress := output.StartRequestProgress(cmd)
 	defer stopProgress()
-	res, err := s.Content.Submit(cmd.Context(), *request, sdkOpts...)
+	res, err := s.Content.Submit(cmd.Context(), *req, sdkOpts...)
 	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)

@@ -17,6 +17,7 @@ var listCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "queue-id", FieldPath: "QueueID", Kind: flagutil.FlagKindString, Optional: true, Description: "string value"},
 	{FlagName: "page", FieldPath: "Page", Kind: flagutil.FlagKindInt64, Optional: true, HasDefault: true, DefaultInt: 1, HasMinimum: true, Minimum: 1, HasMaximum: true, Maximum: 100000, Description: "integer value"},
 	{FlagName: "page-size", FieldPath: "PageSize", Kind: flagutil.FlagKindInt64, Optional: true, HasDefault: true, DefaultInt: 20, HasMinimum: true, Minimum: 1, HasMaximum: true, Maximum: 100, Description: "integer value"},
+	{FlagName: "project-id", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Optional: true, Description: "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error."},
 }
 
 // initListCmd initializes the list command.

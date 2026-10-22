@@ -3401,7 +3401,7 @@ func (u PolicyRequest) MarshalJSON() ([]byte, error) {
 	return nil, errors.New("could not marshal union type PolicyRequest: all fields are null")
 }
 
-type SubmitContentRequest struct {
+type SubmitContentRequestBody struct {
 	// The content sent for moderation
 	Content ContentRequest `json:"content"`
 	// Unix timestamp (in milliseconds) of when the content was created. Use if content is not submitted in real-time.
@@ -3426,112 +3426,132 @@ type SubmitContentRequest struct {
 	Policies []PolicyRequest `json:"policies,omitzero"`
 }
 
-func (s SubmitContentRequest) MarshalJSON() ([]byte, error) {
+func (s SubmitContentRequestBody) MarshalJSON() ([]byte, error) {
 	return utils.MarshalJSON(s, "", false)
 }
 
-func (s *SubmitContentRequest) UnmarshalJSON(data []byte) error {
+func (s *SubmitContentRequestBody) UnmarshalJSON(data []byte) error {
 	if err := utils.UnmarshalJSON(data, &s, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (s *SubmitContentRequest) GetContent() ContentRequest {
+func (s *SubmitContentRequestBody) GetContent() ContentRequest {
 	if s == nil {
 		return ContentRequest{}
 	}
 	return s.Content
 }
 
-func (s *SubmitContentRequest) GetContentText() *TextRequest {
+func (s *SubmitContentRequestBody) GetContentText() *TextRequest {
 	return s.GetContent().TextRequest
 }
 
-func (s *SubmitContentRequest) GetContentImage() *ImageRequest {
+func (s *SubmitContentRequestBody) GetContentImage() *ImageRequest {
 	return s.GetContent().ImageRequest
 }
 
-func (s *SubmitContentRequest) GetContentVideo() *VideoRequest {
+func (s *SubmitContentRequestBody) GetContentVideo() *VideoRequest {
 	return s.GetContent().VideoRequest
 }
 
-func (s *SubmitContentRequest) GetContentAudio() *AudioRequest {
+func (s *SubmitContentRequestBody) GetContentAudio() *AudioRequest {
 	return s.GetContent().AudioRequest
 }
 
-func (s *SubmitContentRequest) GetContentObject() *Object {
+func (s *SubmitContentRequestBody) GetContentObject() *Object {
 	return s.GetContent().Object
 }
 
-func (s *SubmitContentRequest) GetTimestamp() *float64 {
+func (s *SubmitContentRequestBody) GetTimestamp() *float64 {
 	if s == nil {
 		return nil
 	}
 	return s.Timestamp
 }
 
-func (s *SubmitContentRequest) GetChannel() *string {
+func (s *SubmitContentRequestBody) GetChannel() *string {
 	if s == nil {
 		return nil
 	}
 	return s.Channel
 }
 
-func (s *SubmitContentRequest) GetContentID() *string {
+func (s *SubmitContentRequestBody) GetContentID() *string {
 	if s == nil {
 		return nil
 	}
 	return s.ContentID
 }
 
-func (s *SubmitContentRequest) GetMetaType() *MetaType {
+func (s *SubmitContentRequestBody) GetMetaType() *MetaType {
 	if s == nil {
 		return nil
 	}
 	return s.MetaType
 }
 
-func (s *SubmitContentRequest) GetAuthorID() *string {
+func (s *SubmitContentRequestBody) GetAuthorID() *string {
 	if s == nil {
 		return nil
 	}
 	return s.AuthorID
 }
 
-func (s *SubmitContentRequest) GetConversationID() *string {
+func (s *SubmitContentRequestBody) GetConversationID() *string {
 	if s == nil {
 		return nil
 	}
 	return s.ConversationID
 }
 
-func (s *SubmitContentRequest) GetMetadata() map[string]any {
+func (s *SubmitContentRequestBody) GetMetadata() map[string]any {
 	if s == nil {
 		return nil
 	}
 	return s.Metadata
 }
 
-func (s *SubmitContentRequest) GetClientAction() *ClientAction {
+func (s *SubmitContentRequestBody) GetClientAction() *ClientAction {
 	if s == nil {
 		return nil
 	}
 	return s.ClientAction
 }
 
-func (s *SubmitContentRequest) GetDoNotStore() *bool {
+func (s *SubmitContentRequestBody) GetDoNotStore() *bool {
 	if s == nil {
 		return nil
 	}
 	return s.DoNotStore
 }
 
-func (s *SubmitContentRequest) GetPolicies() []PolicyRequest {
+func (s *SubmitContentRequestBody) GetPolicies() []PolicyRequest {
 	if s == nil {
 		return nil
 	}
 	return s.Policies
+}
+
+type SubmitContentRequest struct {
+	// The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.
+	ProjectID *string                  `header:"style=simple,explode=false,name=Project-Id"`
+	Body      SubmitContentRequestBody `request:"mediaType=application/json"`
+}
+
+func (s *SubmitContentRequest) GetProjectID() *string {
+	if s == nil {
+		return nil
+	}
+	return s.ProjectID
+}
+
+func (s *SubmitContentRequest) GetBody() SubmitContentRequestBody {
+	if s == nil {
+		return SubmitContentRequestBody{}
+	}
+	return s.Body
 }
 
 // AudioResponse - Audio
