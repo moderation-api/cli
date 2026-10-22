@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://moderationapi.com/api/v1"
+      "url": "https://api.moderationapi.com/v1"
     }
   ],
   "tags": [

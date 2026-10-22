@@ -18,7 +18,7 @@ import (
 
 // ServerList contains the list of servers available to the SDK
 var ServerList = []string{
-	"https://moderationapi.com/api/v1",
+	"https://api.moderationapi.com/v1",
 }
 
 // HTTPClient provides an interface for supplying the SDK with a custom HTTP client
@@ -137,10 +137,10 @@ func WithTimeout(timeout time.Duration) SDKOption {
 // New creates a new instance of the SDK with the provided options
 func New(opts ...SDKOption) *ModerationAPI {
 	sdk := &ModerationAPI{
-		SDKVersion: "0.2.0",
+		SDKVersion: "0.2.1",
 		sdkConfiguration: config.SDKConfiguration{
-			UserAgent:         "speakeasy-sdk/go 0.2.0 internal 1.1.0 github.com/moderation-api/cli/internal/sdk",
-			SDKVersion:        "0.2.0",
+			UserAgent:         "speakeasy-sdk/go 0.2.1 internal 1.1.0 github.com/moderation-api/cli/internal/sdk",
+			SDKVersion:        "0.2.1",
 			GenVersion:        "internal",
 			OpenAPIDocVersion: "1.1.0",
 			ServerList:        ServerList,

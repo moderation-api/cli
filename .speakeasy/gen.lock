@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: f6fec850-ef66-45dd-9a18-cec7cc0801ce
 management:
-  docChecksum: c27787b45fc5b72aafff31ba945a9e61
+  docChecksum: 38730339aa1da77855e86c169896f12f
   docVersion: 1.1.0
   speakeasyVersion: internal
   generationVersion: internal
-  releaseVersion: 0.2.0
-  configChecksum: 2c70a677029e7ca5879af3f62ad39ff5
+  releaseVersion: 0.2.1
+  configChecksum: e1622cfa2b70058a5902818ea42129b6
   repoURL: https://github.com/moderation-api/cli
   installationURL: https://github.com/moderation-api/cli
   published: true
@@ -127,7 +127,7 @@ trackedFiles:
   internal/cli/root.go:
     last_write_checksum: sha1:d00799a3804f87479242f16bf520cb593f79ba8e
   internal/cli/version.go:
-    last_write_checksum: sha1:79b7a4ddc9ac7f8ceaa8f0294d71ea2b42630d8f
+    last_write_checksum: sha1:c3b3c0d6fb0605a47eae25c55dbf11129c1be1f4
   internal/cli/webhooks/create.go:
     last_write_checksum: sha1:aeee8ed3b7b667e33ea80f2288b4391962e6f263
   internal/cli/webhooks/delete.go:
@@ -367,7 +367,7 @@ trackedFiles:
   internal/sdk/models/sdkerrors/sdkdefaulterror.go:
     last_write_checksum: sha1:437b3a3eacb54d8648a68f80b3cd38fa5019f006
   internal/sdk/moderationapi.go:
-    last_write_checksum: sha1:b1efd304e20f5c422582d61f27b3a9c5e19ae12e
+    last_write_checksum: sha1:cbd5b9bf42437d28f644c6479e4f957332b3560e
   internal/sdk/optionalnullable/optionalnullable.go:
     last_write_checksum: sha1:b828c94c45116e632925027e4e2c211e971e04e2
   internal/sdk/optionalnullable/optionalnullable_test.go:
@@ -429,7 +429,7 @@ trackedFiles:
   internal/usage/bodyschemas.go:
     last_write_checksum: sha1:d7e5d0638f49d0544a69056e1a66f53ee1655143
   internal/usage/schema.go:
-    last_write_checksum: sha1:3b031bd7d4124624ba9c6e92608c1082a047e5eb
+    last_write_checksum: sha1:56988e25b84b5d49731e9c11e3bd558935ec8ffe
   scripts/install.ps1:
     last_write_checksum: sha1:bd3a52c28f647ed881c6e8d72abf2d84216976c9
   scripts/install.sh:
