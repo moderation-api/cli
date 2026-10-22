@@ -16,6 +16,7 @@ import (
 var unresolveCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "id", FieldPath: "ID", Kind: flagutil.FlagKindString, Required: true, Description: "The queue ID [required]"},
 	{FlagName: "item-id", FieldPath: "ItemID", Kind: flagutil.FlagKindString, Required: true, Description: "The item ID to unresolve [required]"},
+	{FlagName: "project-id", Shorthand: "p", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Optional: true, Description: "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error."},
 	{FlagName: "comment", Shorthand: "c", FieldPath: "Body.Comment", Kind: flagutil.FlagKindString, Optional: true, Description: "Optional reason for unresolving the item"},
 }
 

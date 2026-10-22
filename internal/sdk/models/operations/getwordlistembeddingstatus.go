@@ -10,6 +10,8 @@ import (
 type GetWordlistEmbeddingStatusRequest struct {
 	// ID of the wordlist to check embedding status for
 	ID string `pathParam:"style=simple,explode=false,name=id"`
+	// The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.
+	ProjectID *string `header:"style=simple,explode=false,name=Project-Id"`
 }
 
 func (g *GetWordlistEmbeddingStatusRequest) GetID() string {
@@ -17,6 +19,13 @@ func (g *GetWordlistEmbeddingStatusRequest) GetID() string {
 		return ""
 	}
 	return g.ID
+}
+
+func (g *GetWordlistEmbeddingStatusRequest) GetProjectID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.ProjectID
 }
 
 // GetWordlistEmbeddingStatusResponseBody - Embedding status details

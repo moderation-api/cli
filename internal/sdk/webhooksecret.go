@@ -32,7 +32,7 @@ func newWebhookSecret(rootSDK *ModerationAPI, sdkConfig config.SDKConfiguration,
 
 // Retrieve - Get the webhook signing secret
 // Get the signing secret used to sign webhook deliveries for this project, creating one if none exists yet. Verify deliveries by comparing the `modapi-signature` header to HMAC-SHA256(raw request body, secret) hex-encoded.
-func (s *WebhookSecret) Retrieve(ctx context.Context, opts ...operations.Option) (*operations.GetWebhookSecretResponse, error) {
+func (s *WebhookSecret) Retrieve(ctx context.Context, request *operations.GetWebhookSecretRequest, opts ...operations.Option) (*operations.GetWebhookSecretResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionTimeout,
@@ -89,6 +89,8 @@ func (s *WebhookSecret) Retrieve(ctx context.Context, opts ...operations.Option)
 	}
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	utils.PopulateHeaders(ctx, req, request, nil)
 
 	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
 		return nil, err

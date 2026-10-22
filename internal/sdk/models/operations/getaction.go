@@ -11,6 +11,8 @@ import (
 type GetActionRequest struct {
 	// The ID of the action to get.
 	ID string `pathParam:"style=simple,explode=false,name=id"`
+	// The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.
+	ProjectID *string `header:"style=simple,explode=false,name=Project-Id"`
 }
 
 func (g *GetActionRequest) GetID() string {
@@ -18,6 +20,13 @@ func (g *GetActionRequest) GetID() string {
 		return ""
 	}
 	return g.ID
+}
+
+func (g *GetActionRequest) GetProjectID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.ProjectID
 }
 
 type GetActionType string

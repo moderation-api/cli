@@ -132,7 +132,7 @@ func (c *CreateActionPossibleValueRequest) GetValue() string {
 	return c.Value
 }
 
-type CreateActionRequest struct {
+type CreateActionRequestBody struct {
 	// User defined key of the action.
 	Key optionalnullable.OptionalNullable[string] `json:"key,omitzero"`
 	// The name of the action.
@@ -157,92 +157,112 @@ type CreateActionRequest struct {
 	FreeText *bool `default:"false" json:"freeText"`
 }
 
-func (c CreateActionRequest) MarshalJSON() ([]byte, error) {
+func (c CreateActionRequestBody) MarshalJSON() ([]byte, error) {
 	return utils.MarshalJSON(c, "", false)
 }
 
-func (c *CreateActionRequest) UnmarshalJSON(data []byte) error {
+func (c *CreateActionRequestBody) UnmarshalJSON(data []byte) error {
 	if err := utils.UnmarshalJSON(data, &c, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (c *CreateActionRequest) GetKey() optionalnullable.OptionalNullable[string] {
+func (c *CreateActionRequestBody) GetKey() optionalnullable.OptionalNullable[string] {
 	if c == nil {
 		return nil
 	}
 	return c.Key
 }
 
-func (c *CreateActionRequest) GetName() string {
+func (c *CreateActionRequestBody) GetName() string {
 	if c == nil {
 		return ""
 	}
 	return c.Name
 }
 
-func (c *CreateActionRequest) GetDescription() optionalnullable.OptionalNullable[string] {
+func (c *CreateActionRequestBody) GetDescription() optionalnullable.OptionalNullable[string] {
 	if c == nil {
 		return nil
 	}
 	return c.Description
 }
 
-func (c *CreateActionRequest) GetType() optionalnullable.OptionalNullable[CreateActionTypeRequest] {
+func (c *CreateActionRequestBody) GetType() optionalnullable.OptionalNullable[CreateActionTypeRequest] {
 	if c == nil {
 		return nil
 	}
 	return c.Type
 }
 
-func (c *CreateActionRequest) GetBuiltIn() optionalnullable.OptionalNullable[bool] {
+func (c *CreateActionRequestBody) GetBuiltIn() optionalnullable.OptionalNullable[bool] {
 	if c == nil {
 		return nil
 	}
 	return c.BuiltIn
 }
 
-func (c *CreateActionRequest) GetQueueBehaviour() *CreateActionQueueBehaviourRequest {
+func (c *CreateActionRequestBody) GetQueueBehaviour() *CreateActionQueueBehaviourRequest {
 	if c == nil {
 		return nil
 	}
 	return c.QueueBehaviour
 }
 
-func (c *CreateActionRequest) GetFilterInQueueIds() []string {
+func (c *CreateActionRequestBody) GetFilterInQueueIds() []string {
 	if c == nil {
 		return nil
 	}
 	return c.FilterInQueueIds
 }
 
-func (c *CreateActionRequest) GetPosition() *CreateActionPositionRequest {
+func (c *CreateActionRequestBody) GetPosition() *CreateActionPositionRequest {
 	if c == nil {
 		return nil
 	}
 	return c.Position
 }
 
-func (c *CreateActionRequest) GetPossibleValues() []CreateActionPossibleValueRequest {
+func (c *CreateActionRequestBody) GetPossibleValues() []CreateActionPossibleValueRequest {
 	if c == nil {
 		return nil
 	}
 	return c.PossibleValues
 }
 
-func (c *CreateActionRequest) GetValueRequired() *bool {
+func (c *CreateActionRequestBody) GetValueRequired() *bool {
 	if c == nil {
 		return nil
 	}
 	return c.ValueRequired
 }
 
-func (c *CreateActionRequest) GetFreeText() *bool {
+func (c *CreateActionRequestBody) GetFreeText() *bool {
 	if c == nil {
 		return nil
 	}
 	return c.FreeText
+}
+
+type CreateActionRequest struct {
+	// The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.
+	ProjectID *string                 `header:"style=simple,explode=false,name=Project-Id"`
+	Body      CreateActionRequestBody `request:"mediaType=application/json"`
+}
+
+func (c *CreateActionRequest) GetProjectID() *string {
+	if c == nil {
+		return nil
+	}
+	return c.ProjectID
+}
+
+func (c *CreateActionRequest) GetBody() CreateActionRequestBody {
+	if c == nil {
+		return CreateActionRequestBody{}
+	}
+	return c.Body
 }
 
 type CreateActionTypeResponse string

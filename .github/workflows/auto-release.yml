@@ -1,7 +1,7 @@
 # Maintained in moderation-api/sdk-generator (custom/cli). Edits here are overwritten.
 # Every push to main whose CLI version has no release tag yet tags it and builds
 # the release with GoReleaser (a tag pushed from a workflow does not start
-# release.yaml). Notes: .github/release-notes/vX.Y.Z.md if present.
+# release.yaml). Notes: the CHANGELOG.md entry.
 name: Auto release
 on:
   push:
@@ -50,7 +50,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Set the release notes
-        if: steps.version.outputs.release == 'true' && hashFiles(format('.github/release-notes/v{0}.md', env.VERSION)) != ''
+        if: steps.version.outputs.release == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release edit "v${VERSION}" --notes-file ".github/release-notes/v${VERSION}.md"
+        run: |
+          # The CHANGELOG.md entry of this version, then the release notes file.
+          notes="$RUNNER_TEMP/notes.md"
+          awk -v v="$VERSION" 'index($0, "## " v " (") == 1 {f = 1; next} f && /^## / {exit} f' CHANGELOG.md > "$notes" || true
+          if [ ! -s "$notes" ] && [ -f ".github/release-notes/v${VERSION}.md" ]; then
+            cp ".github/release-notes/v${VERSION}.md" "$notes"
+          fi
+          if [ -s "$notes" ]; then gh release edit "v${VERSION}" --notes-file "$notes"; fi

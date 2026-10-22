@@ -9,7 +9,6 @@ package components
 // - `quota_exceeded`: The organization has used all API requests on its plan.
 // - `plan_feature_unavailable`: The current plan does not include this feature.
 // - `plan_limit_exceeded`: The request goes over a limit of the current plan.
-// - `project_key_required`: This endpoint needs a project API key, but an organization key was used.
 // - `organization_key_required`: This endpoint needs an organization API key, but a project key was used.
 // - `missing_key_permission`: The organization key does not have the permission this endpoint needs.
 // - `project_not_reachable`: The organization key is limited to other projects.
@@ -21,7 +20,6 @@ const (
 	PermissionDeniedErrorCodeQuotaExceeded           PermissionDeniedErrorCode = "quota_exceeded"
 	PermissionDeniedErrorCodePlanFeatureUnavailable  PermissionDeniedErrorCode = "plan_feature_unavailable"
 	PermissionDeniedErrorCodePlanLimitExceeded       PermissionDeniedErrorCode = "plan_limit_exceeded"
-	PermissionDeniedErrorCodeProjectKeyRequired      PermissionDeniedErrorCode = "project_key_required"
 	PermissionDeniedErrorCodeOrganizationKeyRequired PermissionDeniedErrorCode = "organization_key_required"
 	PermissionDeniedErrorCodeMissingKeyPermission    PermissionDeniedErrorCode = "missing_key_permission"
 	PermissionDeniedErrorCodeProjectNotReachable     PermissionDeniedErrorCode = "project_not_reachable"
@@ -35,7 +33,7 @@ func (e PermissionDeniedErrorCode) ToPointer() *PermissionDeniedErrorCode {
 func (e *PermissionDeniedErrorCode) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "permission_denied", "account_disabled", "quota_exceeded", "plan_feature_unavailable", "plan_limit_exceeded", "project_key_required", "organization_key_required", "missing_key_permission", "project_not_reachable":
+		case "permission_denied", "account_disabled", "quota_exceeded", "plan_feature_unavailable", "plan_limit_exceeded", "organization_key_required", "missing_key_permission", "project_not_reachable":
 			return true
 		}
 	}

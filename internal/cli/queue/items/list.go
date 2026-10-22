@@ -27,6 +27,7 @@ var listCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "include-resolved", FieldPath: "IncludeResolved", Kind: flagutil.FlagKindBool, Optional: true, Description: "boolean flag"},
 	{FlagName: "author-id", FieldPath: "AuthorID", Kind: flagutil.FlagKindString, Optional: true, Description: "string value"},
 	{FlagName: "filtered-action-ids", Shorthand: "f", FieldPath: "FilteredActionIds", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "list of values"},
+	{FlagName: "project-id", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Optional: true, Description: "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error."},
 }
 
 // initListCmd initializes the list command.

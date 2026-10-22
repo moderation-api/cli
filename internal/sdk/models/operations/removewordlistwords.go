@@ -12,6 +12,8 @@ type RemoveWordlistWordsRequest struct {
 	ID string `pathParam:"style=simple,explode=false,name=id"`
 	// Array of words to remove from the wordlist
 	Words []string `queryParam:"style=form,explode=true,name=words"`
+	// The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.
+	ProjectID *string `header:"style=simple,explode=false,name=Project-Id"`
 }
 
 func (r *RemoveWordlistWordsRequest) GetID() string {
@@ -26,6 +28,13 @@ func (r *RemoveWordlistWordsRequest) GetWords() []string {
 		return []string{}
 	}
 	return r.Words
+}
+
+func (r *RemoveWordlistWordsRequest) GetProjectID() *string {
+	if r == nil {
+		return nil
+	}
+	return r.ProjectID
 }
 
 // RemoveWordlistWordsResponseBody - Words successfully removed from wordlist

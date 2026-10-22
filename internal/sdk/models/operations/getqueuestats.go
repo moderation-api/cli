@@ -11,6 +11,8 @@ type GetQueueStatsRequest struct {
 	// The queue ID
 	ID         string `pathParam:"style=simple,explode=false,name=id"`
 	WithinDays *int64 `default:"30" queryParam:"style=form,explode=true,name=withinDays"`
+	// The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.
+	ProjectID *string `header:"style=simple,explode=false,name=Project-Id"`
 }
 
 func (g GetQueueStatsRequest) MarshalJSON() ([]byte, error) {
@@ -36,6 +38,13 @@ func (g *GetQueueStatsRequest) GetWithinDays() *int64 {
 		return nil
 	}
 	return g.WithinDays
+}
+
+func (g *GetQueueStatsRequest) GetProjectID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.ProjectID
 }
 
 type ReviewStats struct {

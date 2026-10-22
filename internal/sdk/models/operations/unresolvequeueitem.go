@@ -23,8 +23,10 @@ type UnresolveQueueItemRequest struct {
 	// The queue ID
 	ID string `pathParam:"style=simple,explode=false,name=id"`
 	// The item ID to unresolve
-	ItemID string                        `pathParam:"style=simple,explode=false,name=itemId"`
-	Body   UnresolveQueueItemRequestBody `request:"mediaType=application/json"`
+	ItemID string `pathParam:"style=simple,explode=false,name=itemId"`
+	// The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.
+	ProjectID *string                       `header:"style=simple,explode=false,name=Project-Id"`
+	Body      UnresolveQueueItemRequestBody `request:"mediaType=application/json"`
 }
 
 func (u *UnresolveQueueItemRequest) GetID() string {
@@ -39,6 +41,13 @@ func (u *UnresolveQueueItemRequest) GetItemID() string {
 		return ""
 	}
 	return u.ItemID
+}
+
+func (u *UnresolveQueueItemRequest) GetProjectID() *string {
+	if u == nil {
+		return nil
+	}
+	return u.ProjectID
 }
 
 func (u *UnresolveQueueItemRequest) GetBody() UnresolveQueueItemRequestBody {

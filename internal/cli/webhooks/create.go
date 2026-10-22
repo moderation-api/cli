@@ -14,10 +14,11 @@ import (
 )
 
 var createCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "name", Shorthand: "n", FieldPath: "Name", Kind: flagutil.FlagKindString, Required: true, MinLength: 1, Description: "The webhook's name, used to identify it in the dashboard [required]"},
-	{FlagName: "description", FieldPath: "Description", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"description,omitempty"`, Description: "The webhook's description"},
-	{FlagName: "url", Shorthand: "u", FieldPath: "URL", Kind: flagutil.FlagKindString, Required: true, Description: "The webhook's URL. We'll call this URL when an event occurs. [required]"},
-	{FlagName: "event-types", Shorthand: "e", FieldPath: "EventTypes", Kind: flagutil.FlagKindStringArray, Required: true, EnumValues: []string{"QUEUE_ITEM_NEW", "QUEUE_ITEM_COMPLETED", "QUEUE_ITEM_ACTION", "QUEUE_ITEM_REJECTED", "QUEUE_ITEM_ALLOWED", "AUTHOR_BLOCKED", "AUTHOR_UNBLOCKED", "AUTHOR_SUSPENDED", "AUTHOR_UPDATED", "AUTHOR_TRUST_LEVEL_CHANGED", "AUTHOR_ACTION"}, Description: "Event types this webhook subscribes to. One webhook URL receives all events you list here. (options: QUEUE_ITEM_NEW, QUEUE_ITEM_COMPLETED, QUEUE_ITEM_ACTION, QUEUE_ITEM_REJECTED, QUEUE_ITEM_ALLOWED, AUTHOR_BLOCKED, AUTHOR_UNBLOCKED, AUTHOR_SUSPENDED, AUTHOR_UPDATED, AUTHOR_TRUST_LEVEL_CHANGED, AUTHOR_ACTION) [required]"},
+	{FlagName: "project-id", Shorthand: "p", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Optional: true, Description: "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error."},
+	{FlagName: "name", Shorthand: "n", FieldPath: "Body.Name", Kind: flagutil.FlagKindString, Required: true, MinLength: 1, Description: "The webhook's name, used to identify it in the dashboard [required]"},
+	{FlagName: "description", FieldPath: "Body.Description", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"description,omitempty"`, Description: "The webhook's description"},
+	{FlagName: "url", Shorthand: "u", FieldPath: "Body.URL", Kind: flagutil.FlagKindString, Required: true, Description: "The webhook's URL. We'll call this URL when an event occurs. [required]"},
+	{FlagName: "event-types", Shorthand: "e", FieldPath: "Body.EventTypes", Kind: flagutil.FlagKindStringArray, Required: true, EnumValues: []string{"QUEUE_ITEM_NEW", "QUEUE_ITEM_COMPLETED", "QUEUE_ITEM_ACTION", "QUEUE_ITEM_REJECTED", "QUEUE_ITEM_ALLOWED", "AUTHOR_BLOCKED", "AUTHOR_UNBLOCKED", "AUTHOR_SUSPENDED", "AUTHOR_UPDATED", "AUTHOR_TRUST_LEVEL_CHANGED", "AUTHOR_ACTION"}, Description: "Event types this webhook subscribes to. One webhook URL receives all events you list here. (options: QUEUE_ITEM_NEW, QUEUE_ITEM_COMPLETED, QUEUE_ITEM_ACTION, QUEUE_ITEM_REJECTED, QUEUE_ITEM_ALLOWED, AUTHOR_BLOCKED, AUTHOR_UNBLOCKED, AUTHOR_SUSPENDED, AUTHOR_UPDATED, AUTHOR_TRUST_LEVEL_CHANGED, AUTHOR_ACTION) [required]"},
 }
 
 // initCreateCmd initializes the create command.
@@ -40,7 +41,7 @@ func initCreateCmd(parent *cobra.Command) error {
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF. Use --schema to print the exact JSON Schema.")
 	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
-	if err := flagutil.AnnotateBodyFields(cmd, createCmdMeta, "", "body"); err != nil {
+	if err := flagutil.AnnotateBodyFields(cmd, createCmdMeta, "Body", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for create: %w", err)
 	}
 	cmd.Flags().Bool("schema", false, "Print the exact JSON Schema of the request body and exit")
@@ -57,7 +58,7 @@ func runCreateCmd(cmd *cobra.Command, args []string) error {
 	if requested, _ := cmd.Flags().GetBool("schema"); requested {
 		return usage.EmitBodySchema(cmd.OutOrStdout(), "createWebhook")
 	}
-	request, err := flagutil.BuildRequest[operations.CreateWebhookRequest](cmd, createCmdMeta, "", "body")
+	req, err := flagutil.BuildRequest[operations.CreateWebhookRequest](cmd, createCmdMeta, "Body", "body")
 	if err != nil {
 		return flagutil.WithCLIValidation(err)
 	}
@@ -82,7 +83,7 @@ func runCreateCmd(cmd *cobra.Command, args []string) error {
 	}
 	stopProgress := output.StartRequestProgress(cmd)
 	defer stopProgress()
-	res, err := s.Webhooks.Create(cmd.Context(), *request, sdkOpts...)
+	res, err := s.Webhooks.Create(cmd.Context(), *req, sdkOpts...)
 	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)

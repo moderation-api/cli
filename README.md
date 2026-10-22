@@ -366,7 +366,7 @@ modapi projects list --secret-key "$MODAPI_ORGANIZATION_KEY"
     * [`add`](docs/modapi_wordlist_words_add.md) - Add words to wordlist
     * [`remove`](docs/modapi_wordlist_words_remove.md) - Remove words from wordlist
 * [`content`](docs/modapi_content.md) - Operations for content
-  * [`submit`](docs/modapi_content_submit.md)
+  * [`submit`](docs/modapi_content_submit.md) - Submit content
 * [`projects`](docs/modapi_projects.md) - Operations for projects
   * [`list`](docs/modapi_projects_list.md) - List projects
   * [`create`](docs/modapi_projects_create.md) - Create a project
@@ -390,14 +390,6 @@ modapi projects list --secret-key "$MODAPI_ORGANIZATION_KEY"
 
 Commands that accept a request body take it three ways, with a clear priority chain. The examples use `modapi actions create`; every body-bearing command works the same way and prints its exact request schema with `--schema`.
 
-### Individual flags (highest priority)
-
-Each top-level body field is a flag:
-
-```bash
-modapi actions create --name 'Suspend for 24 hours' --queue-behaviour 'REMOVE'
-```
-
 ### `--body` flag
 
 Provide the entire request body as a JSON string:
@@ -406,26 +398,12 @@ Provide the entire request body as a JSON string:
 modapi actions create --body '{"name":"Suspend for 24 hours","key":"suspend-24h","type":"AUTHOR_BLOCK_TEMP","queueBehaviour":"REMOVE"}'
 ```
 
-Individual flags override `--body` values:
-
-```bash
-# Sends {"name":"Suspend for 24 hours (updated)","key":"suspend-24h","type":"AUTHOR_BLOCK_TEMP","queueBehaviour":"REMOVE"}
-modapi actions create --body '{"name":"Suspend for 24 hours","key":"suspend-24h","type":"AUTHOR_BLOCK_TEMP","queueBehaviour":"REMOVE"}' --name 'Suspend for 24 hours (updated)'
-```
-
 ### Stdin piping (lowest priority)
 
 Pipe JSON into any command that accepts a request body:
 
 ```bash
 echo '{"name":"Suspend for 24 hours","key":"suspend-24h","type":"AUTHOR_BLOCK_TEMP","queueBehaviour":"REMOVE"}' | modapi actions create
-```
-
-Individual flags override stdin values:
-
-```bash
-# Sends {"name":"Suspend for 24 hours (updated)","key":"suspend-24h","type":"AUTHOR_BLOCK_TEMP","queueBehaviour":"REMOVE"}
-echo '{"name":"Suspend for 24 hours","key":"suspend-24h","type":"AUTHOR_BLOCK_TEMP","queueBehaviour":"REMOVE"}' | modapi actions create --name 'Suspend for 24 hours (updated)'
 ```
 
 This is useful for chaining commands, reading from files, or scripting:
@@ -444,7 +422,7 @@ When multiple input methods are used, the priority is:
 
 | Priority | Source | Description |
 |----------|--------|-------------|
-| 1 (highest) | Individual flags | `--name ...` always wins |
+| 1 (highest) | Individual flags | A field flag always wins |
 | 2 | `--body` flag | Whole-body JSON via flag |
 | 3 (lowest) | Stdin | Piped JSON input |
 <!-- End Request Body Input [stdinpiping] -->

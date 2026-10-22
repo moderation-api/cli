@@ -16,7 +16,8 @@ import (
 
 var updateCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "id", Shorthand: "i", FieldPath: "ID", Kind: flagutil.FlagKindString, Required: true, Description: "Either external ID or the ID assigned by moderation API. [required]"},
-	{FlagName: "profile-picture", Shorthand: "p", FieldPath: "Body.ProfilePicture", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"profile_picture,omitempty"`, Description: "URL of the author's profile picture"},
+	{FlagName: "project-id", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Optional: true, Description: "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error."},
+	{FlagName: "profile-picture", FieldPath: "Body.ProfilePicture", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"profile_picture,omitempty"`, Description: "URL of the author's profile picture"},
 	{FlagName: "external-link", FieldPath: "Body.ExternalLink", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"external_link,omitempty"`, Description: "URL of the author's external profile"},
 	{FlagName: "name", Shorthand: "n", FieldPath: "Body.Name", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"name,omitempty"`, Description: "Author name or identifier"},
 	{FlagName: "email", FieldPath: "Body.Email", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"email,omitempty"`, Description: "Author email address"},

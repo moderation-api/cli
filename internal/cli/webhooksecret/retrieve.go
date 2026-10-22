@@ -3,13 +3,19 @@
 package webhooksecret
 
 import (
+	"fmt"
 	"github.com/moderation-api/cli/internal/client"
+	"github.com/moderation-api/cli/internal/flagutil"
 	"github.com/moderation-api/cli/internal/output"
 	"github.com/moderation-api/cli/internal/sdk"
 	"github.com/moderation-api/cli/internal/sdk/models/operations"
 	"github.com/moderation-api/cli/internal/usage"
 	"github.com/spf13/cobra"
 )
+
+var retrieveCmdMeta = []flagutil.FlagMeta{
+	{FlagName: "project-id", Shorthand: "p", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Optional: true, Description: "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error."},
+}
 
 // initRetrieveCmd initializes the retrieve command.
 func initRetrieveCmd(parent *cobra.Command) error {
@@ -24,6 +30,10 @@ func initRetrieveCmd(parent *cobra.Command) error {
 			"speakeasy_operation": "getWebhookSecret",
 		},
 	}
+	flagutil.RegisterFlags(cmd, retrieveCmdMeta)
+	if err := flagutil.ValidateMeta[operations.GetWebhookSecretRequest](retrieveCmdMeta); err != nil {
+		return fmt.Errorf("invalid metadata for retrieve: %w", err)
+	}
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -32,6 +42,10 @@ func initRetrieveCmd(parent *cobra.Command) error {
 func runRetrieveCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
+	}
+	req, err := flagutil.BuildRequest[operations.GetWebhookSecretRequest](cmd, retrieveCmdMeta, "", "")
+	if err != nil {
+		return flagutil.WithCLIValidation(err)
 	}
 	s, err := client.NewClient(cmd)
 	if err != nil {
@@ -54,7 +68,7 @@ func runRetrieveCmd(cmd *cobra.Command, args []string) error {
 	}
 	stopProgress := output.StartRequestProgress(cmd)
 	defer stopProgress()
-	res, err := s.WebhookSecret.Retrieve(cmd.Context(), sdkOpts...)
+	res, err := s.WebhookSecret.Retrieve(cmd.Context(), req, sdkOpts...)
 	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)

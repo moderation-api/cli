@@ -14,17 +14,18 @@ import (
 )
 
 var createCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "key", Shorthand: "k", FieldPath: "Key", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"key,omitempty"`, Description: "User defined key of the action."},
-	{FlagName: "name", Shorthand: "n", FieldPath: "Name", Kind: flagutil.FlagKindString, Required: true, Description: "The name of the action. [required]"},
-	{FlagName: "description", FieldPath: "Description", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"description,omitempty"`, Description: "The description of the action."},
-	{FlagName: "type", Shorthand: "t", FieldPath: "Type", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"type,omitempty"`, Description: "The type of the action. (options: AUTHOR_BLOCK, AUTHOR_BLOCK_TEMP, AUTHOR_UNBLOCK, AUTHOR_DELETE, AUTHOR_REPORT, AUTHOR_WARN, AUTHOR_CUSTOM, ITEM_REJECT, ITEM_ALLOW, ITEM_CUSTOM)"},
-	{FlagName: "built-in", Shorthand: "b", FieldPath: "BuiltIn", Kind: flagutil.FlagKindJSON, Optional: true, HasDefault: true, DefaultStr: "false", Annotations: `default:"false" json:"builtIn"`, Description: "Whether the action is a built-in action or a custom one."},
-	{FlagName: "queue-behaviour", FieldPath: "QueueBehaviour", Kind: flagutil.FlagKindEnum, Optional: true, HasDefault: true, DefaultStr: "NO_CHANGE", EnumValues: []string{"REMOVE", "ADD", "NO_CHANGE"}, Description: "Whether the action resolves and removes the item, unresolves and re-add it to the queue, or does not change the resolve status. (options: REMOVE, ADD, NO_CHANGE)"},
-	{FlagName: "filter-in-queue-ids", FieldPath: "FilterInQueueIds", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "The IDs of the queues the action is available in."},
-	{FlagName: "position", FieldPath: "Position", Kind: flagutil.FlagKindEnum, Optional: true, HasDefault: true, DefaultStr: "ALL_QUEUES", EnumValues: []string{"ALL_QUEUES", "SOME_QUEUES", "HIDDEN"}, Description: "Show the action in all queues, selected queues or no queues (to use via API only). (options: ALL_QUEUES, SOME_QUEUES, HIDDEN)"},
-	{FlagName: "possible-values", FieldPath: "PossibleValues", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"possibleValues,omitempty"`, Description: "The possible values of the action. The user will be prompted to select one of these values when executing the action. (JSON array)"},
-	{FlagName: "value-required", Shorthand: "v", FieldPath: "ValueRequired", Kind: flagutil.FlagKindBool, Optional: true, HasDefault: true, Description: "Whether the action requires a value to be executed."},
-	{FlagName: "free-text", FieldPath: "FreeText", Kind: flagutil.FlagKindBool, Optional: true, HasDefault: true, Description: "Whether the action allows any text to be entered as a value or if it must be one of the possible values."},
+	{FlagName: "project-id", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Optional: true, Description: "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error."},
+	{FlagName: "key", Shorthand: "k", FieldPath: "Body.Key", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"key,omitempty"`, Description: "User defined key of the action."},
+	{FlagName: "name", Shorthand: "n", FieldPath: "Body.Name", Kind: flagutil.FlagKindString, Required: true, Description: "The name of the action. [required]"},
+	{FlagName: "description", FieldPath: "Body.Description", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"description,omitempty"`, Description: "The description of the action."},
+	{FlagName: "type", Shorthand: "t", FieldPath: "Body.Type", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"type,omitempty"`, Description: "The type of the action. (options: AUTHOR_BLOCK, AUTHOR_BLOCK_TEMP, AUTHOR_UNBLOCK, AUTHOR_DELETE, AUTHOR_REPORT, AUTHOR_WARN, AUTHOR_CUSTOM, ITEM_REJECT, ITEM_ALLOW, ITEM_CUSTOM)"},
+	{FlagName: "built-in", Shorthand: "b", FieldPath: "Body.BuiltIn", Kind: flagutil.FlagKindJSON, Optional: true, HasDefault: true, DefaultStr: "false", Annotations: `default:"false" json:"builtIn"`, Description: "Whether the action is a built-in action or a custom one."},
+	{FlagName: "queue-behaviour", FieldPath: "Body.QueueBehaviour", Kind: flagutil.FlagKindEnum, Optional: true, HasDefault: true, DefaultStr: "NO_CHANGE", EnumValues: []string{"REMOVE", "ADD", "NO_CHANGE"}, Description: "Whether the action resolves and removes the item, unresolves and re-add it to the queue, or does not change the resolve status. (options: REMOVE, ADD, NO_CHANGE)"},
+	{FlagName: "filter-in-queue-ids", FieldPath: "Body.FilterInQueueIds", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "The IDs of the queues the action is available in."},
+	{FlagName: "position", FieldPath: "Body.Position", Kind: flagutil.FlagKindEnum, Optional: true, HasDefault: true, DefaultStr: "ALL_QUEUES", EnumValues: []string{"ALL_QUEUES", "SOME_QUEUES", "HIDDEN"}, Description: "Show the action in all queues, selected queues or no queues (to use via API only). (options: ALL_QUEUES, SOME_QUEUES, HIDDEN)"},
+	{FlagName: "possible-values", FieldPath: "Body.PossibleValues", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"possibleValues,omitempty"`, Description: "The possible values of the action. The user will be prompted to select one of these values when executing the action. (JSON array)"},
+	{FlagName: "value-required", Shorthand: "v", FieldPath: "Body.ValueRequired", Kind: flagutil.FlagKindBool, Optional: true, HasDefault: true, Description: "Whether the action requires a value to be executed."},
+	{FlagName: "free-text", FieldPath: "Body.FreeText", Kind: flagutil.FlagKindBool, Optional: true, HasDefault: true, Description: "Whether the action allows any text to be entered as a value or if it must be one of the possible values."},
 }
 
 // initCreateCmd initializes the create command.
@@ -47,7 +48,7 @@ func initCreateCmd(parent *cobra.Command) error {
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF. Use --schema to print the exact JSON Schema.")
 	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
-	if err := flagutil.AnnotateBodyFields(cmd, createCmdMeta, "", "body"); err != nil {
+	if err := flagutil.AnnotateBodyFields(cmd, createCmdMeta, "Body", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for create: %w", err)
 	}
 	cmd.Flags().Bool("schema", false, "Print the exact JSON Schema of the request body and exit")
@@ -64,7 +65,7 @@ func runCreateCmd(cmd *cobra.Command, args []string) error {
 	if requested, _ := cmd.Flags().GetBool("schema"); requested {
 		return usage.EmitBodySchema(cmd.OutOrStdout(), "createAction")
 	}
-	request, err := flagutil.BuildRequest[operations.CreateActionRequest](cmd, createCmdMeta, "", "body")
+	req, err := flagutil.BuildRequest[operations.CreateActionRequest](cmd, createCmdMeta, "Body", "body")
 	if err != nil {
 		return flagutil.WithCLIValidation(err)
 	}
@@ -89,7 +90,7 @@ func runCreateCmd(cmd *cobra.Command, args []string) error {
 	}
 	stopProgress := output.StartRequestProgress(cmd)
 	defer stopProgress()
-	res, err := s.Actions.Create(cmd.Context(), *request, sdkOpts...)
+	res, err := s.Actions.Create(cmd.Context(), *req, sdkOpts...)
 	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)

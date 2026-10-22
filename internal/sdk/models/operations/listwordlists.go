@@ -10,6 +10,8 @@ import (
 type ListWordlistsRequest struct {
 	Page     *int64 `default:"1" queryParam:"style=form,explode=true,name=page"`
 	PageSize *int64 `default:"20" queryParam:"style=form,explode=true,name=pageSize"`
+	// The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.
+	ProjectID *string `header:"style=simple,explode=false,name=Project-Id"`
 }
 
 func (l ListWordlistsRequest) MarshalJSON() ([]byte, error) {
@@ -35,6 +37,13 @@ func (l *ListWordlistsRequest) GetPageSize() *int64 {
 		return nil
 	}
 	return l.PageSize
+}
+
+func (l *ListWordlistsRequest) GetProjectID() *string {
+	if l == nil {
+		return nil
+	}
+	return l.ProjectID
 }
 
 type ListWordlistsData struct {

@@ -14,16 +14,17 @@ import (
 )
 
 var createCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "profile-picture", Shorthand: "p", FieldPath: "ProfilePicture", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"profile_picture,omitempty"`, Description: "URL of the author's profile picture"},
-	{FlagName: "external-link", FieldPath: "ExternalLink", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"external_link,omitempty"`, Description: "URL of the author's external profile"},
-	{FlagName: "name", Shorthand: "n", FieldPath: "Name", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"name,omitempty"`, Description: "Author name or identifier"},
-	{FlagName: "email", FieldPath: "Email", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"email,omitempty"`, Description: "Author email address"},
-	{FlagName: "company", Shorthand: "c", FieldPath: "Company", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"company,omitempty"`, Description: "The author's company or organization"},
-	{FlagName: "metadata", FieldPath: "Metadata", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"metadata,omitempty"`, Description: "Additional metadata provided by your system. We recommend including any relevant information that may assist in the moderation process."},
-	{FlagName: "first-seen", Shorthand: "f", FieldPath: "FirstSeen", Kind: flagutil.FlagKindFloat64, Optional: true, Description: "Timestamp when author first appeared"},
-	{FlagName: "last-seen", Shorthand: "l", FieldPath: "LastSeen", Kind: flagutil.FlagKindFloat64, Optional: true, Description: "Timestamp of last activity"},
-	{FlagName: "manual-trust-level", FieldPath: "ManualTrustLevel", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"manual_trust_level,omitempty"`, Description: "number value"},
-	{FlagName: "external-id", FieldPath: "ExternalID", Kind: flagutil.FlagKindString, Required: true, Description: "External ID of the user, typically the ID of the author in your database. [required]"},
+	{FlagName: "project-id", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Optional: true, Description: "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error."},
+	{FlagName: "profile-picture", FieldPath: "Body.ProfilePicture", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"profile_picture,omitempty"`, Description: "URL of the author's profile picture"},
+	{FlagName: "external-link", FieldPath: "Body.ExternalLink", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"external_link,omitempty"`, Description: "URL of the author's external profile"},
+	{FlagName: "name", Shorthand: "n", FieldPath: "Body.Name", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"name,omitempty"`, Description: "Author name or identifier"},
+	{FlagName: "email", FieldPath: "Body.Email", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"email,omitempty"`, Description: "Author email address"},
+	{FlagName: "company", Shorthand: "c", FieldPath: "Body.Company", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"company,omitempty"`, Description: "The author's company or organization"},
+	{FlagName: "metadata", FieldPath: "Body.Metadata", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"metadata,omitempty"`, Description: "Additional metadata provided by your system. We recommend including any relevant information that may assist in the moderation process."},
+	{FlagName: "first-seen", Shorthand: "f", FieldPath: "Body.FirstSeen", Kind: flagutil.FlagKindFloat64, Optional: true, Description: "Timestamp when author first appeared"},
+	{FlagName: "last-seen", Shorthand: "l", FieldPath: "Body.LastSeen", Kind: flagutil.FlagKindFloat64, Optional: true, Description: "Timestamp of last activity"},
+	{FlagName: "manual-trust-level", FieldPath: "Body.ManualTrustLevel", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"manual_trust_level,omitempty"`, Description: "number value"},
+	{FlagName: "external-id", FieldPath: "Body.ExternalID", Kind: flagutil.FlagKindString, Required: true, Description: "External ID of the user, typically the ID of the author in your database. [required]"},
 }
 
 // initCreateCmd initializes the create command.
@@ -46,7 +47,7 @@ func initCreateCmd(parent *cobra.Command) error {
 	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF. Use --schema to print the exact JSON Schema.")
 	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
 	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
-	if err := flagutil.AnnotateBodyFields(cmd, createCmdMeta, "", "body"); err != nil {
+	if err := flagutil.AnnotateBodyFields(cmd, createCmdMeta, "Body", "body"); err != nil {
 		return fmt.Errorf("annotate body fields for create: %w", err)
 	}
 	cmd.Flags().Bool("schema", false, "Print the exact JSON Schema of the request body and exit")
@@ -63,7 +64,7 @@ func runCreateCmd(cmd *cobra.Command, args []string) error {
 	if requested, _ := cmd.Flags().GetBool("schema"); requested {
 		return usage.EmitBodySchema(cmd.OutOrStdout(), "createAuthor")
 	}
-	request, err := flagutil.BuildRequest[operations.CreateAuthorRequest](cmd, createCmdMeta, "", "body")
+	req, err := flagutil.BuildRequest[operations.CreateAuthorRequest](cmd, createCmdMeta, "Body", "body")
 	if err != nil {
 		return flagutil.WithCLIValidation(err)
 	}
@@ -88,7 +89,7 @@ func runCreateCmd(cmd *cobra.Command, args []string) error {
 	}
 	stopProgress := output.StartRequestProgress(cmd)
 	defer stopProgress()
-	res, err := s.Authors.Create(cmd.Context(), *request, sdkOpts...)
+	res, err := s.Authors.Create(cmd.Context(), *req, sdkOpts...)
 	stopProgress()
 	if err != nil {
 		return output.Error(cmd, err)

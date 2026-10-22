@@ -23,8 +23,10 @@ type ResolveQueueItemRequest struct {
 	// The queue ID
 	ID string `pathParam:"style=simple,explode=false,name=id"`
 	// The item ID to resolve
-	ItemID string                      `pathParam:"style=simple,explode=false,name=itemId"`
-	Body   ResolveQueueItemRequestBody `request:"mediaType=application/json"`
+	ItemID string `pathParam:"style=simple,explode=false,name=itemId"`
+	// The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.
+	ProjectID *string                     `header:"style=simple,explode=false,name=Project-Id"`
+	Body      ResolveQueueItemRequestBody `request:"mediaType=application/json"`
 }
 
 func (r *ResolveQueueItemRequest) GetID() string {
@@ -39,6 +41,13 @@ func (r *ResolveQueueItemRequest) GetItemID() string {
 		return ""
 	}
 	return r.ItemID
+}
+
+func (r *ResolveQueueItemRequest) GetProjectID() *string {
+	if r == nil {
+		return nil
+	}
+	return r.ProjectID
 }
 
 func (r *ResolveQueueItemRequest) GetBody() ResolveQueueItemRequestBody {

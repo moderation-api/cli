@@ -80,6 +80,8 @@ type ListQueueItemsRequest struct {
 	IncludeResolved   *bool                        `queryParam:"style=form,explode=true,name=includeResolved"`
 	AuthorID          *string                      `queryParam:"style=form,explode=true,name=authorId"`
 	FilteredActionIds []string                     `queryParam:"style=form,explode=true,name=filteredActionIds"`
+	// The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.
+	ProjectID *string `header:"style=simple,explode=false,name=Project-Id"`
 }
 
 func (l ListQueueItemsRequest) MarshalJSON() ([]byte, error) {
@@ -175,6 +177,13 @@ func (l *ListQueueItemsRequest) GetFilteredActionIds() []string {
 		return nil
 	}
 	return l.FilteredActionIds
+}
+
+func (l *ListQueueItemsRequest) GetProjectID() *string {
+	if l == nil {
+		return nil
+	}
+	return l.ProjectID
 }
 
 type ListQueueItemsLabel struct {
