@@ -17,6 +17,7 @@ import (
 	"github.com/moderation-api/cli/internal/cli/wordlist"
 	"github.com/moderation-api/cli/internal/clierrors"
 	"github.com/moderation-api/cli/internal/config"
+	"github.com/moderation-api/cli/internal/custom"
 	"github.com/moderation-api/cli/internal/explorer"
 	"github.com/moderation-api/cli/internal/flagutil"
 	"github.com/moderation-api/cli/internal/interactive"
@@ -112,6 +113,9 @@ func NewRootCommand() (*cobra.Command, error) {
 	if err := channels.InitChannelsRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init channels: %w", err)
 	}
+	// Hand-written commands (login, logout, init, doctor). Kept on
+	// regeneration by Speakeasy persistent edits; see internal/custom.
+	custom.Register(rootCmd)
 	if err := initConfigureCmd(rootCmd); err != nil {
 		return nil, fmt.Errorf("init configure: %w", err)
 	}
