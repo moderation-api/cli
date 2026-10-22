@@ -153,7 +153,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -296,7 +296,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -539,7 +539,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -656,7 +656,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -897,7 +897,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -1025,7 +1025,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -1440,7 +1440,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -1843,7 +1843,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -2120,7 +2120,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -2276,7 +2276,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -2442,7 +2442,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -2713,7 +2713,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -3065,7 +3065,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -3290,7 +3290,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -3641,7 +3641,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -3745,7 +3745,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -3909,7 +3909,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -4068,7 +4068,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -4234,7 +4234,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -4449,7 +4449,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -4599,7 +4599,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -4809,7 +4809,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -4903,7 +4903,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -4978,7 +4978,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -5000,7 +5000,7 @@
                     "type": "string"
                   },
                   "doNotStore": {
-                    "description": "Do not store the content. The content won't enter the review queue",
+                    "description": "Process the content without saving it on our servers. The item is still created and appears in the review queue, analytics and author history with its moderation results, but its content is empty, so reviewers cannot see what was submitted.",
                     "type": "boolean"
                   },
                   "authorId": {
@@ -5282,7 +5282,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -5304,7 +5304,7 @@
                     "type": "string"
                   },
                   "doNotStore": {
-                    "description": "Do not store the content. The content won't enter the review queue",
+                    "description": "Process the content without saving it on our servers. The item is still created and appears in the review queue, analytics and author history with its moderation results, but its content is empty, so reviewers cannot see what was submitted.",
                     "type": "boolean"
                   },
                   "authorId": {
@@ -5586,7 +5586,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -5697,7 +5697,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -5799,7 +5799,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -5932,7 +5932,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -6129,7 +6129,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -6303,7 +6303,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -6494,7 +6494,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -6634,7 +6634,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -6795,7 +6795,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -6906,7 +6906,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -7201,7 +7201,7 @@
                     ]
                   },
                   "doNotStore": {
-                    "description": "Do not store the content. The content won't enter the review queue",
+                    "description": "Process the content without saving it on our servers. The item is still created and appears in the review queue, analytics and author history with its moderation results, but its content is empty, so reviewers cannot see what was submitted.",
                     "type": "boolean"
                   },
                   "policies": {
@@ -10871,7 +10871,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.",
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
             "x-speakeasy-name-override": "projectId"
           }
         ],
@@ -13555,10 +13555,11 @@
             "enum": [
               "invalid_request",
               "project_id_required",
+              "project_name_ambiguous",
               "validation_failed"
             ],
             "x-speakeasy-unknown-values": "allow",
-            "description": "Exactly what went wrong. Stable; safe to branch on. New codes may be added.\n\n- `invalid_request`: A parameter is invalid. `message` says which one.\n- `project_id_required`: An organization key called a project endpoint without naming the project in `Project-Id`, and the organization has more than one project.\n- `validation_failed`: The request body does not match the schema. `issues` lists each problem with its `path`.",
+            "description": "Exactly what went wrong. Stable; safe to branch on. New codes may be added.\n\n- `invalid_request`: A parameter is invalid. `message` says which one.\n- `project_id_required`: An organization key called a project endpoint without naming the project in `Project-Id`, and the key reaches more than one project. `message` lists the projects it reaches.\n- `project_name_ambiguous`: The name in `Project-Id` fits more than one project the key reaches. `message` lists them; name the project by ID instead.\n- `validation_failed`: The request body does not match the schema. `issues` lists each problem with its `path`.",
             "example": "invalid_request"
           },
           "message": {

@@ -16,7 +16,7 @@ import (
 
 var retrieveCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "id", Shorthand: "i", FieldPath: "ID", Kind: flagutil.FlagKindString, Required: true, Description: "The queue ID [required]"},
-	{FlagName: "project-id", Shorthand: "p", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Optional: true, Description: "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error."},
+	{FlagName: "project-id", Shorthand: "p", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Optional: true, Description: "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error."},
 }
 
 // initRetrieveCmd initializes the retrieve command.

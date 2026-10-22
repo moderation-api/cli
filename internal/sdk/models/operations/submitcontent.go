@@ -3420,7 +3420,7 @@ type SubmitContentRequestBody struct {
 	Metadata map[string]any `json:"metadata,omitzero"`
 	// A recommendation from your own client-side flagging (e.g. a banned-IP list or a third-party tool). Feeds the rules engine and can escalate or override the recommended action. Does not change whether our analysis flagged the content.
 	ClientAction *ClientAction `json:"clientAction,omitzero"`
-	// Do not store the content. The content won't enter the review queue
+	// Process the content without saving it on our servers. The item is still created and appears in the review queue, analytics and author history with its moderation results, but its content is empty, so reviewers cannot see what was submitted.
 	DoNotStore *bool `json:"doNotStore,omitzero"`
 	// (Enterprise) override the channel policies for this moderation request only.
 	Policies []PolicyRequest `json:"policies,omitzero"`
@@ -3535,7 +3535,7 @@ func (s *SubmitContentRequestBody) GetPolicies() []PolicyRequest {
 }
 
 type SubmitContentRequest struct {
-	// The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.
+	// The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.
 	ProjectID *string                  `header:"style=simple,explode=false,name=Project-Id"`
 	Body      SubmitContentRequestBody `request:"mediaType=application/json"`
 }

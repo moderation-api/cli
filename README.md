@@ -311,9 +311,9 @@ Configuration is stored in `~/.config/modapi/config.yaml`.
 Moderation API has two kinds of API keys:
 
 - A **project key** works with one project: content, authors, review queues, actions, wordlists, webhooks and the account.
-- An **organization key** works with the [management API](https://docs.moderationapi.com/api-reference/management-api): `modapi projects` and `modapi channels`. The management API is available on Enterprise plans.
+- An **organization key** works with the [management API](https://docs.moderationapi.com/api-reference/management-api): `modapi projects` and `modapi channels`. It can also use any project's endpoints: name the project with `--project-id`.
 
-Each key works only with its own commands. With the wrong key the API returns `403` with the code `project_key_required` or `organization_key_required`. To run a management command while `MODAPI_SECRET_KEY` holds your project key, pass the organization key for that command:
+A project key can't run the management commands: the API returns `403` with the code `organization_key_required`. To run a management command while `MODAPI_SECRET_KEY` holds your project key, pass the organization key for that command:
 
 ```bash
 modapi projects list --secret-key "$MODAPI_ORGANIZATION_KEY"
