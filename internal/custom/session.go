@@ -40,13 +40,35 @@ func saveSession(s session) (string, error) {
 		return "OS keychain", nil
 	}
 	path := sessionFile()
-	if err := os.MkdirAll(filepath.Dir(path), 0o700); err != nil {
-		return "", err
-	}
-	if err := os.WriteFile(path, data, 0o600); err != nil {
+	if err := writePrivateFile(path, data); err != nil {
 		return "", fmt.Errorf("could not save the session: %w", err)
 	}
 	return path, nil
+}
+
+// writePrivateFile writes data to a new 0600 file and renames it over path,
+// so a file that exists with a looser mode never keeps the secret.
+func writePrivateFile(path string, data []byte) error {
+	if err := os.MkdirAll(filepath.Dir(path), 0o700); err != nil {
+		return err
+	}
+	tmp, err := os.CreateTemp(filepath.Dir(path), ".session-*")
+	if err != nil {
+		return err
+	}
+	defer os.Remove(tmp.Name())
+	if err := tmp.Chmod(0o600); err != nil {
+		tmp.Close()
+		return err
+	}
+	if _, err := tmp.Write(data); err != nil {
+		tmp.Close()
+		return err
+	}
+	if err := tmp.Close(); err != nil {
+		return err
+	}
+	return os.Rename(tmp.Name(), path)
 }
 
 // loadSession returns the stored session, or nil when there is none.
@@ -75,14 +97,19 @@ func loadSession() (*session, error) {
 	return &s, nil
 }
 
-// deleteSession removes the session from both places. It reports whether one existed.
-func deleteSession() bool {
-	found := false
-	if config.KeyringAvailable() && config.GetKeyringValue(sessionKeyringKey) != "" {
-		found = config.DeleteKeyringValue(sessionKeyringKey) == nil
+// deleteSession removes the session from both places. It reports whether one
+// existed, and whether the keychain was skipped (--no-keyring), in which case
+// a session stored there may remain.
+func deleteSession() (found, keyringSkipped bool) {
+	if config.KeyringAvailable() {
+		if config.GetKeyringValue(sessionKeyringKey) != "" {
+			found = config.DeleteKeyringValue(sessionKeyringKey) == nil
+		}
+	} else {
+		keyringSkipped = config.KeyringDisabled()
 	}
 	if err := os.Remove(sessionFile()); err == nil {
 		found = true
 	}
-	return found
+	return found, keyringSkipped
 }

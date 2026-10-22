@@ -260,3 +260,43 @@ func TestDoctorFailsWithoutKey(t *testing.T) {
 		t.Fatalf("exit %d: %s", code, stdout)
 	}
 }
+
+func TestInitRefusesTrackedEnvFile(t *testing.T) {
+	if _, err := exec.LookPath("git"); err != nil {
+		t.Skip("git not installed")
+	}
+	dir := setup(t)
+	api := newFakeAPI(t)
+	t.Setenv("MODAPI_ORGANIZATION_KEY", "sk_org_test")
+	env := filepath.Join(dir, ".env.local")
+	if err := os.WriteFile(env, []byte("OTHER=1\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	for _, args := range [][]string{{"add", ".env.local"}, {"-c", "user.email=t@t", "-c", "user.name=t", "commit", "-qm", "x"}} {
+		if out, err := exec.Command("git", append([]string{"-C", dir}, args...)...).CombinedOutput(); err != nil {
+			t.Fatalf("git %v: %v %s", args, err, out)
+		}
+	}
+	_, stderr, code := run(t, "init", "--dir", dir, "--server-url", api.URL, "--agent-mode")
+	if code != 2 || !strings.Contains(stderr, "committed to git") {
+		t.Fatalf("exit %d: %s", code, stderr)
+	}
+	if len(api.paths()) != 0 {
+		t.Fatalf("init created a project before refusing: %v", api.paths())
+	}
+	if data, _ := os.ReadFile(env); strings.Contains(string(data), "MODAPI_SECRET_KEY") {
+		t.Fatal("init wrote the key into a tracked file")
+	}
+}
+
+func TestInitRejectsInvalidExistingKey(t *testing.T) {
+	dir := setup(t)
+	api := newFakeAPI(t)
+	if err := os.WriteFile(filepath.Join(dir, ".env"), []byte("MODAPI_SECRET_KEY=sk_revoked\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	_, stderr, code := run(t, "init", "--dir", dir, "--server-url", api.URL, "--agent-mode")
+	if code != 3 || !strings.Contains(stderr, "--force") {
+		t.Fatalf("exit %d: %s", code, stderr)
+	}
+}

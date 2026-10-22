@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/rand"
 	"crypto/sha256"
+	"crypto/subtle"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -19,6 +20,7 @@ import (
 
 // authServer holds the endpoints from the issuer's OAuth metadata.
 type authServer struct {
+	Issuer                      string `json:"issuer"`
 	AuthorizationEndpoint       string `json:"authorization_endpoint"`
 	TokenEndpoint               string `json:"token_endpoint"`
 	DeviceAuthorizationEndpoint string `json:"device_authorization_endpoint"`
@@ -67,7 +69,34 @@ func discover(ctx context.Context, client *http.Client, issuer string) (*authSer
 	if server.AuthorizationEndpoint == "" || server.TokenEndpoint == "" {
 		return nil, errors.New("the sign-in server metadata has no authorization or token endpoint")
 	}
+	// RFC 8414 section 3.3: the metadata must be for the issuer we asked.
+	if strings.TrimSuffix(server.Issuer, "/") != strings.TrimSuffix(issuer, "/") {
+		return nil, fmt.Errorf("the sign-in server metadata is for %q, not %q", server.Issuer, issuer)
+	}
+	for _, endpoint := range []string{server.AuthorizationEndpoint, server.TokenEndpoint, server.DeviceAuthorizationEndpoint} {
+		if endpoint != "" {
+			if err := requireHTTPS(endpoint); err != nil {
+				return nil, err
+			}
+		}
+	}
 	return &server, nil
+}
+
+// requireHTTPS refuses plain-HTTP URLs except on loopback hosts (local tests).
+func requireHTTPS(raw string) error {
+	u, err := url.Parse(raw)
+	if err != nil {
+		return fmt.Errorf("invalid URL %q: %w", raw, err)
+	}
+	if u.Scheme == "https" {
+		return nil
+	}
+	host := u.Hostname()
+	if u.Scheme == "http" && (host == "localhost" || net.ParseIP(host).IsLoopback()) {
+		return nil
+	}
+	return fmt.Errorf("refusing to send credentials to %q: it is not https", raw)
 }
 
 // pkce is a PKCE verifier and its S256 challenge (RFC 7636).
@@ -165,19 +194,27 @@ func browserLogin(ctx context.Context, opts browserLoginOptions) (*tokenSet, err
 	select {
 	case result = <-codes:
 	case <-waitCtx.Done():
+		if ctx.Err() != nil {
+			return nil, ctx.Err()
+		}
 		return nil, fmt.Errorf("sign-in did not finish within %s", opts.Wait)
 	}
 	if result.err != nil {
 		return nil, result.err
 	}
 
-	return postToken(ctx, opts.HTTP, opts.Server.TokenEndpoint, url.Values{
+	form := url.Values{
 		"grant_type":    {"authorization_code"},
 		"code":          {result.code},
 		"redirect_uri":  {redirectURI},
 		"client_id":     {opts.ClientID},
 		"code_verifier": {challenge.Verifier},
-	})
+	}
+	// RFC 8707 section 2.2: name the resource at the token endpoint too.
+	if opts.Resource != "" {
+		form.Set("resource", opts.Resource)
+	}
+	return postToken(ctx, opts.HTTP, opts.Server.TokenEndpoint, form)
 }
 
 type callbackResult struct {
@@ -186,15 +223,19 @@ type callbackResult struct {
 }
 
 // callbackHandler answers the browser first and then hands the result to the
-// CLI, so the browser never hangs on the redirect.
+// CLI, so the browser never hangs on the redirect. A request without this
+// sign-in's state (a port scan, a stray page) gets a 400 and is ignored, so
+// it cannot end the sign-in.
 func callbackHandler(state string, results chan<- callbackResult) http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/callback", func(w http.ResponseWriter, r *http.Request) {
 		query := r.URL.Query()
+		if subtle.ConstantTimeCompare([]byte(query.Get("state")), []byte(state)) != 1 {
+			writeCallbackPage(w, errors.New("this sign-in link is not for the running command"))
+			return
+		}
 		var result callbackResult
 		switch {
-		case query.Get("state") != state:
-			result.err = errors.New("the sign-in response did not match this request; run the command again")
 		case query.Get("error") != "":
 			result.err = &oauthError{Code: query.Get("error"), Description: query.Get("error_description")}
 		case query.Get("code") == "":
@@ -212,7 +253,7 @@ func callbackHandler(state string, results chan<- callbackResult) http.Handler {
 }
 
 func writeCallbackPage(w http.ResponseWriter, err error) {
-	title, body := "Signed in", "You are signed in to the Moderation API CLI. You can close this tab."
+	title, body := "Almost done", "Return to your terminal to finish signing in to the Moderation API CLI. You can close this tab."
 	status := http.StatusOK
 	if err != nil {
 		title, body = "Sign-in failed", "Sign-in did not finish: "+err.Error()+". Return to your terminal."
@@ -289,11 +330,15 @@ func deviceLogin(ctx context.Context, opts deviceLoginOptions) (*tokenSet, error
 		if err := sleep(ctx, interval); err != nil {
 			return nil, err
 		}
-		tokens, err := postToken(ctx, opts.HTTP, opts.Server.TokenEndpoint, url.Values{
+		poll := url.Values{
 			"grant_type":  {"urn:ietf:params:oauth:grant-type:device_code"},
 			"device_code": {device.DeviceCode},
 			"client_id":   {opts.ClientID},
-		})
+		}
+		if opts.Resource != "" {
+			poll.Set("resource", opts.Resource)
+		}
+		tokens, err := postToken(ctx, opts.HTTP, opts.Server.TokenEndpoint, poll)
 		if err == nil {
 			return tokens, nil
 		}

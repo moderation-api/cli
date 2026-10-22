@@ -168,6 +168,10 @@ func checkWebhookSecret(dir string, s *stack) check {
 func checkGitignore(dir, envFile string) check {
 	name := relPath(dir, envFile)
 	switch gitIgnoreState(dir, envFile) {
+	case "tracked":
+		return check{ID: "gitignore", Status: "fail", Message: name + " holds secrets and is committed to git.", Remedy: "git rm --cached " + name + ", add it to .gitignore, and rotate the keys on the dashboard's API keys page."}
+	case "unknown":
+		return check{ID: "gitignore", Status: "warn", Message: "Could not tell whether git ignores " + name + "."}
 	case "ignored":
 		return check{ID: "gitignore", Status: "ok", Message: name + " is in .gitignore."}
 	case "not_ignored":

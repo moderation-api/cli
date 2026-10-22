@@ -2,6 +2,7 @@ package custom
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -14,6 +15,7 @@ import (
 	"github.com/moderation-api/cli/internal/forms"
 	"github.com/moderation-api/cli/internal/output"
 	"github.com/moderation-api/cli/internal/sdk/models/operations"
+	"github.com/moderation-api/cli/internal/sdk/models/sdkerrors"
 	"github.com/moderation-api/cli/internal/usage"
 )
 
@@ -57,7 +59,7 @@ the guide at https://docs.moderationapi.com, to add the moderation calls.`,
 	f.String("env-file", "", "Env file to write the secrets to (default: .env.local for Next.js, else .env)")
 	f.Bool("install", false, "Also install the SDK with the detected package manager")
 	f.Bool("force", false, "Create a new project even when the env file already has a key")
-	f.String("organization-key", "", "Organization key to create the project with (env: MODAPI_ORGANIZATION_KEY; default: the key from modapi login)")
+	f.String("organization-key", "", "Organization key to create the project with. Prefer the MODAPI_ORGANIZATION_KEY env var: a flag value stays in shell history (default: the key from modapi login)")
 	return cmd
 }
 
@@ -198,8 +200,8 @@ func defaultProjectName(dir string) string {
 		// "@acme/web" becomes "web".
 		name = manifest.Name[strings.LastIndex(manifest.Name, "/")+1:]
 	}
-	if len(name) > 35 {
-		name = name[:35]
+	if runes := []rune(name); len(runes) > 35 {
+		name = string(runes[:35])
 	}
 	return name
 }
@@ -246,7 +248,14 @@ func checkExistingKey(cmd *cobra.Command, key string, result *initResult) error 
 	}
 	res, err := api.Account.Retrieve(cmd.Context(), &operations.GetAccountRequest{})
 	if err != nil {
-		result.Warnings = append(result.Warnings, fmt.Sprintf("%s in %s did not work: %v. Fix it, or run `modapi init --force` to create a new project.", projectKeyEnv, result.EnvFile, err))
+		var authErr *sdkerrors.AuthenticationError
+		var permErr *sdkerrors.PermissionDeniedError
+		if errors.As(err, &authErr) || errors.As(err, &permErr) {
+			return withHints(failure(output.ReasonCLIAuthentication, "%s in %s was rejected by the API: %v", projectKeyEnv, result.EnvFile, err),
+				"Replace it with a valid project key from the dashboard's API keys page",
+				"Or run `modapi init --force` to create a new project")
+		}
+		result.Warnings = append(result.Warnings, fmt.Sprintf("Could not check %s in %s: %v. Run `modapi doctor` later.", projectKeyEnv, result.EnvFile, err))
 		return nil
 	}
 	if res.Object != nil && res.Object.CurrentProject != nil {
@@ -258,6 +267,17 @@ func checkExistingKey(cmd *cobra.Command, key string, result *initResult) error 
 }
 
 func createProject(cmd *cobra.Command, dir, envFile string, input initInput, result *initResult) error {
+	// Refuse before creating anything if the secrets would land in a committed file.
+	switch gitIgnoreState(dir, envFile) {
+	case "tracked":
+		name := relPath(dir, envFile)
+		return withHints(failure(output.ReasonCLIValidation, "%s is committed to git, so writing the project key there would commit it", name),
+			"Stop tracking it: git rm --cached "+name+", then add it to .gitignore",
+			"Or write the keys to another file with --env-file .env.local")
+	case "unknown":
+		result.Warnings = append(result.Warnings, fmt.Sprintf("Could not tell whether git ignores %s. Make sure it is not committed.", relPath(dir, envFile)))
+	}
+
 	orgKey, _, err := organizationKey(cmd)
 	if err != nil {
 		return failure(output.ReasonCLIAuthentication, "%v", err)
@@ -278,7 +298,8 @@ func createProject(cmd *cobra.Command, dir, envFile string, input initInput, res
 		result.Warnings = append(result.Warnings, "No --domain or --context was given, so the project suggests no policies. Add context in the dashboard, or run `modapi projects update` with --domain or --context.")
 	}
 
-	api, err := newAPIClient(cmd, orgKey)
+	// Not the --debug client: it would log the new project's secret key.
+	api, err := newQuietAPIClient(cmd, orgKey)
 	if err != nil {
 		return err
 	}
@@ -310,6 +331,11 @@ func createProject(cmd *cobra.Command, dir, envFile string, input initInput, res
 	} else {
 		values[webhookSecretEnv] = secret
 	}
+	added, err := ensureGitIgnored(dir, envFile)
+	if err != nil {
+		result.Warnings = append(result.Warnings, fmt.Sprintf("Could not add %s to .gitignore: %v. Make sure it is not committed.", result.EnvFile, err))
+	}
+	result.GitignoreAdded = added
 	if err := setEnvValues(envFile, values, order); err != nil {
 		return failure(output.ReasonCLIRuntime, "the project %s was created, but writing %s failed: %v. Find the key in the dashboard", project.ID, envFile, err)
 	}
@@ -318,11 +344,6 @@ func createProject(cmd *cobra.Command, dir, envFile string, input initInput, res
 			result.VariablesSet = append(result.VariablesSet, key)
 		}
 	}
-	added, err := ensureGitIgnored(dir, envFile)
-	if err != nil {
-		result.Warnings = append(result.Warnings, fmt.Sprintf("Could not add %s to .gitignore: %v. Make sure it is not committed.", result.EnvFile, err))
-	}
-	result.GitignoreAdded = added
 
 	result.Status = "created"
 	result.Project = &initProject{ID: project.ID, Name: project.Name, Domain: deref(project.Domain), Context: deref(project.Context)}
@@ -331,7 +352,7 @@ func createProject(cmd *cobra.Command, dir, envFile string, input initInput, res
 }
 
 func webhookSecret(cmd *cobra.Command, projectKey string) (string, error) {
-	api, err := newAPIClient(cmd, projectKey)
+	api, err := newQuietAPIClient(cmd, projectKey)
 	if err != nil {
 		return "", err
 	}

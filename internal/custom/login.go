@@ -146,11 +146,15 @@ Project keys stored with "modapi auth login" or "modapi configure" are not touch
 			if dryRunPlan(cmd, "logout removes the locally stored organization key; nothing was changed.", nil) {
 				return nil
 			}
-			removed := deleteSession()
+			removed, keyringSkipped := deleteSession()
 			apiKeysURL := loadSettings().DashboardURL + "/settings/api-keys"
-			return render(cmd, map[string]any{"removed": removed, "revoke_url": apiKeysURL}, func(w io.Writer) {
+			result := map[string]any{"removed": removed, "keychain_skipped": keyringSkipped, "revoke_url": apiKeysURL}
+			return render(cmd, result, func(w io.Writer) {
+				if keyringSkipped {
+					fmt.Fprintln(w, "The OS keychain was skipped (--no-keyring); a session stored there was not removed.")
+				}
 				if !removed {
-					fmt.Fprintln(w, "You were not signed in.")
+					fmt.Fprintln(w, "No session found to remove.")
 					return
 				}
 				fmt.Fprintln(w, "Signed out. The organization key was removed from this machine.")

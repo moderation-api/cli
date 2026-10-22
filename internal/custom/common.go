@@ -51,6 +51,16 @@ func withHints(err error, hints ...string) error {
 // newAPIClient makes an SDK client that calls with key and honours the
 // global --server-url, --timeout, --debug and --dry-run flags.
 func newAPIClient(cmd *cobra.Command, key string) (*sdk.ModerationAPI, error) {
+	return buildAPIClient(cmd, key, true)
+}
+
+// newQuietAPIClient is newAPIClient without --debug logging, for calls whose
+// responses hold secrets the debug log would print.
+func newQuietAPIClient(cmd *cobra.Command, key string) (*sdk.ModerationAPI, error) {
+	return buildAPIClient(cmd, key, client.IsDryRun(cmd))
+}
+
+func buildAPIClient(cmd *cobra.Command, key string, diagnostics bool) (*sdk.ModerationAPI, error) {
 	opts := []sdk.SDKOption{sdk.WithSecurity(components.Security{SecretKey: key})}
 	if serverURL, _ := flagutil.GetStringFlag(cmd, "server-url"); serverURL != "" {
 		if err := flagutil.ValidateServerURL(serverURL); err != nil {
@@ -69,7 +79,10 @@ func newAPIClient(cmd *cobra.Command, key string) (*sdk.ModerationAPI, error) {
 	if test := testclient.NewTestHTTPClient(); test != nil {
 		httpClient = test
 	}
-	opts = append(opts, sdk.WithClient(client.WrapClientForDiagnostics(cmd, httpClient)))
+	if diagnostics {
+		httpClient = client.WrapClientForDiagnostics(cmd, httpClient)
+	}
+	opts = append(opts, sdk.WithClient(httpClient))
 	return sdk.New(opts...), nil
 }
 

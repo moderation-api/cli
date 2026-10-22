@@ -28,13 +28,18 @@ func setEnvValues(path string, values map[string]string, order []string) error {
 			continue
 		}
 		if value, set := values[key]; set {
-			lines[i] = key + "=" + value
+			prefix := ""
+			// Keep "export " so files that shells source keep working.
+			if strings.HasPrefix(strings.TrimSpace(line), "export ") {
+				prefix = "export "
+			}
+			lines[i] = prefix + key + "=" + quoteEnvValue(value)
 			written[key] = true
 		}
 	}
 	for _, key := range order {
 		if value, set := values[key]; set && !written[key] {
-			lines = append(lines, key+"="+value)
+			lines = append(lines, key+"="+quoteEnvValue(value))
 		}
 	}
 	mode := os.FileMode(0o600)
@@ -42,6 +47,14 @@ func setEnvValues(path string, values map[string]string, order []string) error {
 		mode = info.Mode().Perm()
 	}
 	return os.WriteFile(path, []byte(strings.Join(lines, "\n")+"\n"), mode)
+}
+
+// quoteEnvValue double-quotes values that dotenv parsers would otherwise misread.
+func quoteEnvValue(value string) string {
+	if !strings.ContainsAny(value, " \t#$\"'\\`") {
+		return value
+	}
+	return `"` + strings.NewReplacer(`\`, `\\`, `"`, `\"`, "$", `\$`, "`", "\\`").Replace(value) + `"`
 }
 
 var envLinePattern = regexp.MustCompile(`^\s*(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=`)
@@ -66,11 +79,44 @@ func readEnvValue(path, key string) string {
 	for scanner.Scan() {
 		line := scanner.Text()
 		if k, ok := envLineKey(line); ok && k == key {
-			raw := strings.TrimSpace(line[strings.Index(line, "=")+1:])
-			value = strings.Trim(raw, `"'`)
+			value = parseEnvValue(line[strings.Index(line, "=")+1:])
 		}
 	}
 	return value
+}
+
+// parseEnvValue reads a dotenv value: one matching pair of quotes is
+// removed, and an unquoted value ends at an inline " #" comment.
+func parseEnvValue(raw string) string {
+	raw = strings.TrimSpace(raw)
+	if len(raw) >= 2 && (raw[0] == '"' || raw[0] == '\'') {
+		if end := closingQuote(raw); end > 0 {
+			inner := raw[1:end]
+			if raw[0] == '"' {
+				inner = strings.NewReplacer(`\"`, `"`, `\$`, "$", "\\`", "`", `\\`, `\`).Replace(inner)
+			}
+			return inner
+		}
+	}
+	if i := strings.Index(raw, " #"); i >= 0 {
+		raw = raw[:i]
+	}
+	return strings.TrimSpace(raw)
+}
+
+// closingQuote finds the quote that closes raw[0]; inside double quotes a
+// backslash escapes the next character. It returns -1 when there is none.
+func closingQuote(raw string) int {
+	q := raw[0]
+	for i := 1; i < len(raw); i++ {
+		switch {
+		case q == '"' && raw[i] == '\\':
+			i++
+		case raw[i] == q:
+			return i
+		}
+	}
+	return -1
 }
 
 // envFilesFor are the env files a project in dir may keep its key in, most specific first.
@@ -96,7 +142,9 @@ func findEnvValue(dir string, s *stack, key string) (string, string) {
 	return "", ""
 }
 
-// gitIgnoreState is whether git ignores a file: "ignored", "not_ignored", or "no_git".
+// gitIgnoreState says how git treats a file: "tracked" (committed, so
+// .gitignore cannot help), "ignored", "not_ignored", "no_git", or "unknown"
+// (for example a file outside the repository).
 func gitIgnoreState(dir, file string) string {
 	if _, err := exec.LookPath("git"); err != nil {
 		return "no_git"
@@ -105,11 +153,19 @@ func gitIgnoreState(dir, file string) string {
 	if out, err := inside.Output(); err != nil || strings.TrimSpace(string(out)) != "true" {
 		return "no_git"
 	}
-	check := exec.Command("git", "-C", dir, "check-ignore", "-q", file)
-	if check.Run() == nil {
-		return "ignored"
+	if exec.Command("git", "-C", dir, "ls-files", "--error-unmatch", "--", file).Run() == nil {
+		return "tracked"
 	}
-	return "not_ignored"
+	err := exec.Command("git", "-C", dir, "check-ignore", "-q", "--", file).Run()
+	var exitErr *exec.ExitError
+	switch {
+	case err == nil:
+		return "ignored"
+	case errors.As(err, &exitErr) && exitErr.ExitCode() == 1:
+		return "not_ignored"
+	default:
+		return "unknown"
+	}
 }
 
 // ensureGitIgnored adds the env file to .gitignore when git would track it.

@@ -49,7 +49,7 @@ modapi init [flags]
   -h, --help                      help for init
       --install                   Also install the SDK with the detected package manager
   -n, --name string               Project name (default: the package or directory name)
-      --organization-key string   Organization key to create the project with (env: MODAPI_ORGANIZATION_KEY; default: the key from modapi login)
+      --organization-key string   Organization key to create the project with. Prefer the MODAPI_ORGANIZATION_KEY env var: a flag value stays in shell history (default: the key from modapi login)
       --used-by-minors            Children use the platform (stricter policies)
 ```
 

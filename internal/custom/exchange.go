@@ -25,6 +25,9 @@ var errExchangeNotAvailable = errors.New("this Moderation API account cannot sig
 // organization key of the organization the user picked on the consent screen.
 // The dashboard makes one key per user and device name.
 func exchangeForOrganizationKey(ctx context.Context, client *http.Client, dashboardURL, accessToken, deviceName string) (*exchangeResult, error) {
+	if err := requireHTTPS(dashboardURL); err != nil {
+		return nil, err
+	}
 	payload, err := json.Marshal(map[string]string{"deviceName": deviceName})
 	if err != nil {
 		return nil, err

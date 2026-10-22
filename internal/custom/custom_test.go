@@ -93,7 +93,7 @@ func TestSetEnvValuesReplacesAndAppends(t *testing.T) {
 		t.Fatal(err)
 	}
 	data, _ := os.ReadFile(path)
-	want := "# app\nDATABASE_URL=postgres://x\nMODAPI_SECRET_KEY=sk_new\nMODAPI_WEBHOOK_SECRET=whsec\n"
+	want := "# app\nDATABASE_URL=postgres://x\nexport MODAPI_SECRET_KEY=sk_new\nMODAPI_WEBHOOK_SECRET=whsec\n"
 	if string(data) != want {
 		t.Fatalf("got:\n%s\nwant:\n%s", data, want)
 	}
@@ -151,6 +151,7 @@ func newFakeClerk(t *testing.T, pending int32) *fakeClerk {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/.well-known/oauth-authorization-server", func(w http.ResponseWriter, r *http.Request) {
 		_ = json.NewEncoder(w).Encode(map[string]string{
+			"issuer":                        f.URL,
 			"authorization_endpoint":        f.URL + "/oauth/authorize",
 			"token_endpoint":                f.URL + "/oauth/token",
 			"device_authorization_endpoint": f.URL + "/oauth/device_authorization",
@@ -265,8 +266,63 @@ func TestCallbackRejectsWrongState(t *testing.T) {
 	if rec.Code != http.StatusBadRequest {
 		t.Fatalf("status = %d", rec.Code)
 	}
-	if r := <-results; r.err == nil {
-		t.Fatal("wrong state was accepted")
+	select {
+	case r := <-results:
+		t.Fatalf("a request with the wrong state ended the sign-in: %+v", r)
+	default:
+	}
+
+	// The real redirect still gets through afterwards.
+	rec = httptest.NewRecorder()
+	callbackHandler("expected", results).ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/callback?code=c1&state=expected", nil))
+	if r := <-results; r.err != nil || r.code != "c1" {
+		t.Fatalf("got %+v", r)
+	}
+}
+
+func TestDiscoverRejectsWrongIssuer(t *testing.T) {
+	clerk := newFakeClerk(t, 0)
+	if _, err := discover(context.Background(), clerk.Client(), "https://other.example.com"); err == nil {
+		t.Fatal("metadata for another issuer was accepted")
+	}
+}
+
+func TestRequireHTTPS(t *testing.T) {
+	for raw, ok := range map[string]bool{
+		"https://dash.moderationapi.com": true,
+		"http://127.0.0.1:8080":          true,
+		"http://localhost:3000":          true,
+		"http://dash.moderationapi.com":  false,
+	} {
+		if err := requireHTTPS(raw); (err == nil) != ok {
+			t.Errorf("requireHTTPS(%q) = %v", raw, err)
+		}
+	}
+}
+
+func TestEnvValueEdgeCases(t *testing.T) {
+	for raw, want := range map[string]string{
+		`abc # note`:   "abc",
+		`"a b" # note`: "a b",
+		`'x'`:          "x",
+		`"esc\"q"`:     `esc"q`,
+	} {
+		if got := parseEnvValue(raw); got != want {
+			t.Errorf("parseEnvValue(%q) = %q, want %q", raw, got, want)
+		}
+	}
+	dir := t.TempDir()
+	path := filepath.Join(dir, ".env")
+	write(t, dir, ".env", "export MODAPI_SECRET_KEY=old\n")
+	if err := setEnvValues(path, map[string]string{projectKeyEnv: "has space"}, []string{projectKeyEnv}); err != nil {
+		t.Fatal(err)
+	}
+	data, _ := os.ReadFile(path)
+	if string(data) != "export MODAPI_SECRET_KEY=\"has space\"\n" {
+		t.Fatalf("got %q", data)
+	}
+	if got := readEnvValue(path, projectKeyEnv); got != "has space" {
+		t.Fatalf("round trip = %q", got)
 	}
 }
 
