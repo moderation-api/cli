@@ -137,10 +137,10 @@ func WithTimeout(timeout time.Duration) SDKOption {
 // New creates a new instance of the SDK with the provided options
 func New(opts ...SDKOption) *ModerationAPI {
 	sdk := &ModerationAPI{
-		SDKVersion: "0.4.0",
+		SDKVersion: "0.4.1",
 		sdkConfiguration: config.SDKConfiguration{
-			UserAgent:         "speakeasy-sdk/go 0.4.0 internal 1.1.0 github.com/moderation-api/cli/internal/sdk",
-			SDKVersion:        "0.4.0",
+			UserAgent:         "speakeasy-sdk/go 0.4.1 internal 1.1.0 github.com/moderation-api/cli/internal/sdk",
+			SDKVersion:        "0.4.1",
 			GenVersion:        "internal",
 			OpenAPIDocVersion: "1.1.0",
 			ServerList:        ServerList,

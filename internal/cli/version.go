@@ -14,7 +14,7 @@ import (
 // which propagates the value here (see cmd/modapi/main.go):
 //
 //	go build -ldflags "-X main.version=x.y.z" ./cmd/modapi
-var Version = "0.4.0"
+var Version = "0.4.1"
 
 // BuildTime is optionally set at build time via ldflags targeting the main package.
 var BuildTime string
