@@ -331,7 +331,7 @@ func TestExchangeForOrganizationKey(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		gotAuth = r.Header.Get("Authorization")
 		switch r.URL.Path {
-		case "/api/cli/key":
+		case "/v1/cli/key":
 			_, _ = io.WriteString(w, `{"apiKey":"sk_org","organizationId":"org_1","organizationName":"Acme"}`)
 		default:
 			http.NotFound(w, r)
@@ -339,7 +339,7 @@ func TestExchangeForOrganizationKey(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	got, err := exchangeForOrganizationKey(context.Background(), srv.Client(), srv.URL, "at-1", "laptop")
+	got, err := exchangeForOrganizationKey(context.Background(), srv.Client(), srv.URL+"/v1/cli/key", "at-1", "laptop")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -350,5 +350,19 @@ func TestExchangeForOrganizationKey(t *testing.T) {
 	_, err = exchangeForOrganizationKey(context.Background(), srv.Client(), srv.URL+"/missing", "at-1", "laptop")
 	if !errors.Is(err, errExchangeNotAvailable) {
 		t.Fatalf("404 should mean not available, got %v", err)
+	}
+}
+
+func TestKeyExchangeURLIsTheTokenAudience(t *testing.T) {
+	t.Setenv("MODAPI_KEY_EXCHANGE_URL", "")
+	t.Setenv("MODAPI_OAUTH_RESOURCE", "")
+	cfg := loadSettings()
+	if cfg.KeyExchangeURL != "https://api.moderationapi.com/v1/cli/key" || cfg.Resource != cfg.KeyExchangeURL {
+		t.Fatalf("got exchange %q, resource %q", cfg.KeyExchangeURL, cfg.Resource)
+	}
+
+	t.Setenv("MODAPI_KEY_EXCHANGE_URL", "https://staging.example.com/v1/cli/key")
+	if cfg := loadSettings(); cfg.Resource != "https://staging.example.com/v1/cli/key" {
+		t.Fatalf("resource %q does not follow the exchange URL", cfg.Resource)
 	}
 }
