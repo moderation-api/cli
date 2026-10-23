@@ -24,7 +24,7 @@ import (
 
 // Register adds the hand-written commands to the root command.
 func Register(root *cobra.Command) {
-	root.AddCommand(newLoginCmd(), newLogoutCmd(), newInitCmd(), newDoctorCmd())
+	root.AddCommand(newLoginCmd(), newLogoutCmd(), newInitCmd(), newLinkCmd(), newDoctorCmd())
 	preRun := root.PersistentPreRunE
 	root.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
 		if preRun != nil {
