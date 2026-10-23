@@ -409,6 +409,8 @@ modapi projects list --secret-key "$MODAPI_ORGANIZATION_KEY"
   * [`update`](docs/modapi_projects_update.md) - Update a project
   * [`delete`](docs/modapi_projects_delete.md) - Delete a project
   * [`duplicate`](docs/modapi_projects_duplicate.md) - Duplicate a project
+  * [`api-keys`](docs/modapi_projects_api-keys.md) - Operations for api-keys
+    * [`create`](docs/modapi_projects_api-keys_create.md) - Create a project API key
 * [`channels`](docs/modapi_channels.md) - Operations for channels
   * [`list`](docs/modapi_channels_list.md) - List channels
   * [`create`](docs/modapi_channels_create.md) - Create a channel

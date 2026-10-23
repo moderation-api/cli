@@ -25,6 +25,8 @@ type fakeAPI struct {
 	*httptest.Server
 	mu       sync.Mutex
 	requests []recorded
+	// projects is the JSON array GET /projects returns (default: none).
+	projects string
 }
 
 type recorded struct {
@@ -50,10 +52,24 @@ func newFakeAPI(t *testing.T) *fakeAPI {
 				return
 			}
 			_, _ = io.WriteString(w, `{"id":"proj_1","name":"`+body["name"].(string)+`","description":null,"domain":"acme.com","context":"A marketplace","globalFlaggingMode":"ACTIVE","enableRequestLogging":true,"casebookEnabled":true,"createdAt":"2026-10-22T00:00:00Z","updatedAt":"2026-10-22T00:00:00Z","secretKey":"sk_proj_new"}`)
+		case r.Method == http.MethodGet && r.URL.Path == "/projects":
+			projects := f.projects
+			if projects == "" {
+				projects = "[]"
+			}
+			_, _ = io.WriteString(w, `{"data":`+projects+`,"pagination":{"page":1,"pageSize":100,"total":0,"totalPages":1,"hasMore":false}}`)
+		case r.Method == http.MethodPost && strings.HasSuffix(r.URL.Path, "/api-keys"):
+			if auth != "Bearer sk_org_test" {
+				w.WriteHeader(http.StatusUnauthorized)
+				_, _ = io.WriteString(w, `{"message":"bad key","code":"unauthorized"}`)
+				return
+			}
+			id := strings.TrimSuffix(strings.TrimPrefix(r.URL.Path, "/projects/"), "/api-keys")
+			_, _ = io.WriteString(w, `{"id":"key_1","name":"`+body["name"].(string)+`","projectId":"`+id+`","createdAt":"2026-10-23T00:00:00Z","secretKey":"sk_proj_linked"}`)
 		case r.URL.Path == "/webhook-secret":
 			_, _ = io.WriteString(w, `{"secret":"whsec_new"}`)
 		case r.URL.Path == "/account":
-			if auth != "Bearer sk_proj_new" && auth != "Bearer sk_proj_existing" {
+			if auth != "Bearer sk_proj_new" && auth != "Bearer sk_proj_existing" && auth != "Bearer sk_proj_linked" {
 				w.WriteHeader(http.StatusUnauthorized)
 				_, _ = io.WriteString(w, `{"message":"bad key","code":"unauthorized"}`)
 				return
@@ -151,8 +167,11 @@ func TestInitCreatesProjectAndWritesEnv(t *testing.T) {
 		t.Fatalf(".env.local = %q, want %q", env, want)
 	}
 
+	if paths := api.paths(); len(paths) < 2 || paths[0] != "GET /projects" || paths[1] != "POST /projects" {
+		t.Fatalf("requests = %v, want GET /projects (none to link), then POST /projects", paths)
+	}
 	api.mu.Lock()
-	create := api.requests[0]
+	create := api.requests[1]
 	api.mu.Unlock()
 	if create.Path != "/projects" || create.Body["name"] != "market" || create.Body["brief"] != "No scams" || create.Body["usedByMinors"] != false {
 		t.Fatalf("create request = %+v", create)
@@ -209,7 +228,7 @@ func TestInitDryRunTouchesNothing(t *testing.T) {
 	dir := setup(t)
 	api := newFakeAPI(t)
 	t.Setenv("MODAPI_ORGANIZATION_KEY", "sk_org_test")
-	stdout, _, code := run(t, "init", "--dir", dir, "--server-url", api.URL, "--dry-run", "-o", "json")
+	stdout, _, code := run(t, "init", "--dir", dir, "--server-url", api.URL, "--new", "--dry-run", "-o", "json")
 	if code != 0 || !strings.Contains(stdout, `"would_create_project":true`) {
 		t.Fatalf("exit %d: %s", code, stdout)
 	}
@@ -394,5 +413,134 @@ func TestDoctorListsProblemsWithoutAnErrorBlock(t *testing.T) {
 	}
 	if stderr != "" {
 		t.Fatalf("doctor printed an error block: %s", stderr)
+	}
+}
+
+const twoProjects = `[
+  {"id":"proj_1","name":"Market","description":null,"domain":"acme.com","context":null,"globalFlaggingMode":"ACTIVE","enableRequestLogging":true,"casebookEnabled":true,"createdAt":"2026-10-22T00:00:00Z","updatedAt":"2026-10-22T00:00:00Z"},
+  {"id":"proj_2","name":"Forum","description":null,"domain":null,"context":null,"globalFlaggingMode":"ACTIVE","enableRequestLogging":true,"casebookEnabled":true,"createdAt":"2026-10-22T00:00:00Z","updatedAt":"2026-10-22T00:00:00Z"}
+]`
+
+func readEnv(t *testing.T, path string) string {
+	t.Helper()
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return string(data)
+}
+
+func TestInitWithProjectsAsksAnAgentToChoose(t *testing.T) {
+	dir := setup(t)
+	api := newFakeAPI(t)
+	api.projects = twoProjects
+	t.Setenv("MODAPI_ORGANIZATION_KEY", "sk_org_test")
+
+	_, stderr, code := run(t, "init", "--dir", dir, "--server-url", api.URL, "-o", "json")
+	if code != 2 {
+		t.Fatalf("exit %d, want 2: %s", code, stderr)
+	}
+	for _, want := range []string{"Market (proj_1)", "Forum (proj_2)", "--project", "--new"} {
+		if !strings.Contains(stderr, want) {
+			t.Fatalf("stderr misses %q: %s", want, stderr)
+		}
+	}
+	if paths := api.paths(); len(paths) != 1 || paths[0] != "GET /projects" {
+		t.Fatalf("requests = %v, want only the project list", paths)
+	}
+}
+
+func TestInitLinksAProjectByName(t *testing.T) {
+	dir := setup(t)
+	api := newFakeAPI(t)
+	api.projects = twoProjects
+	t.Setenv("MODAPI_ORGANIZATION_KEY", "sk_org_test")
+
+	stdout, stderr, code := run(t, "init", "--dir", dir, "--server-url", api.URL, "--project", "forum", "-o", "json")
+	if code != 0 {
+		t.Fatalf("exit %d\nstdout: %s\nstderr: %s", code, stdout, stderr)
+	}
+	if !strings.Contains(stdout, `"status":"linked"`) || strings.Contains(stdout, "sk_proj_linked") {
+		t.Fatalf("result = %s", stdout)
+	}
+	if paths := api.paths(); !strings.Contains(strings.Join(paths, ","), "POST /projects/proj_2/api-keys") {
+		t.Fatalf("requests = %v", paths)
+	}
+	api.mu.Lock()
+	var name string
+	for _, r := range api.requests {
+		if strings.HasSuffix(r.Path, "/api-keys") {
+			name, _ = r.Body["name"].(string)
+		}
+	}
+	api.mu.Unlock()
+	if !strings.HasPrefix(name, "CLI · ") {
+		t.Fatalf("key name = %q", name)
+	}
+	if env := readEnv(t, filepath.Join(dir, ".env.local")); env != "MODAPI_SECRET_KEY=sk_proj_linked\nMODAPI_WEBHOOK_SECRET=whsec_new\n" {
+		t.Fatalf(".env.local = %q", env)
+	}
+}
+
+func TestInitRefusesProjectAndNewTogether(t *testing.T) {
+	dir := setup(t)
+	_, _, code := run(t, "init", "--dir", dir, "--project", "x", "--new")
+	if code != 2 {
+		t.Fatalf("exit %d, want 2", code)
+	}
+}
+
+func TestLinkRefusesAmbiguousName(t *testing.T) {
+	dir := setup(t)
+	api := newFakeAPI(t)
+	api.projects = strings.Replace(twoProjects, `"Forum"`, `"market"`, 1)
+	t.Setenv("MODAPI_ORGANIZATION_KEY", "sk_org_test")
+
+	_, stderr, code := run(t, "link", "Market", "--dir", dir, "--server-url", api.URL)
+	if code != 2 || !strings.Contains(stderr, "more than one project") {
+		t.Fatalf("exit %d: %s", code, stderr)
+	}
+}
+
+func TestLinkAsksBeforeReplacingAnotherProjectsKey(t *testing.T) {
+	dir := setup(t)
+	api := newFakeAPI(t)
+	api.projects = twoProjects
+	t.Setenv("MODAPI_ORGANIZATION_KEY", "sk_org_test")
+	// The account endpoint says sk_proj_existing belongs to proj_1.
+	writeEnv(t, dir, ".env.local", "MODAPI_SECRET_KEY=sk_proj_existing\n")
+
+	_, stderr, code := run(t, "link", "proj_2", "--dir", dir, "--server-url", api.URL)
+	if code != 2 || !strings.Contains(stderr, "--force") {
+		t.Fatalf("exit %d: %s", code, stderr)
+	}
+	if env := readEnv(t, filepath.Join(dir, ".env.local")); !strings.Contains(env, "sk_proj_existing") {
+		t.Fatalf("the key was replaced without --force: %q", env)
+	}
+
+	stdout, stderr, code := run(t, "link", "proj_2", "--dir", dir, "--server-url", api.URL, "--force", "-o", "json")
+	if code != 0 || !strings.Contains(stdout, `"status":"linked"`) {
+		t.Fatalf("exit %d\nstdout: %s\nstderr: %s", code, stdout, stderr)
+	}
+	if env := readEnv(t, filepath.Join(dir, ".env.local")); !strings.Contains(env, "MODAPI_SECRET_KEY=sk_proj_linked") {
+		t.Fatalf(".env.local = %q", env)
+	}
+}
+
+func TestLinkSameProjectChangesNothing(t *testing.T) {
+	dir := setup(t)
+	api := newFakeAPI(t)
+	api.projects = twoProjects
+	t.Setenv("MODAPI_ORGANIZATION_KEY", "sk_org_test")
+	writeEnv(t, dir, ".env.local", "MODAPI_SECRET_KEY=sk_proj_existing\n")
+
+	stdout, stderr, code := run(t, "link", "Market", "--dir", dir, "--server-url", api.URL, "-o", "json")
+	if code != 0 || !strings.Contains(stdout, `"status":"already_set_up"`) {
+		t.Fatalf("exit %d\nstdout: %s\nstderr: %s", code, stdout, stderr)
+	}
+	for _, p := range api.paths() {
+		if strings.HasSuffix(p, "/api-keys") {
+			t.Fatalf("made a key for the project it is already linked to: %v", api.paths())
+		}
 	}
 }

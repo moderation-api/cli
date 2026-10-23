@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.0 (2026-10-23)
+
+Full Changelog: [v0.3.3...v0.4.0](https://github.com/moderation-api/cli/compare/v0.3.3...v0.4.0)
+
+### API changes
+
+- `POST /projects/{id}/api-keys`: endpoint added
+
 ## 0.3.3 (2026-10-23)
 
 Full Changelog: [v0.3.2...v0.3.3](https://github.com/moderation-api/cli/compare/v0.3.2...v0.3.3)

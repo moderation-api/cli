@@ -25,19 +25,23 @@ func newInitCmd() *cobra.Command {
 		Short: "Set up Moderation API in this project",
 		Long: `Set up Moderation API in the project in the current directory.
 
-init detects the language, framework and package manager, creates a
-Moderation API project, and writes its secret key (MODAPI_SECRET_KEY) and
-webhook signing secret (MODAPI_WEBHOOK_SECRET) to the project's env file. It
-adds the env file to .gitignore when git would track it.
+init detects the language, framework and package manager, links an existing
+Moderation API project or creates a new one, and writes its secret key
+(MODAPI_SECRET_KEY) and webhook signing secret (MODAPI_WEBHOOK_SECRET) to the
+project's env file. It adds the env file to .gitignore when git would track it.
+
+When your organization already has projects, init asks whether to link one
+or create a new one. Without a terminal (agents, scripts), choose with
+--project <id or name> or --new; init stops and lists the projects when
+neither is given. Linking makes a new key for the project (see modapi link).
 
 Describe the platform with --domain, --context and --brief: the project uses
 them to suggest moderation policies. Coding agents can read these from the
 codebase and confirm them with the user before running init.
 
-init needs an organization key to create the project: sign in with
-"modapi login", or set MODAPI_ORGANIZATION_KEY. When the env file already has
-MODAPI_SECRET_KEY, init checks it and creates nothing (use --force for a new
-project).
+init needs an organization key: sign in with "modapi login", or set
+MODAPI_ORGANIZATION_KEY. When the env file already has MODAPI_SECRET_KEY, init
+checks it and changes nothing (use --force to link or create anyway).
 
 init does not change your code. Use the moderation-api-setup agent skill, or
 the guide at https://docs.moderationapi.com, to add the moderation calls.`,
@@ -45,6 +49,8 @@ the guide at https://docs.moderationapi.com, to add the moderation calls.`,
   modapi init --name "Acme Marketplace" --domain acme.com \
     --context "Marketplace where buyers and sellers chat before a booking" \
     --brief "Stop contact details and payment requests outside the platform, scams and harassment"
+  modapi init --project "Acme Marketplace"
+  modapi init --new --name "Acme Marketplace" --domain acme.com
   modapi init --dry-run -o json`,
 		Args: cobra.NoArgs,
 		RunE: runInit,
@@ -58,7 +64,9 @@ the guide at https://docs.moderationapi.com, to add the moderation calls.`,
 	f.String("dir", ".", "The project directory")
 	f.String("env-file", "", "Env file to write the secrets to (default: .env.local for Next.js, else .env)")
 	f.Bool("install", false, "Also install the SDK with the detected package manager")
-	f.Bool("force", false, "Create a new project even when the env file already has a key")
+	f.String("project", "", "Link this existing project (ID or name) instead of asking")
+	f.Bool("new", false, "Create a new project instead of asking")
+	f.Bool("force", false, "Link or create even when the env file already has a key")
 	f.String("organization-key", "", "Organization key to create the project with. Prefer the MODAPI_ORGANIZATION_KEY env var: a flag value stays in shell history (default: the key from modapi login)")
 	return cmd
 }
@@ -71,7 +79,7 @@ type initProject struct {
 }
 
 type initResult struct {
-	Status          string       `json:"status"` // "created" or "already_set_up"
+	Status          string       `json:"status"` // "created", "linked" or "already_set_up"
 	Project         *initProject `json:"project,omitempty"`
 	EnvFile         string       `json:"env_file"`
 	VariablesSet    []string     `json:"variables_set"`
@@ -95,13 +103,15 @@ func runInit(cmd *cobra.Command, _ []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	dir, _ := cmd.Flags().GetString("dir")
-	dir, err := filepath.Abs(dir)
+	dir, err := projectDir(cmd)
 	if err != nil {
-		return failure(output.ReasonCLIValidation, "invalid --dir: %v", err)
+		return err
 	}
-	if info, err := os.Stat(dir); err != nil || !info.IsDir() {
-		return failure(output.ReasonCLIValidation, "--dir %s is not a directory", dir)
+	projectRef, _ := cmd.Flags().GetString("project")
+	projectRef = strings.TrimSpace(projectRef)
+	createNew, _ := cmd.Flags().GetBool("new")
+	if projectRef != "" && createNew {
+		return failure(output.ReasonCLIValidation, "pass either --project or --new, not both")
 	}
 
 	detected := detectStack(dir)
@@ -120,7 +130,10 @@ func runInit(cmd *cobra.Command, _ []string) error {
 		"stack":                   detected,
 		"env_file":                envFile,
 		"existing_key_found":      existingKey != "",
-		"would_create_project":    existingKey == "",
+		"would_link_project":      existingKey == "" && projectRef != "",
+		"would_create_project":    existingKey == "" && createNew,
+		"would_ask":               existingKey == "" && projectRef == "" && !createNew,
+		"link_project":            projectRef,
 		"project":                 input,
 		"would_install_sdk":       install && detected != nil && !detected.SDKInstalled && detected.InstallCommand != "",
 		"organization_key_source": organizationKeySource(cmd),
@@ -134,10 +147,8 @@ func runInit(cmd *cobra.Command, _ []string) error {
 		if err := checkExistingKey(cmd, existingKey, &result); err != nil {
 			return err
 		}
-	} else {
-		if err := createProject(cmd, dir, envFile, input, &result); err != nil {
-			return err
-		}
+	} else if err := linkOrCreate(cmd, dir, envFile, projectRef, createNew, input, &result); err != nil {
+		return err
 	}
 
 	if install && detected != nil && !detected.SDKInstalled && detected.InstallCommand != "" {
@@ -253,7 +264,7 @@ func checkExistingKey(cmd *cobra.Command, key string, result *initResult) error 
 		if errors.As(err, &authErr) || errors.As(err, &permErr) {
 			return withHints(failure(output.ReasonCLIAuthentication, "%s in %s was rejected by the API: %v", projectKeyEnv, result.EnvFile, err),
 				"Replace it with a valid project key from the dashboard's API keys page",
-				"Or run `modapi init --force` to create a new project")
+				"Or run `modapi link` to use another project, or `modapi init --force --new` to create one")
 		}
 		result.Warnings = append(result.Warnings, fmt.Sprintf("Could not check %s in %s: %v. Run `modapi doctor` later.", projectKeyEnv, result.EnvFile, err))
 		return nil
@@ -261,13 +272,64 @@ func checkExistingKey(cmd *cobra.Command, key string, result *initResult) error 
 	if res.Object != nil && res.Object.CurrentProject != nil {
 		p := res.Object.CurrentProject
 		result.Project = &initProject{ID: p.ID, Name: p.Name}
-		result.DashboardURL = fmt.Sprintf("%s/project/%s/policies", loadSettings().DashboardURL, p.ID)
+		result.DashboardURL = projectDashboardURL(p.ID)
 	}
 	return nil
 }
 
-func createProject(cmd *cobra.Command, dir, envFile string, input initInput, result *initResult) error {
-	// Refuse before creating anything if the secrets would land in a committed file.
+// linkOrCreate links the project named by projectRef, creates one with
+// createNew, or else lets a person choose: link one of the organization's
+// projects or create a new one. Without a terminal and with projects to
+// choose from, it lists them instead of guessing.
+func linkOrCreate(cmd *cobra.Command, dir, envFile, projectRef string, createNew bool, input initInput, result *initResult) error {
+	if err := checkEnvFileWritable(dir, envFile, result); err != nil {
+		return err
+	}
+	orgKey, err := requireOrganizationKey(cmd, "init needs an organization key to link or create a project")
+	if err != nil {
+		return withHints(err,
+			"Run `modapi login` to sign in in the browser (`modapi login --device` on a machine without a browser)",
+			"Or set "+organizationKeyEnv+" to an organization key from the dashboard's API keys page",
+			"To use a project key you already have, put it in the env file as "+projectKeyEnv+" and run `modapi init` again")
+	}
+	if createNew {
+		return createProject(cmd, dir, envFile, orgKey, input, result)
+	}
+
+	projects, err := listProjects(cmd, orgKey)
+	if err != nil {
+		return err
+	}
+	if projectRef != "" {
+		project, err := findProject(projects, projectRef)
+		if err != nil {
+			return err
+		}
+		return linkProject(cmd, dir, envFile, orgKey, project, result)
+	}
+	if len(projects) == 0 {
+		return createProject(cmd, dir, envFile, orgKey, input, result)
+	}
+	if !canPrompt(cmd) {
+		return chooseProjectError(projects, true)
+	}
+	choice, err := pickProject(cmd, projects, true)
+	if err != nil {
+		return err
+	}
+	if choice == newProjectChoice {
+		return createProject(cmd, dir, envFile, orgKey, input, result)
+	}
+	project, err := findProject(projects, choice)
+	if err != nil {
+		return err
+	}
+	return linkProject(cmd, dir, envFile, orgKey, project, result)
+}
+
+// checkEnvFileWritable refuses before anything is made if the secrets would
+// land in a file git already tracks.
+func checkEnvFileWritable(dir, envFile string, result *initResult) error {
 	switch gitIgnoreState(dir, envFile) {
 	case "tracked":
 		name := relPath(dir, envFile)
@@ -277,18 +339,10 @@ func createProject(cmd *cobra.Command, dir, envFile string, input initInput, res
 	case "unknown":
 		result.Warnings = append(result.Warnings, fmt.Sprintf("Could not tell whether git ignores %s. Make sure it is not committed.", relPath(dir, envFile)))
 	}
+	return nil
+}
 
-	orgKey, _, err := organizationKey(cmd)
-	if err != nil {
-		return failure(output.ReasonCLIAuthentication, "%v", err)
-	}
-	if orgKey == "" {
-		return withHints(failure(output.ReasonCLIAuthentication, "init needs an organization key to create a project"),
-			"Run `modapi login` to sign in in the browser (`modapi login --device` on a machine without a browser)",
-			"Or set "+organizationKeyEnv+" to an organization key from the dashboard's API keys page",
-			"To use a project you already have, put its key in the env file as "+projectKeyEnv+" and run `modapi init` again")
-	}
-
+func createProject(cmd *cobra.Command, dir, envFile, orgKey string, input initInput, result *initResult) error {
 	if canPrompt(cmd) && !cmd.Flags().Changed("context") && !cmd.Flags().Changed("brief") {
 		if err := promptProject(cmd, &input); err != nil {
 			return err
@@ -323,10 +377,22 @@ func createProject(cmd *cobra.Command, dir, envFile string, input initInput, res
 		return failure(output.ReasonCLIProtocol, "the API created the project but returned no secret key")
 	}
 	project := res.ProjectWithKey
+	if err := writeProjectEnv(cmd, dir, envFile, project.SecretKey, result); err != nil {
+		return failure(output.ReasonCLIRuntime, "the project %s was created, but writing %s failed: %v. Find the key in the dashboard", project.ID, envFile, err)
+	}
 
-	values := map[string]string{projectKeyEnv: project.SecretKey}
+	result.Status = "created"
+	result.Project = &initProject{ID: project.ID, Name: project.Name, Domain: deref(project.Domain), Context: deref(project.Context)}
+	result.DashboardURL = projectDashboardURL(project.ID)
+	return nil
+}
+
+// writeProjectEnv writes the project key and its webhook signing secret to
+// the env file, and adds the file to .gitignore.
+func writeProjectEnv(cmd *cobra.Command, dir, envFile, projectKey string, result *initResult) error {
+	values := map[string]string{projectKeyEnv: projectKey}
 	order := []string{projectKeyEnv, webhookSecretEnv}
-	if secret, err := webhookSecret(cmd, project.SecretKey); err != nil {
+	if secret, err := webhookSecret(cmd, projectKey); err != nil {
 		result.Warnings = append(result.Warnings, fmt.Sprintf("Could not get the webhook signing secret: %v. Run `modapi webhook-secret retrieve` later.", err))
 	} else {
 		values[webhookSecretEnv] = secret
@@ -337,17 +403,13 @@ func createProject(cmd *cobra.Command, dir, envFile string, input initInput, res
 	}
 	result.GitignoreAdded = added
 	if err := setEnvValues(envFile, values, order); err != nil {
-		return failure(output.ReasonCLIRuntime, "the project %s was created, but writing %s failed: %v. Find the key in the dashboard", project.ID, envFile, err)
+		return err
 	}
 	for _, key := range order {
 		if _, ok := values[key]; ok {
 			result.VariablesSet = append(result.VariablesSet, key)
 		}
 	}
-
-	result.Status = "created"
-	result.Project = &initProject{ID: project.ID, Name: project.Name, Domain: deref(project.Domain), Context: deref(project.Context)}
-	result.DashboardURL = fmt.Sprintf("%s/project/%s/policies", loadSettings().DashboardURL, project.ID)
 	return nil
 }
 
@@ -424,8 +486,12 @@ func printInitResult(w io.Writer, r *initResult) {
 		fmt.Fprintf(w, "Detected %s\n", desc)
 	}
 	switch r.Status {
-	case "created":
-		fmt.Fprintf(w, "Created project %s (%s)\n", r.Project.Name, r.Project.ID)
+	case "created", "linked":
+		verb := "Created"
+		if r.Status == "linked" {
+			verb = "Linked"
+		}
+		fmt.Fprintf(w, "%s project %s (%s)\n", verb, r.Project.Name, r.Project.ID)
 		fmt.Fprintf(w, "Wrote %s to %s\n", strings.Join(r.VariablesSet, " and "), r.EnvFile)
 		if r.GitignoreAdded {
 			fmt.Fprintf(w, "Added %s to .gitignore\n", r.EnvFile)

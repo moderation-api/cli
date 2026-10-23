@@ -12,7 +12,7 @@ import (
 // commandsWithoutAPIKey are the top-level commands that do not call the API
 // with the secret key, or that find their own key.
 var commandsWithoutAPIKey = map[string]bool{
-	"login": true, "logout": true, "init": true, "doctor": true,
+	"login": true, "logout": true, "init": true, "link": true, "doctor": true,
 	"auth": true, "configure": true, "whoami": true,
 	"help": true, "completion": true, "version": true,
 }

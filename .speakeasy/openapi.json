@@ -10002,6 +10002,124 @@
         }
       }
     },
+    "/projects/{id}/api-keys": {
+      "post": {
+        "operationId": "createProjectApiKey",
+        "summary": "Create a project API key",
+        "description": "Create a new secret API key for a project and return it. Give each app or computer its own key, so you can revoke one without breaking the others. The project's existing keys keep working. Needs the `projects:write` permission.",
+        "tags": [
+          "Projects"
+        ],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "description": "The ID of the project."
+            },
+            "required": true,
+            "description": "The ID of the project."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "default": "API key",
+                    "description": "A name for the key, shown on the API keys page of the dashboard. Name it after where the key is used, for example the app or the computer.",
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 50
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "API key created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectApiKey"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDeniedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests. Retry after the number of seconds in the `Retry-After` header.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitError"
+                }
+              }
+            }
+          }
+        },
+        "x-speakeasy-group": "projects.apiKeys",
+        "x-speakeasy-name-override": "create",
+        "x-speakeasy-mcp": {
+          "title": "Create a project API key",
+          "scopes": [
+            "write"
+          ],
+          "readOnlyHint": false,
+          "destructiveHint": false
+        }
+      }
+    },
     "/projects/{projectId}/channels": {
       "get": {
         "operationId": "listChannels",
@@ -11310,6 +11428,39 @@
           "casebookEnabled",
           "createdAt",
           "updatedAt",
+          "secretKey"
+        ],
+        "additionalProperties": false
+      },
+      "ProjectApiKey": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the API key."
+          },
+          "name": {
+            "type": "string",
+            "description": "The key's name."
+          },
+          "projectId": {
+            "type": "string",
+            "description": "The ID of the project the key belongs to."
+          },
+          "createdAt": {
+            "description": "When the key was created.",
+            "type": "string"
+          },
+          "secretKey": {
+            "type": "string",
+            "description": "The new secret API key. Use it to moderate content in this project. It is also shown in the project's settings."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "projectId",
+          "createdAt",
           "secretKey"
         ],
         "additionalProperties": false
