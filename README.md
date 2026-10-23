@@ -128,7 +128,7 @@ modapi content submit --content '{"type":"text","text":"Hey, check out my profil
 <!-- Start Custom [guide] -->
 ## Set up Moderation API in your project
 
-Run `init` in your project's directory. It signs you in if needed, creates a Moderation API project, and writes the project's keys to your env file:
+Run `init` in your project's directory. It links one of your Moderation API projects or creates a new one, and writes the project's keys to your env file:
 
 ```bash
 modapi login   # once per machine; opens the browser
@@ -143,6 +143,8 @@ modapi init --domain acme.com \
   --context "Marketplace where buyers and sellers chat before a booking" \
   --brief "Stop contact details shared outside the platform, scams and harassment"
 ```
+
+To connect a directory to a project you already have, run `modapi link` (or `modapi link "<project name>"`). It makes a new key for the project, so you can revoke it on its own. Agents and scripts pass `init --project <id or name>` or `init --new` instead of answering the question.
 
 `init` does not change your code. To add the moderation calls, let your coding agent do it with the [setup skill](https://github.com/moderation-api/skills):
 

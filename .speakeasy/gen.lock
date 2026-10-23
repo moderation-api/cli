@@ -5,8 +5,8 @@ management:
   docVersion: 1.1.0
   speakeasyVersion: internal
   generationVersion: internal
-  releaseVersion: 0.4.0
-  configChecksum: 4273d5885cbbeaedeb3ad7cdeb96d994
+  releaseVersion: 0.4.1
+  configChecksum: 21891e6d971da536ef34b1a2ef1f6719
   repoURL: https://github.com/moderation-api/cli
   installationURL: https://github.com/moderation-api/cli
   published: true
@@ -131,7 +131,7 @@ trackedFiles:
   internal/cli/root.go:
     last_write_checksum: sha1:d00799a3804f87479242f16bf520cb593f79ba8e
   internal/cli/version.go:
-    last_write_checksum: sha1:a8ab87a20abe46d2c0f4928cafee3c713021c841
+    last_write_checksum: sha1:a09a4c67485d1dae88a5613bc71c68523813e735
   internal/cli/webhooks/create.go:
     last_write_checksum: sha1:98c73266c8954efcf0da2493ae41909df45a38f0
   internal/cli/webhooks/delete.go:
@@ -377,7 +377,7 @@ trackedFiles:
   internal/sdk/models/sdkerrors/sdkdefaulterror.go:
     last_write_checksum: sha1:437b3a3eacb54d8648a68f80b3cd38fa5019f006
   internal/sdk/moderationapi.go:
-    last_write_checksum: sha1:dddc315a89c2907ff24d91c28784ed97fe738c5f
+    last_write_checksum: sha1:01a63303755b132f3de398d56ab52c5770ea4c5e
   internal/sdk/optionalnullable/optionalnullable.go:
     last_write_checksum: sha1:b828c94c45116e632925027e4e2c211e971e04e2
   internal/sdk/optionalnullable/optionalnullable_test.go:
@@ -439,7 +439,7 @@ trackedFiles:
   internal/usage/bodyschemas.go:
     last_write_checksum: sha1:f766420e385b255888deecba3146cc31d22dc3d3
   internal/usage/schema.go:
-    last_write_checksum: sha1:04bfae1bd9a42fc9ffc14b31e09bff0d4c326b65
+    last_write_checksum: sha1:646d24e33a9a22dd450dcdcac5ee6bc37664a810
   scripts/install.ps1:
     last_write_checksum: sha1:bd3a52c28f647ed881c6e8d72abf2d84216976c9
   scripts/install.sh:
