@@ -144,10 +144,10 @@ modapi init --domain acme.com \
   --brief "Stop contact details shared outside the platform, scams and harassment"
 ```
 
-`init` does not change your code. To add the moderation calls, let your coding agent do it with the setup skill:
+`init` does not change your code. To add the moderation calls, let your coding agent do it with the [setup skill](https://github.com/moderation-api/skills):
 
 ```bash
-npx skills add moderation-api/cli
+npx skills add moderation-api/skills
 ```
 
 Then ask your agent to "set up Moderation API". The skill finds where users create content, adds the moderation call, handles the result and sets up webhooks, asking you before each change.
