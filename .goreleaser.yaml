@@ -52,3 +52,20 @@ release:
 
 checksum:
   name_template: "checksums.txt"
+
+brews:
+  - name: modapi
+    repository:
+      owner: moderation-api
+      name: homebrew-tap
+      branch: main
+      token: '{{ envOrDefault "HOMEBREW_TAP_GITHUB_TOKEN" "" }}'
+    directory: Formula
+    skip_upload: '{{ if eq (envOrDefault "HOMEBREW_TAP_GITHUB_TOKEN" "") "" }}true{{ end }}'
+    homepage: "https://github.com/moderation-api/cli"
+    description: "Moderation API CLI: moderate content and manage your setup from the terminal"
+    license: "Apache-2.0"
+    install: |
+      bin.install "modapi"
+    test: |
+      system "#{bin}/modapi", "--version"

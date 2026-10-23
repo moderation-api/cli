@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.2 (2026-10-23)
+
+Full Changelog: [v0.3.1...v0.3.2](https://github.com/moderation-api/cli/compare/v0.3.1...v0.3.2)
+
+### Chores
+
+- Update the generated code.
+
 ## 0.3.1 (2026-10-23)
 
 Full Changelog: [v0.3.0...v0.3.1](https://github.com/moderation-api/cli/compare/v0.3.0...v0.3.1)

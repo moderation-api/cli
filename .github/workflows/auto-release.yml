@@ -49,6 +49,10 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          # Writes Formula/modapi.rb to moderation-api/homebrew-tap: a
+          # fine-grained token with Contents read and write on that repo.
+          # Without it the release skips the Homebrew step.
+          HOMEBREW_TAP_GITHUB_TOKEN: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }}
       - name: Set the release notes
         if: steps.version.outputs.release == 'true'
         env:
