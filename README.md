@@ -43,6 +43,12 @@ More information about the API can be found at https://docs.moderationapi.com
 <!-- Start CLI Installation [installation] -->
 ## CLI Installation
 
+### Homebrew (macOS/Linux)
+
+```bash
+brew install moderation-api/tap/modapi
+```
+
 ### Quick Install (Linux/macOS)
 
 ```bash
