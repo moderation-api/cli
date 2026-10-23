@@ -14,7 +14,7 @@ import (
 )
 
 var createCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "project-id", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Optional: true, Description: "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error."},
+	{FlagName: "project-id", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Optional: true, Description: "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error."},
 	{FlagName: "profile-picture", FieldPath: "Body.ProfilePicture", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"profile_picture,omitempty"`, Description: "URL of the author's profile picture"},
 	{FlagName: "external-link", FieldPath: "Body.ExternalLink", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"external_link,omitempty"`, Description: "URL of the author's external profile"},
 	{FlagName: "name", Shorthand: "n", FieldPath: "Body.Name", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"name,omitempty"`, Description: "Author name or identifier"},

@@ -14,7 +14,7 @@ import (
 )
 
 var submitCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "project-id", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Optional: true, Description: "The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error."},
+	{FlagName: "project-id", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Optional: true, Description: "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error."},
 	{FlagName: "content", FieldPath: "Body.Content", Kind: flagutil.FlagKindUnion, Union: &flagutil.UnionMeta{Discriminated: true, DiscriminatorKey: "Type", TypeDescription: "JSON value (variants: text: { \"text\": string }, image: { \"url\": string, \"data\": string }, video: { \"url\": string }, audio: { \"url\": string }, object: { \"data\": object })", Variants: []flagutil.UnionVariantMeta{
 		{DiscriminatorValue: "text", FlagName: "content.text", FieldName: "TextRequest", CanExpand: true, Description: "Text_request variant as JSON", Fields: []flagutil.FlagMeta{
 			{FlagName: "content.text.text", FieldPath: "Text", Kind: flagutil.FlagKindString, Required: true, HasMaxLength: true, MaxLength: 100000, Description: "The content text [required]"},
@@ -39,7 +39,7 @@ var submitCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "conversation-id", FieldPath: "Body.ConversationID", Kind: flagutil.FlagKindString, Optional: true, Description: "For example the ID of a chat room or a post"},
 	{FlagName: "metadata", FieldPath: "Body.Metadata", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"metadata,omitempty"`, Description: "Any metadata you want to store with the content"},
 	{FlagName: "client-action", FieldPath: "Body.ClientAction", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"clientAction,omitempty"`, Description: "A recommendation from your own client-side flagging (e.g. a banned-IP list or a third-party tool). Feeds the rules engine and can escalate or override the recommended action. Does not change whether our analysis flagged the content."},
-	{FlagName: "do-not-store", FieldPath: "Body.DoNotStore", Kind: flagutil.FlagKindBool, Optional: true, Description: "Do not store the content. The content won't enter the review queue"},
+	{FlagName: "do-not-store", FieldPath: "Body.DoNotStore", Kind: flagutil.FlagKindBool, Optional: true, Description: "Process the content without saving it on our servers. The item is still created and appears in the review queue, analytics and author history with its moderation results, but its content is empty, so reviewers cannot see what was submitted."},
 	{FlagName: "policies", FieldPath: "Body.Policies", Kind: flagutil.FlagKindJSON, Optional: true, Annotations: `json:"policies,omitempty"`, Description: "(Enterprise) override the channel policies for this moderation request only. (JSON array)"},
 }
 
