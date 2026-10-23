@@ -11,7 +11,7 @@ files, then the keychain), checks it against the API, and checks the webhook
 signing secret, .gitignore, the SDK dependency and the modapi login session.
 
 Each check has a status (ok, warn, fail or skip) and, when it is not ok, a
-remedy to run. doctor exits 1 when a check fails. Use -o json for the result
+fix to run. doctor exits 1 when a check fails. Use -o json for the result
 as data.
 
 ```
