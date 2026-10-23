@@ -25,6 +25,15 @@ import (
 // Register adds the hand-written commands to the root command.
 func Register(root *cobra.Command) {
 	root.AddCommand(newLoginCmd(), newLogoutCmd(), newInitCmd(), newDoctorCmd())
+	preRun := root.PersistentPreRunE
+	root.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
+		if preRun != nil {
+			if err := preRun(cmd, args); err != nil {
+				return err
+			}
+		}
+		return useFallbackKey(cmd)
+	}
 }
 
 // failure is an error the CLI's error renderer classifies by reason:
