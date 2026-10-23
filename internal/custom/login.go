@@ -99,7 +99,7 @@ func runLogin(cmd *cobra.Command, _ []string) error {
 	}
 
 	hostname, _ := os.Hostname()
-	exchanged, err := exchangeForOrganizationKey(ctx, httpClient, cfg.DashboardURL, tokens.AccessToken, hostname)
+	exchanged, err := exchangeForOrganizationKey(ctx, httpClient, cfg.KeyExchangeURL, tokens.AccessToken, hostname)
 	if errors.Is(err, errExchangeNotAvailable) {
 		return withHints(failure(output.ReasonCLIUnavailable, "%v", err),
 			"Set "+organizationKeyEnv+" to an organization key from the dashboard's API keys page")

@@ -20,9 +20,10 @@ var OAuthClientID = "4Cis1Jh7mS6MINJg"
 const (
 	defaultIssuer       = "https://clerk.moderationapi.com"
 	defaultDashboardURL = "https://dash.moderationapi.com"
-	// defaultResource is the audience the CLI asks Clerk to put in its access
-	// token; the dashboard's CLI key exchange accepts only this audience.
-	defaultResource = "https://dash.moderationapi.com/api/cli/key"
+	// defaultKeyExchangeURL trades the Clerk access token for an organization
+	// key. It is also the audience the CLI asks Clerk to put in that token: the
+	// key exchange accepts only this audience.
+	defaultKeyExchangeURL = "https://api.moderationapi.com/v1/cli/key"
 
 	// projectKeyEnv and webhookSecretEnv are the variables every SDK reads.
 	projectKeyEnv    = "MODAPI_SECRET_KEY"
@@ -36,19 +37,22 @@ const (
 var loginScopes = []string{"openid", "profile", "email", "user:org:read"}
 
 type settings struct {
-	Issuer       string
-	ClientID     string
-	Resource     string
-	DashboardURL string
+	Issuer         string
+	ClientID       string
+	Resource       string
+	KeyExchangeURL string
+	DashboardURL   string
 }
 
 // loadSettings reads the sign-in settings. The env vars exist for staging and tests.
 func loadSettings() settings {
+	keyExchangeURL := envOr("MODAPI_KEY_EXCHANGE_URL", defaultKeyExchangeURL)
 	return settings{
-		Issuer:       envOr("MODAPI_OAUTH_ISSUER", defaultIssuer),
-		ClientID:     envOr("MODAPI_OAUTH_CLIENT_ID", OAuthClientID),
-		Resource:     envOr("MODAPI_OAUTH_RESOURCE", defaultResource),
-		DashboardURL: strings.TrimSuffix(envOr("MODAPI_DASHBOARD_URL", defaultDashboardURL), "/"),
+		Issuer:         envOr("MODAPI_OAUTH_ISSUER", defaultIssuer),
+		ClientID:       envOr("MODAPI_OAUTH_CLIENT_ID", OAuthClientID),
+		Resource:       envOr("MODAPI_OAUTH_RESOURCE", keyExchangeURL),
+		KeyExchangeURL: keyExchangeURL,
+		DashboardURL:   strings.TrimSuffix(envOr("MODAPI_DASHBOARD_URL", defaultDashboardURL), "/"),
 	}
 }
 
