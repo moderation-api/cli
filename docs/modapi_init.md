@@ -6,19 +6,23 @@ Set up Moderation API in this project
 
 Set up Moderation API in the project in the current directory.
 
-init detects the language, framework and package manager, creates a
-Moderation API project, and writes its secret key (MODAPI_SECRET_KEY) and
-webhook signing secret (MODAPI_WEBHOOK_SECRET) to the project's env file. It
-adds the env file to .gitignore when git would track it.
+init detects the language, framework and package manager, links an existing
+Moderation API project or creates a new one, and writes its secret key
+(MODAPI_SECRET_KEY) and webhook signing secret (MODAPI_WEBHOOK_SECRET) to the
+project's env file. It adds the env file to .gitignore when git would track it.
+
+When your organization already has projects, init asks whether to link one
+or create a new one. Without a terminal (agents, scripts), choose with
+--project <id or name> or --new; init stops and lists the projects when
+neither is given. Linking makes a new key for the project (see modapi link).
 
 Describe the platform with --domain, --context and --brief: the project uses
 them to suggest moderation policies. Coding agents can read these from the
 codebase and confirm them with the user before running init.
 
-init needs an organization key to create the project: sign in with
-"modapi login", or set MODAPI_ORGANIZATION_KEY. When the env file already has
-MODAPI_SECRET_KEY, init checks it and creates nothing (use --force for a new
-project).
+init needs an organization key: sign in with "modapi login", or set
+MODAPI_ORGANIZATION_KEY. When the env file already has MODAPI_SECRET_KEY, init
+checks it and changes nothing (use --force to link or create anyway).
 
 init does not change your code. Use the moderation-api-setup agent skill, or
 the guide at https://docs.moderationapi.com, to add the moderation calls.
@@ -34,6 +38,8 @@ modapi init [flags]
   modapi init --name "Acme Marketplace" --domain acme.com \
     --context "Marketplace where buyers and sellers chat before a booking" \
     --brief "Stop contact details and payment requests outside the platform, scams and harassment"
+  modapi init --project "Acme Marketplace"
+  modapi init --new --name "Acme Marketplace" --domain acme.com
   modapi init --dry-run -o json
 ```
 
@@ -45,11 +51,13 @@ modapi init [flags]
       --dir string                The project directory (default ".")
       --domain string             The website or app the project moderates content for, e.g. acme.com
       --env-file string           Env file to write the secrets to (default: .env.local for Next.js, else .env)
-      --force                     Create a new project even when the env file already has a key
+      --force                     Link or create even when the env file already has a key
   -h, --help                      help for init
       --install                   Also install the SDK with the detected package manager
   -n, --name string               Project name (default: the package or directory name)
+      --new                       Create a new project instead of asking
       --organization-key string   Organization key to create the project with. Prefer the MODAPI_ORGANIZATION_KEY env var: a flag value stays in shell history (default: the key from modapi login)
+      --project string            Link this existing project (ID or name) instead of asking
       --used-by-minors            Children use the platform (stricter policies)
 ```
 

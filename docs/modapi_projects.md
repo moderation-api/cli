@@ -41,6 +41,7 @@ modapi projects [flags]
 ### SEE ALSO
 
 * [modapi](modapi.md)	 - Moderation API: Moderate text, images, video and audio in real time, manage authors, review queues and actions, and receive webhooks
+* [modapi projects api-keys](modapi_projects_api-keys.md)	 - Operations for api-keys
 * [modapi projects create](modapi_projects_create.md)	 - Create a project
 * [modapi projects delete](modapi_projects_delete.md)	 - Delete a project
 * [modapi projects duplicate](modapi_projects_duplicate.md)	 - Duplicate a project

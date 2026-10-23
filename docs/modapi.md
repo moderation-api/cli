@@ -46,6 +46,7 @@ modapi [flags]
 * [modapi doctor](modapi_doctor.md)	 - Check the Moderation API setup of this project
 * [modapi explore](modapi_explore.md)	 - Interactively browse and run commands
 * [modapi init](modapi_init.md)	 - Set up Moderation API in this project
+* [modapi link](modapi_link.md)	 - Connect this directory to an existing Moderation API project
 * [modapi login](modapi_login.md)	 - Sign in with your Moderation API account
 * [modapi logout](modapi_logout.md)	 - Remove the organization key stored by modapi login
 * [modapi projects](modapi_projects.md)	 - Operations for projects
