@@ -3,6 +3,7 @@
 package projects
 
 import (
+	"github.com/moderation-api/cli/internal/cli/projects/apikeys"
 	"github.com/moderation-api/cli/internal/usage"
 	"github.com/spf13/cobra"
 )
@@ -20,6 +21,10 @@ func InitProjectsRoot(parent *cobra.Command) error {
 			}
 			return cmd.Help()
 		},
+	}
+
+	if err := apikeys.InitApiKeysRoot(ProjectsCmd); err != nil {
+		return err
 	}
 
 	if err := initListCmd(ProjectsCmd); err != nil {
