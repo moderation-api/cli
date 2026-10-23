@@ -405,7 +405,7 @@ func nextSteps(s *stack, r *initResult) []string {
 		steps = append(steps, s.Note)
 	}
 	steps = append(steps,
-		"Moderate content where users create it: call content.submit and act on recommendation.action (allow, review or reject). The moderation-api-setup agent skill does this for you: npx skills add moderation-api/cli",
+		"Moderate content where users create it: call content.submit and act on recommendation.action (allow, review or reject). The moderation-api-setup agent skill does this for you: npx skills add moderation-api/skills",
 		"Restart your dev server so it reads the new env values.",
 	)
 	if r.DashboardURL != "" {
