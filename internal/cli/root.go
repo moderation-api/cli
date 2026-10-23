@@ -113,8 +113,7 @@ func NewRootCommand() (*cobra.Command, error) {
 	if err := channels.InitChannelsRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init channels: %w", err)
 	}
-	// Hand-written commands (login, logout, init, doctor). Kept on
-	// regeneration by Speakeasy persistent edits; see internal/custom.
+	// Hand-written commands (login, logout, init, doctor); see internal/custom.
 	custom.Register(rootCmd)
 	if err := initConfigureCmd(rootCmd); err != nil {
 		return nil, fmt.Errorf("init configure: %w", err)

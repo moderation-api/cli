@@ -22,6 +22,7 @@ More information about the API can be found at https://docs.moderationapi.com
   * [CLI Installation](#cli-installation)
   * [Shell Completion](#shell-completion)
   * [CLI Example Usage](#cli-example-usage)
+  * [Set up Moderation API in your project](#set-up-moderation-api-in-your-project)
   * [Moderating content](#moderating-content)
   * [For AI agents](#for-ai-agents)
   * [Authentication](#authentication)

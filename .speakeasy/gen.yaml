@@ -26,14 +26,13 @@ generation:
     allOfMergeStrategy: shallowMerge
   requestBodyFieldName: body
   versioningStrategy: automatic
-  persistentEdits:
-    enabled: true
+  persistentEdits: {}
   tests:
     generateTests: false
     generateNewTests: true
     skipResponseBodyAssertions: false
 cli:
-  version: 0.3.0
+  version: 0.3.1
   additionalDependencies: {}
   agentEnvironmentDetection: true
   arrayFlagFormat: repeatable
@@ -43,8 +42,8 @@ cli:
   defaultTimeout: ""
   distribution:
     homebrew:
-      enabled: true
-      tap: moderation-api/homebrew-tap
+      enabled: false
+      tap: ""
     nfpm:
       enabled: false
       formats: deb,rpm
