@@ -59,7 +59,9 @@ brews:
       owner: moderation-api
       name: homebrew-tap
       branch: main
-      token: '{{ envOrDefault "HOMEBREW_TAP_GITHUB_TOKEN" "" }}'
+      # Only .Env works here, not template functions. auto-release.yml always
+      # sets the variable (empty without the secret, then skip_upload is true).
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
     directory: Formula
     skip_upload: '{{ if eq (envOrDefault "HOMEBREW_TAP_GITHUB_TOKEN" "") "" }}true{{ end }}'
     homepage: "https://github.com/moderation-api/cli"
