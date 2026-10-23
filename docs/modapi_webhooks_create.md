@@ -24,7 +24,7 @@ modapi webhooks create [flags]
   -e, --event-types stringArray   Event types this webhook subscribes to. One webhook URL receives all events you list here. (options: QUEUE_ITEM_NEW, QUEUE_ITEM_COMPLETED, QUEUE_ITEM_ACTION, QUEUE_ITEM_REJECTED, QUEUE_ITEM_ALLOWED, AUTHOR_BLOCKED, AUTHOR_UNBLOCKED, AUTHOR_SUSPENDED, AUTHOR_UPDATED, AUTHOR_TRUST_LEVEL_CHANGED, AUTHOR_ACTION) [required]
   -h, --help                      help for create
   -n, --name string               The webhook's name, used to identify it in the dashboard [required]
-  -p, --project-id string         The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.
+  -p, --project-id string         The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.
       --schema                    Print the exact JSON Schema of the request body and exit
   -u, --url string                The webhook's URL. We'll call this URL when an event occurs. [required]
 ```

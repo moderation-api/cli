@@ -24,7 +24,7 @@ modapi queue items resolve [flags]
   -h, --help                help for resolve
       --id string           The queue ID [required]
       --item-id string      The item ID to resolve [required]
-  -p, --project-id string   The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.
+  -p, --project-id string   The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.
       --schema              Print the exact JSON Schema of the request body and exit
 ```
 

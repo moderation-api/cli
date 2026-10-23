@@ -21,7 +21,7 @@ modapi webhooks delete [id] [flags]
 ```
   -h, --help                help for delete
   -i, --id string           The ID of the webhook to delete. (or pass it as the [id] argument)
-  -p, --project-id string   The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.
+  -p, --project-id string   The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.
 ```
 
 ### Options inherited from parent commands

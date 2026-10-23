@@ -30,7 +30,7 @@ modapi actions update [id] [flags]
   -n, --name string                       The name of the action.
       --position string                   Show the action in all queues, selected queues or no queues (to use via API only). (options: ALL_QUEUES, SOME_QUEUES, HIDDEN) (default "ALL_QUEUES")
       --possible-values string            The possible values of the action. The user will be prompted to select one of these values when executing the action. (JSON array)
-      --project-id string                 The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.
+      --project-id string                 The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.
       --queue-behaviour string            Whether the action resolves and removes the item, unresolves and re-add it to the queue, or does not change the resolve status. (options: REMOVE, ADD, NO_CHANGE) (default "NO_CHANGE")
       --schema                            Print the exact JSON Schema of the request body and exit
   -t, --type string                       The type of the action. (options: AUTHOR_BLOCK, AUTHOR_BLOCK_TEMP, AUTHOR_UNBLOCK, AUTHOR_DELETE, AUTHOR_REPORT, AUTHOR_WARN, AUTHOR_CUSTOM, ITEM_REJECT, ITEM_ALLOW, ITEM_CUSTOM)

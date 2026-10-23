@@ -25,7 +25,7 @@ modapi wordlist update [id] [flags]
   -i, --id string            ID of the wordlist to update (or pass it as the [id] argument)
   -k, --key string           New key for the wordlist
   -n, --name string          New name for the wordlist
-  -p, --project-id string    The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.
+  -p, --project-id string    The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.
       --schema               Print the exact JSON Schema of the request body and exit
   -s, --strict               Deprecated. Now using threshold in project settings.
   -w, --words stringArray    New words for the wordlist. Replace the existing words with these new ones. Duplicate words will be ignored.

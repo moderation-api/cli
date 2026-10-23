@@ -31,7 +31,7 @@ modapi authors update [id] [flags]
       --metadata string             Additional metadata provided by your system. We recommend including any relevant information that may assist in the moderation process.
   -n, --name string                 Author name or identifier
       --profile-picture string      URL of the author's profile picture
-      --project-id string           The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.
+      --project-id string           The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.
       --schema                      Print the exact JSON Schema of the request body and exit
 ```
 

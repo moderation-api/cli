@@ -27,7 +27,7 @@ modapi authors list [flags]
   -m, --member-since-date string    string value
       --page int                    integer value (default 1)
       --page-size int               integer value (default 20)
-      --project-id string           The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.
+      --project-id string           The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.
       --sort-by string              options: trustLevel, violationCount, reportCount, memberSince, lastActive, contentCount, flaggedContentRatio, averageSentiment
       --sort-direction string       Sort direction (options: asc, desc) (default "desc")
 ```

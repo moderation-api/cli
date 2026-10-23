@@ -24,7 +24,7 @@ modapi webhooks list [flags]
       --max-pages int       Maximum number of pages to fetch when using --all (0 = no limit)
       --page int            integer value (default 1)
       --page-size int       integer value (default 20)
-      --project-id string   The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.
+      --project-id string   The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.
 ```
 
 ### Options inherited from parent commands

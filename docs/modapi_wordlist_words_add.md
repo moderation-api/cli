@@ -22,7 +22,7 @@ modapi wordlist words add [id] [flags]
       --body string         Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF. Use --schema to print the exact JSON Schema.
   -h, --help                help for add
   -i, --id string           ID of the wordlist to add words to (or pass it as the [id] argument)
-  -p, --project-id string   The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.
+  -p, --project-id string   The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.
       --schema              Print the exact JSON Schema of the request body and exit
   -w, --words stringArray   Array of words to add to the wordlist. Duplicate words will be ignored. [required]
 ```

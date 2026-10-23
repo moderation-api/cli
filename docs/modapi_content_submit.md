@@ -36,12 +36,12 @@ modapi content submit [flags]
       --content.video string        Video_request variant as JSON
       --content.video.url string    A public URL of the video content [required]
       --conversation-id string      For example the ID of a chat room or a post
-      --do-not-store                Do not store the content. The content won't enter the review queue
+      --do-not-store                Process the content without saving it on our servers. The item is still created and appears in the review queue, analytics and author history with its moderation results, but its content is empty, so reviewers cannot see what was submitted.
   -h, --help                        help for submit
       --meta-type string            The meta type of content being moderated (options: profile, message, post, comment, event, product, review, voice, other)
       --metadata string             Any metadata you want to store with the content
       --policies string             (Enterprise) override the channel policies for this moderation request only. (JSON array)
-      --project-id string           The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.
+      --project-id string           The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.
       --schema                      Print the exact JSON Schema of the request body and exit
   -t, --timestamp float             Unix timestamp (in milliseconds) of when the content was created. Use if content is not submitted in real-time.
 ```

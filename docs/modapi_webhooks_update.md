@@ -25,7 +25,7 @@ modapi webhooks update [id] [flags]
   -h, --help                      help for update
   -i, --id string                 The ID of the webhook to update. (or pass it as the [id] argument)
   -n, --name string               The webhook's name, used to identify it in the dashboard
-  -p, --project-id string         The project to act on, when you call with an organization key. Optional when the organization has one project. A project key acts on its own project: naming another one is an error.
+  -p, --project-id string         The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.
       --schema                    Print the exact JSON Schema of the request body and exit
   -u, --url string                The webhook's URL. We'll call this URL when an event occurs.
 ```
