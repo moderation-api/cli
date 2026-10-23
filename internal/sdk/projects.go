@@ -18,6 +18,8 @@ import (
 )
 
 type Projects struct {
+	APIKeys *APIKeys
+
 	rootSDK          *ModerationAPI
 	sdkConfiguration config.SDKConfiguration
 	hooks            *hooks.Hooks
@@ -28,6 +30,7 @@ func newProjects(rootSDK *ModerationAPI, sdkConfig config.SDKConfiguration, hook
 		rootSDK:          rootSDK,
 		sdkConfiguration: sdkConfig,
 		hooks:            hooks,
+		APIKeys:          newAPIKeys(rootSDK, sdkConfig, hooks),
 	}
 }
 

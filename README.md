@@ -128,7 +128,7 @@ modapi content submit --content '{"type":"text","text":"Hey, check out my profil
 <!-- Start Custom [guide] -->
 ## Set up Moderation API in your project
 
-Run `init` in your project's directory. It signs you in if needed, creates a Moderation API project, and writes the project's keys to your env file:
+Run `init` in your project's directory. It links one of your Moderation API projects or creates a new one, and writes the project's keys to your env file:
 
 ```bash
 modapi login   # once per machine; opens the browser
@@ -144,10 +144,12 @@ modapi init --domain acme.com \
   --brief "Stop contact details shared outside the platform, scams and harassment"
 ```
 
-`init` does not change your code. To add the moderation calls, let your coding agent do it with the [setup skill](https://github.com/moderation-api/skills):
+To connect a directory to a project you already have, run `modapi link` (or `modapi link "<project name>"`). It makes a new key for the project, so you can revoke it on its own. Agents and scripts pass `init --project <id or name>` or `init --new` instead of answering the question.
+
+`init` does not change your code. To add the moderation calls, let your coding agent do it with the setup skill:
 
 ```bash
-npx skills add moderation-api/skills
+npx skills add moderation-api/cli
 ```
 
 Then ask your agent to "set up Moderation API". The skill finds where users create content, adds the moderation call, handles the result and sets up webhooks, asking you before each change.
@@ -409,6 +411,8 @@ modapi projects list --secret-key "$MODAPI_ORGANIZATION_KEY"
   * [`update`](docs/modapi_projects_update.md) - Update a project
   * [`delete`](docs/modapi_projects_delete.md) - Delete a project
   * [`duplicate`](docs/modapi_projects_duplicate.md) - Duplicate a project
+  * [`api-keys`](docs/modapi_projects_api-keys.md) - Operations for api-keys
+    * [`create`](docs/modapi_projects_api-keys_create.md) - Create a project API key
 * [`channels`](docs/modapi_channels.md) - Operations for channels
   * [`list`](docs/modapi_channels_list.md) - List channels
   * [`create`](docs/modapi_channels_create.md) - Create a channel
