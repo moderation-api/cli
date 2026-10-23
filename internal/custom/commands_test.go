@@ -300,3 +300,99 @@ func TestInitRejectsInvalidExistingKey(t *testing.T) {
 		t.Fatalf("exit %d: %s", code, stderr)
 	}
 }
+
+func (f *fakeAPI) authFor(path string) []string {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	var out []string
+	for _, r := range f.requests {
+		if r.Path == path {
+			out = append(out, r.Auth)
+		}
+	}
+	return out
+}
+
+func writeEnv(t *testing.T, dir, name, content string) {
+	t.Helper()
+	if err := os.WriteFile(filepath.Join(dir, name), []byte(content), 0o600); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestAPICommandUsesProjectKeyFromEnvFile(t *testing.T) {
+	dir := setup(t)
+	api := newFakeAPI(t)
+	writeEnv(t, dir, ".env", "MODAPI_SECRET_KEY=sk_proj_existing\n")
+	t.Chdir(dir)
+
+	stdout, stderr, code := run(t, "account", "retrieve", "--server-url", api.URL, "-o", "json")
+	if code != 0 {
+		t.Fatalf("exit %d\nstdout: %s\nstderr: %s", code, stdout, stderr)
+	}
+	if got := api.authFor("/account"); len(got) != 1 || got[0] != "Bearer sk_proj_existing" {
+		t.Fatalf("Authorization = %v", got)
+	}
+}
+
+func TestAPICommandPrefersExplicitKey(t *testing.T) {
+	dir := setup(t)
+	api := newFakeAPI(t)
+	writeEnv(t, dir, ".env", "MODAPI_SECRET_KEY=sk_proj_existing\n")
+	t.Chdir(dir)
+	t.Setenv("MODAPI_SECRET_KEY", "sk_proj_new")
+
+	if _, stderr, code := run(t, "account", "retrieve", "--server-url", api.URL); code != 0 {
+		t.Fatalf("exit %d: %s", code, stderr)
+	}
+	if got := api.authFor("/account"); len(got) != 1 || got[0] != "Bearer sk_proj_new" {
+		t.Fatalf("Authorization = %v", got)
+	}
+}
+
+func TestManagementCommandUsesOrganizationKey(t *testing.T) {
+	dir := setup(t)
+	api := newFakeAPI(t)
+	writeEnv(t, dir, ".env", "MODAPI_SECRET_KEY=sk_proj_existing\n")
+	t.Chdir(dir)
+	t.Setenv("MODAPI_ORGANIZATION_KEY", "sk_org_test")
+
+	_, _, _ = run(t, "projects", "list", "--server-url", api.URL)
+	if got := api.authFor("/projects"); len(got) != 1 || got[0] != "Bearer sk_org_test" {
+		t.Fatalf("Authorization = %v", got)
+	}
+}
+
+func TestAPICommandWithoutAnyKeyStopsBeforeTheRequest(t *testing.T) {
+	dir := setup(t)
+	api := newFakeAPI(t)
+	t.Chdir(dir)
+
+	_, stderr, code := run(t, "account", "retrieve", "--server-url", api.URL)
+	if code != 3 {
+		t.Fatalf("exit %d, want 3: %s", code, stderr)
+	}
+	if !strings.Contains(stderr, "modapi init") || !strings.Contains(stderr, "modapi login") {
+		t.Fatalf("stderr does not say how to get a key: %s", stderr)
+	}
+	if paths := api.paths(); len(paths) != 0 {
+		t.Fatalf("sent requests without a key: %v", paths)
+	}
+}
+
+func TestDoctorListsProblemsWithoutAnErrorBlock(t *testing.T) {
+	dir := setup(t)
+
+	stdout, stderr, code := run(t, "doctor", "--dir", dir, "--agent-mode=false", "--color", "never")
+	if code != 1 {
+		t.Fatalf("exit %d, want 1\nstdout: %s\nstderr: %s", code, stdout, stderr)
+	}
+	for _, want := range []string{"Problems\n  ✗ No project key found.\n    Fix: modapi init\n", "Warnings\n", "1 problem, 2 warnings.\n"} {
+		if !strings.Contains(stdout, want) {
+			t.Fatalf("stdout misses %q:\n%s", want, stdout)
+		}
+	}
+	if stderr != "" {
+		t.Fatalf("doctor printed an error block: %s", stderr)
+	}
+}

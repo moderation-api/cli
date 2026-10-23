@@ -11,6 +11,7 @@ import (
 	"github.com/moderation-api/cli/internal/clierrors"
 	"github.com/moderation-api/cli/internal/config"
 	"github.com/moderation-api/cli/internal/flagutil"
+	"github.com/moderation-api/cli/internal/output"
 	"github.com/moderation-api/cli/internal/sdk/models/operations"
 	"github.com/moderation-api/cli/internal/usage"
 )
@@ -26,7 +27,7 @@ files, then the keychain), checks it against the API, and checks the webhook
 signing secret, .gitignore, the SDK dependency and the modapi login session.
 
 Each check has a status (ok, warn, fail or skip) and, when it is not ok, a
-remedy to run. doctor exits 1 when a check fails. Use -o json for the result
+fix to run. doctor exits 1 when a check fails. Use -o json for the result
 as data.`,
 		Example: `  modapi doctor
   modapi doctor -o json`,
@@ -85,18 +86,19 @@ func runDoctor(cmd *cobra.Command, _ []string) error {
 	add(checkSDK(detected))
 	add(checkLogin())
 
-	if err := render(cmd, result, func(w io.Writer) { printDoctor(w, &result) }); err != nil {
+	colors := doctorColors(cmd)
+	if err := render(cmd, result, func(w io.Writer) { printDoctor(w, &result, colors) }); err != nil {
 		return err
 	}
 	if !result.OK {
-		failed := 0
-		for _, c := range result.Checks {
-			if c.Status == "fail" {
-				failed++
-			}
+		failed := countStatus(result.Checks, "fail")
+		err := withHints(fmt.Errorf("%d check(s) failed", failed),
+			"Run the fix listed for each problem, then run `modapi doctor` again")
+		if !output.IsMachineMode(cmd) {
+			// The summary above already says what failed and how to fix it.
+			return shownError{err}
 		}
-		return clierrors.WithExitCode(withHints(fmt.Errorf("%d check(s) failed", failed),
-			"Run the remedy listed for each failed check, then run `modapi doctor` again"), 1)
+		return clierrors.WithExitCode(err, 1)
 	}
 	return nil
 }
@@ -206,15 +208,94 @@ func checkLogin() check {
 	}
 }
 
-func printDoctor(w io.Writer, r *doctorResult) {
-	marks := map[string]string{"ok": "✓", "warn": "!", "fail": "✗", "skip": "-"}
-	for _, c := range r.Checks {
-		fmt.Fprintf(w, "%s %s\n", marks[c.Status], c.Message)
-		if c.Remedy != "" {
-			fmt.Fprintf(w, "    → %s\n", c.Remedy)
+// shownError ends a command with exit code 1 after its output already
+// explained the failure, so no error block is printed below it.
+type shownError struct{ error }
+
+func (shownError) Rendered() bool  { return true }
+func (shownError) ExitCode() int   { return 1 }
+func (e shownError) Unwrap() error { return e.error }
+
+type palette struct{ red, yellow, green, dim, bold, reset string }
+
+func doctorColors(cmd *cobra.Command) palette {
+	flag, _ := flagutil.GetStringFlag(cmd, "color")
+	if flag == "" {
+		flag = "auto"
+	}
+	if !output.ShouldColorize(flag) {
+		return palette{}
+	}
+	return palette{red: "\x1b[31m", yellow: "\x1b[33m", green: "\x1b[32m", dim: "\x1b[2m", bold: "\x1b[1m", reset: "\x1b[0m"}
+}
+
+func countStatus(checks []check, status string) int {
+	n := 0
+	for _, c := range checks {
+		if c.Status == status {
+			n++
 		}
 	}
-	if r.OK {
-		fmt.Fprintln(w, "\nAll required checks passed.")
+	return n
+}
+
+// printDoctor lists the problems first, then the warnings, then what passed,
+// each with the command that fixes it, and ends with a one-line summary.
+func printDoctor(w io.Writer, r *doctorResult, p palette) {
+	groups := []struct {
+		status, title, mark, color string
+	}{
+		{"fail", "Problems", "✗", p.red},
+		{"warn", "Warnings", "!", p.yellow},
+		{"skip", "Not set up", "-", p.dim},
+		{"ok", "Passed", "✓", p.green},
+	}
+	first := true
+	for _, g := range groups {
+		if countStatus(r.Checks, g.status) == 0 {
+			continue
+		}
+		if !first {
+			fmt.Fprintln(w)
+		}
+		first = false
+		fmt.Fprintf(w, "%s%s%s\n", p.bold, g.title, p.reset)
+		for _, c := range r.Checks {
+			if c.Status != g.status {
+				continue
+			}
+			fmt.Fprintf(w, "  %s%s%s %s\n", g.color, g.mark, p.reset, c.Message)
+			if c.Remedy != "" && c.Status != "ok" {
+				fmt.Fprintf(w, "    %sFix:%s %s\n", p.dim, p.reset, c.Remedy)
+			}
+		}
+	}
+
+	failed, warned := countStatus(r.Checks, "fail"), countStatus(r.Checks, "warn")
+	fmt.Fprintln(w)
+	switch {
+	case failed > 0:
+		fmt.Fprintf(w, "%s%s%s%s\n", p.red, p.bold, summary(failed, warned), p.reset)
+	case warned > 0:
+		fmt.Fprintf(w, "%sReady to use. %s%s\n", p.yellow, summary(0, warned), p.reset)
+	default:
+		fmt.Fprintf(w, "%sReady to use. All checks passed.%s\n", p.green, p.reset)
+	}
+}
+
+func summary(failed, warned int) string {
+	plural := func(n int, word string) string {
+		if n == 1 {
+			return fmt.Sprintf("1 %s", word)
+		}
+		return fmt.Sprintf("%d %ss", n, word)
+	}
+	switch {
+	case failed > 0 && warned > 0:
+		return plural(failed, "problem") + ", " + plural(warned, "warning") + "."
+	case failed > 0:
+		return plural(failed, "problem") + "."
+	default:
+		return plural(warned, "warning") + "."
 	}
 }
