@@ -11,10 +11,11 @@ import (
 
 // OAuthClientID is the Clerk OAuth application the CLI signs in with: a public
 // client with PKCE, the redirect URI http://127.0.0.1/callback and the device
-// authorization grant on. It is not a secret. Set it here once the app
-// exists, or at build time with
-// -ldflags "-X github.com/moderation-api/cli/internal/custom.OAuthClientID=...".
-var OAuthClientID = ""
+// authorization grant on ("Moderation API CLI" on the production Clerk
+// instance). It is not a secret. Override it at build time with
+// -ldflags "-X github.com/moderation-api/cli/internal/custom.OAuthClientID=...",
+// or at run time with MODAPI_OAUTH_CLIENT_ID.
+var OAuthClientID = "4Cis1Jh7mS6MINJg"
 
 const (
 	defaultIssuer       = "https://clerk.moderationapi.com"
