@@ -119,6 +119,34 @@ modapi content submit --content '{"type":"text","text":"Hey, check out my profil
 ```
 <!-- End CLI Example Usage [usage] -->
 <!-- Start Custom [guide] -->
+## Set up Moderation API in your project
+
+Run `init` in your project's directory. It signs you in if needed, creates a Moderation API project, and writes the project's keys to your env file:
+
+```bash
+modapi login   # once per machine; opens the browser
+modapi init    # in your project
+modapi doctor  # check the setup at any time
+```
+
+`init` detects your language, framework and package manager, writes `MODAPI_SECRET_KEY` and `MODAPI_WEBHOOK_SECRET` to `.env.local` (Next.js) or `.env`, and adds that file to `.gitignore`. Describe your platform so the project can suggest moderation policies:
+
+```bash
+modapi init --domain acme.com \
+  --context "Marketplace where buyers and sellers chat before a booking" \
+  --brief "Stop contact details shared outside the platform, scams and harassment"
+```
+
+`init` does not change your code. To add the moderation calls, let your coding agent do it with the setup skill:
+
+```bash
+npx skills add moderation-api/cli
+```
+
+Then ask your agent to "set up Moderation API". The skill finds where users create content, adds the moderation call, handles the result and sets up webhooks, asking you before each change.
+
+Without a browser (for example over SSH), use `modapi login --device`. In CI, skip `login` and set `MODAPI_ORGANIZATION_KEY` to an organization key from the dashboard.
+
 ## Moderating content
 
 Set your API key once, then submit content:
