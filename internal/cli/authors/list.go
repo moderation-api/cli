@@ -16,11 +16,10 @@ import (
 var listCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "page", FieldPath: "Page", Kind: flagutil.FlagKindInt64, Optional: true, HasDefault: true, DefaultInt: 1, HasMinimum: true, Minimum: 1, HasMaximum: true, Maximum: 100000, Description: "integer value"},
 	{FlagName: "page-size", FieldPath: "PageSize", Kind: flagutil.FlagKindInt64, Optional: true, HasDefault: true, DefaultInt: 20, HasMinimum: true, Minimum: 1, HasMaximum: true, Maximum: 100, Description: "integer value"},
-	{FlagName: "sort-by", FieldPath: "SortBy", Kind: flagutil.FlagKindEnum, Optional: true, EnumValues: []string{"trustLevel", "violationCount", "reportCount", "memberSince", "lastActive", "contentCount", "flaggedContentRatio", "averageSentiment"}, Description: "options: trustLevel, violationCount, reportCount, memberSince, lastActive, contentCount, flaggedContentRatio, averageSentiment"},
+	{FlagName: "sort-by", FieldPath: "SortBy", Kind: flagutil.FlagKindEnum, Optional: true, EnumValues: []string{"trustLevel", "violationCount", "memberSince", "lastActive", "contentCount", "flaggedContentRatio", "averageSentiment"}, Description: "options: trustLevel, violationCount, memberSince, lastActive, contentCount, flaggedContentRatio, averageSentiment"},
 	{FlagName: "sort-direction", FieldPath: "SortDirection", Kind: flagutil.FlagKindEnum, Optional: true, HasDefault: true, DefaultStr: "desc", EnumValues: []string{"asc", "desc"}, Description: "Sort direction (options: asc, desc)"},
 	{FlagName: "member-since-date", Shorthand: "m", FieldPath: "MemberSinceDate", Kind: flagutil.FlagKindString, Optional: true, Description: "string value"},
 	{FlagName: "last-active-date", Shorthand: "l", FieldPath: "LastActiveDate", Kind: flagutil.FlagKindString, Optional: true, Description: "string value"},
-	{FlagName: "content-types", Shorthand: "c", FieldPath: "ContentTypes", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "list of values"},
 	{FlagName: "project-id", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Optional: true, Description: "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error."},
 }
 
@@ -29,7 +28,7 @@ func initListCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "list",
 		Short:   "List authors",
-		Long:    "List authors with their activity metrics and reputation. The list is paginated.",
+		Long:    "List the authors of the project, with their status, trust level and content metrics. The list is paginated. By default, the authors that were active most recently come first.",
 		Example: "  modapi authors list",
 		Args:    cobra.NoArgs,
 		RunE:    runListCmd,

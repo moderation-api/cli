@@ -7,21 +7,21 @@ import (
 	"github.com/moderation-api/cli/internal/sdk/sdkinternal/utils"
 )
 
-// Status - Current author status
-type Status string
+// PublicAuthorStatus - Current author status
+type PublicAuthorStatus string
 
 const (
-	StatusEnabled   Status = "enabled"
-	StatusSuspended Status = "suspended"
-	StatusBlocked   Status = "blocked"
+	PublicAuthorStatusEnabled   PublicAuthorStatus = "enabled"
+	PublicAuthorStatusSuspended PublicAuthorStatus = "suspended"
+	PublicAuthorStatusBlocked   PublicAuthorStatus = "blocked"
 )
 
-func (e Status) ToPointer() *Status {
+func (e PublicAuthorStatus) ToPointer() *PublicAuthorStatus {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *Status) IsExact() bool {
+func (e *PublicAuthorStatus) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "enabled", "suspended", "blocked":
@@ -196,8 +196,8 @@ type PublicAuthor struct {
 	// Timestamp of last incident
 	LastIncident optionalnullable.OptionalNullable[float64] `json:"last_incident,omitzero"`
 	// Current author status
-	Status     Status     `json:"status"`
-	TrustLevel TrustLevel `json:"trust_level"`
+	Status     PublicAuthorStatus `json:"status"`
+	TrustLevel TrustLevel         `json:"trust_level"`
 	// Block or suspension details, if applicable. Null if the author is enabled.
 	Block *Block `json:"block"`
 	// Risk assessment details, if available.
@@ -277,9 +277,9 @@ func (p *PublicAuthor) GetLastIncident() optionalnullable.OptionalNullable[float
 	return p.LastIncident
 }
 
-func (p *PublicAuthor) GetStatus() Status {
+func (p *PublicAuthor) GetStatus() PublicAuthorStatus {
 	if p == nil {
-		return Status("")
+		return PublicAuthorStatus("")
 	}
 	return p.Status
 }

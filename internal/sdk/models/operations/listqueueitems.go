@@ -9,77 +9,51 @@ import (
 	"github.com/moderation-api/cli/internal/sdk/sdkinternal/utils"
 )
 
-type SortField string
+type Sort string
 
 const (
-	SortFieldCreatedAt  SortField = "createdAt"
-	SortFieldSeverity   SortField = "severity"
-	SortFieldReviewedAt SortField = "reviewedAt"
+	SortFifo         Sort = "FIFO"
+	SortLifo         Sort = "LIFO"
+	SortRandom       Sort = "RANDOM"
+	SortSeverityDesc Sort = "SEVERITY_DESC"
 )
 
-func (e SortField) ToPointer() *SortField {
+func (e Sort) ToPointer() *Sort {
 	return &e
 }
-func (e *SortField) UnmarshalJSON(data []byte) error {
+func (e *Sort) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	switch v {
-	case "createdAt":
+	case "FIFO":
 		fallthrough
-	case "severity":
+	case "LIFO":
 		fallthrough
-	case "reviewedAt":
-		*e = SortField(v)
+	case "RANDOM":
+		fallthrough
+	case "SEVERITY_DESC":
+		*e = Sort(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for SortField: %v", v)
-	}
-}
-
-// ListQueueItemsSortDirection - Sort direction
-type ListQueueItemsSortDirection string
-
-const (
-	ListQueueItemsSortDirectionAsc  ListQueueItemsSortDirection = "asc"
-	ListQueueItemsSortDirectionDesc ListQueueItemsSortDirection = "desc"
-)
-
-func (e ListQueueItemsSortDirection) ToPointer() *ListQueueItemsSortDirection {
-	return &e
-}
-func (e *ListQueueItemsSortDirection) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "asc":
-		fallthrough
-	case "desc":
-		*e = ListQueueItemsSortDirection(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for ListQueueItemsSortDirection: %v", v)
+		return fmt.Errorf("invalid value for Sort: %v", v)
 	}
 }
 
 type ListQueueItemsRequest struct {
-	// The queue ID
-	ID        string     `pathParam:"style=simple,explode=false,name=id"`
-	Page      *int64     `default:"1" queryParam:"style=form,explode=true,name=page"`
-	PageSize  *int64     `default:"20" queryParam:"style=form,explode=true,name=pageSize"`
-	SortField *SortField `queryParam:"style=form,explode=true,name=sortField"`
-	// Sort direction
-	SortDirection     *ListQueueItemsSortDirection `default:"desc" queryParam:"style=form,explode=true,name=sortDirection"`
-	ConversationIds   []string                     `queryParam:"style=form,explode=true,name=conversationIds"`
-	Labels            []string                     `queryParam:"style=form,explode=true,name=labels"`
-	AfterDate         *string                      `queryParam:"style=form,explode=true,name=afterDate"`
-	BeforeDate        *string                      `queryParam:"style=form,explode=true,name=beforeDate"`
-	IncludeResolved   *bool                        `queryParam:"style=form,explode=true,name=includeResolved"`
-	AuthorID          *string                      `queryParam:"style=form,explode=true,name=authorId"`
-	FilteredActionIds []string                     `queryParam:"style=form,explode=true,name=filteredActionIds"`
+	// The queue ID.
+	ID                string   `pathParam:"style=simple,explode=false,name=id"`
+	Page              *int64   `default:"1" queryParam:"style=form,explode=true,name=page"`
+	PageSize          *int64   `default:"20" queryParam:"style=form,explode=true,name=pageSize"`
+	Sort              *Sort    `queryParam:"style=form,explode=true,name=sort"`
+	IncludeResolved   *bool    `queryParam:"style=form,explode=true,name=includeResolved"`
+	ConversationIds   []string `queryParam:"style=form,explode=true,name=conversationIds"`
+	Labels            []string `queryParam:"style=form,explode=true,name=labels"`
+	AuthorID          *string  `queryParam:"style=form,explode=true,name=authorId"`
+	FilteredActionIds []string `queryParam:"style=form,explode=true,name=filteredActionIds"`
+	AfterDate         *string  `queryParam:"style=form,explode=true,name=afterDate"`
+	BeforeDate        *string  `queryParam:"style=form,explode=true,name=beforeDate"`
 	// The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.
 	ProjectID *string `header:"style=simple,explode=false,name=Project-Id"`
 }
@@ -116,18 +90,18 @@ func (l *ListQueueItemsRequest) GetPageSize() *int64 {
 	return l.PageSize
 }
 
-func (l *ListQueueItemsRequest) GetSortField() *SortField {
+func (l *ListQueueItemsRequest) GetSort() *Sort {
 	if l == nil {
 		return nil
 	}
-	return l.SortField
+	return l.Sort
 }
 
-func (l *ListQueueItemsRequest) GetSortDirection() *ListQueueItemsSortDirection {
+func (l *ListQueueItemsRequest) GetIncludeResolved() *bool {
 	if l == nil {
 		return nil
 	}
-	return l.SortDirection
+	return l.IncludeResolved
 }
 
 func (l *ListQueueItemsRequest) GetConversationIds() []string {
@@ -144,27 +118,6 @@ func (l *ListQueueItemsRequest) GetLabels() []string {
 	return l.Labels
 }
 
-func (l *ListQueueItemsRequest) GetAfterDate() *string {
-	if l == nil {
-		return nil
-	}
-	return l.AfterDate
-}
-
-func (l *ListQueueItemsRequest) GetBeforeDate() *string {
-	if l == nil {
-		return nil
-	}
-	return l.BeforeDate
-}
-
-func (l *ListQueueItemsRequest) GetIncludeResolved() *bool {
-	if l == nil {
-		return nil
-	}
-	return l.IncludeResolved
-}
-
 func (l *ListQueueItemsRequest) GetAuthorID() *string {
 	if l == nil {
 		return nil
@@ -179,6 +132,20 @@ func (l *ListQueueItemsRequest) GetFilteredActionIds() []string {
 	return l.FilteredActionIds
 }
 
+func (l *ListQueueItemsRequest) GetAfterDate() *string {
+	if l == nil {
+		return nil
+	}
+	return l.AfterDate
+}
+
+func (l *ListQueueItemsRequest) GetBeforeDate() *string {
+	if l == nil {
+		return nil
+	}
+	return l.BeforeDate
+}
+
 func (l *ListQueueItemsRequest) GetProjectID() *string {
 	if l == nil {
 		return nil
@@ -186,230 +153,17 @@ func (l *ListQueueItemsRequest) GetProjectID() *string {
 	return l.ProjectID
 }
 
-type ListQueueItemsLabel struct {
-	// Label name
-	Label string `json:"label"`
-	// Confidence score of the label
-	Score float64 `json:"score"`
-	// Whether this label caused a flag
-	Flagged bool `json:"flagged"`
-}
-
-func (l *ListQueueItemsLabel) GetLabel() string {
-	if l == nil {
-		return ""
-	}
-	return l.Label
-}
-
-func (l *ListQueueItemsLabel) GetScore() float64 {
-	if l == nil {
-		return 0.0
-	}
-	return l.Score
-}
-
-func (l *ListQueueItemsLabel) GetFlagged() bool {
-	if l == nil {
-		return false
-	}
-	return l.Flagged
-}
-
-type ListQueueItemsAction struct {
-	// Action ID
-	ID string `json:"id"`
-	// Action name
-	Name string `json:"name"`
-	// Action comment
-	Comment *string `json:"comment,omitzero"`
-	// Unix timestamp of when the action was taken
-	Timestamp float64 `json:"timestamp"`
-	// Moderator userID
-	Reviewer *string `json:"reviewer,omitzero"`
-}
-
-func (l *ListQueueItemsAction) GetID() string {
-	if l == nil {
-		return ""
-	}
-	return l.ID
-}
-
-func (l *ListQueueItemsAction) GetName() string {
-	if l == nil {
-		return ""
-	}
-	return l.Name
-}
-
-func (l *ListQueueItemsAction) GetComment() *string {
-	if l == nil {
-		return nil
-	}
-	return l.Comment
-}
-
-func (l *ListQueueItemsAction) GetTimestamp() float64 {
-	if l == nil {
-		return 0.0
-	}
-	return l.Timestamp
-}
-
-func (l *ListQueueItemsAction) GetReviewer() *string {
-	if l == nil {
-		return nil
-	}
-	return l.Reviewer
-}
-
-// ListQueueItemsStatus - Status of the item
-type ListQueueItemsStatus string
-
-const (
-	ListQueueItemsStatusPending  ListQueueItemsStatus = "pending"
-	ListQueueItemsStatusResolved ListQueueItemsStatus = "resolved"
-)
-
-func (e ListQueueItemsStatus) ToPointer() *ListQueueItemsStatus {
-	return &e
-}
-
-// IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *ListQueueItemsStatus) IsExact() bool {
-	if e != nil {
-		switch *e {
-		case "pending", "resolved":
-			return true
-		}
-	}
-	return false
-}
-
-type ListQueueItemsData struct {
-	// Content ID
-	ID string `json:"id"`
-	// The content to be moderated
-	Content string `json:"content"`
-	// Content language
-	Language *string               `json:"language,omitzero"`
-	Labels   []ListQueueItemsLabel `json:"labels"`
-	// Conversation ID
-	ConversationID *string `json:"conversationId,omitzero"`
-	// Author ID
-	AuthorID *string `json:"authorId,omitzero"`
-	// Action IDs taken on this item
-	Actions []ListQueueItemsAction `json:"actions,omitzero"`
-	// Whether the item is flagged by any label
-	Flagged bool `json:"flagged"`
-	// Status of the item
-	Status ListQueueItemsStatus `json:"status"`
-	// Unix timestamp of when the item was created
-	Timestamp float64 `json:"timestamp"`
-	// Type of the content object
-	ContentType *string `json:"contentType,omitzero"`
-}
-
-func (l ListQueueItemsData) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(l, "", false)
-}
-
-func (l *ListQueueItemsData) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &l, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (l *ListQueueItemsData) GetID() string {
-	if l == nil {
-		return ""
-	}
-	return l.ID
-}
-
-func (l *ListQueueItemsData) GetContent() string {
-	if l == nil {
-		return ""
-	}
-	return l.Content
-}
-
-func (l *ListQueueItemsData) GetLanguage() *string {
-	if l == nil {
-		return nil
-	}
-	return l.Language
-}
-
-func (l *ListQueueItemsData) GetLabels() []ListQueueItemsLabel {
-	if l == nil {
-		return []ListQueueItemsLabel{}
-	}
-	return l.Labels
-}
-
-func (l *ListQueueItemsData) GetConversationID() *string {
-	if l == nil {
-		return nil
-	}
-	return l.ConversationID
-}
-
-func (l *ListQueueItemsData) GetAuthorID() *string {
-	if l == nil {
-		return nil
-	}
-	return l.AuthorID
-}
-
-func (l *ListQueueItemsData) GetActions() []ListQueueItemsAction {
-	if l == nil {
-		return nil
-	}
-	return l.Actions
-}
-
-func (l *ListQueueItemsData) GetFlagged() bool {
-	if l == nil {
-		return false
-	}
-	return l.Flagged
-}
-
-func (l *ListQueueItemsData) GetStatus() ListQueueItemsStatus {
-	if l == nil {
-		return ListQueueItemsStatus("")
-	}
-	return l.Status
-}
-
-func (l *ListQueueItemsData) GetTimestamp() float64 {
-	if l == nil {
-		return 0.0
-	}
-	return l.Timestamp
-}
-
-func (l *ListQueueItemsData) GetContentType() *string {
-	if l == nil {
-		return nil
-	}
-	return l.ContentType
-}
-
 // ListQueueItemsResponseBody - Successful response
 type ListQueueItemsResponseBody struct {
 	// The items on this page.
-	Data []ListQueueItemsData `json:"data"`
+	Data []components.QueueItem `json:"data"`
 	// Where this page is in the full list.
 	Pagination components.Pagination `json:"pagination"`
 }
 
-func (l *ListQueueItemsResponseBody) GetData() []ListQueueItemsData {
+func (l *ListQueueItemsResponseBody) GetData() []components.QueueItem {
 	if l == nil {
-		return []ListQueueItemsData{}
+		return []components.QueueItem{}
 	}
 	return l.Data
 }

@@ -15,7 +15,7 @@ import (
 )
 
 var retrieveCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "id", Shorthand: "i", FieldPath: "ID", Kind: flagutil.FlagKindString, Required: true, Description: "The queue ID [required]"},
+	{FlagName: "id", Shorthand: "i", FieldPath: "ID", Kind: flagutil.FlagKindString, Required: true, Description: "The queue ID. [required]"},
 	{FlagName: "project-id", Shorthand: "p", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Optional: true, Description: "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error."},
 }
 
@@ -24,7 +24,7 @@ func initRetrieveCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "retrieve [id]",
 		Short:   "Get a queue",
-		Long:    "Get a queue",
+		Long:    "Get a review queue with its item counts. The counts use the filters and the date window of the queue, the same as the dashboard.",
 		Example: "  modapi queue retrieve --id <id>",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runRetrieveCmd,
@@ -36,11 +36,11 @@ func initRetrieveCmd(parent *cobra.Command) error {
 	if err := flagutil.ValidateMeta[operations.GetQueueRequest](retrieveCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for retrieve: %w", err)
 	}
-	if err := flagutil.DeclarePositionalFlag(cmd, "id", "The queue ID (or pass it as the [id] argument)", true); err != nil {
+	if err := flagutil.DeclarePositionalFlag(cmd, "id", "The queue ID. (or pass it as the [id] argument)", true); err != nil {
 		return err
 	}
 	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
-		{Name: "id", Summary: "The queue ID", Required: true, SatisfiedBy: []string{"id"}},
+		{Name: "id", Summary: "The queue ID.", Required: true, SatisfiedBy: []string{"id"}},
 	}}); err != nil {
 		return fmt.Errorf("declare interactive arguments for retrieve: %w", err)
 	}

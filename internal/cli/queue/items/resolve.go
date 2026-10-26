@@ -14,10 +14,9 @@ import (
 )
 
 var resolveCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "id", FieldPath: "ID", Kind: flagutil.FlagKindString, Required: true, Description: "The queue ID [required]"},
-	{FlagName: "item-id", FieldPath: "ItemID", Kind: flagutil.FlagKindString, Required: true, Description: "The item ID to resolve [required]"},
+	{FlagName: "id", FieldPath: "ID", Kind: flagutil.FlagKindString, Required: true, Description: "The queue ID. [required]"},
+	{FlagName: "item-id", FieldPath: "ItemID", Kind: flagutil.FlagKindString, Required: true, Description: "The item ID to resolve. [required]"},
 	{FlagName: "project-id", Shorthand: "p", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Optional: true, Description: "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error."},
-	{FlagName: "comment", Shorthand: "c", FieldPath: "Body.Comment", Kind: flagutil.FlagKindString, Optional: true, Description: "Optional comment"},
 }
 
 // initResolveCmd initializes the resolve command.
@@ -25,7 +24,7 @@ func initResolveCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "resolve",
 		Short:   "Resolve a queue item",
-		Long:    "Mark a queue item as resolved with a specific moderation action",
+		Long:    "Mark an item of a queue as resolved. It is the same as a check-off in the dashboard: the item leaves the pending list and a QUEUE_ITEM_COMPLETED webhook is sent. To also take a moderation action, use `POST /actions/execute`.",
 		Example: "  modapi queue items resolve --id <id> --item-id <id>",
 		Args:    cobra.NoArgs,
 		RunE:    runResolveCmd,
@@ -37,14 +36,6 @@ func initResolveCmd(parent *cobra.Command) error {
 	if err := flagutil.ValidateMeta[operations.ResolveQueueItemRequest](resolveCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for resolve: %w", err)
 	}
-	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF. Use --schema to print the exact JSON Schema.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
-	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
-	if err := flagutil.AnnotateBodyFields(cmd, resolveCmdMeta, "Body", "body"); err != nil {
-		return fmt.Errorf("annotate body fields for resolve: %w", err)
-	}
-	cmd.Flags().Bool("schema", false, "Print the exact JSON Schema of the request body and exit")
-	_ = flagutil.AnnotatePromptFlag(cmd, "schema", flagutil.PromptFlagSpec{Kind: "bool", DocSurface: true})
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -54,10 +45,7 @@ func runResolveCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if requested, _ := cmd.Flags().GetBool("schema"); requested {
-		return usage.EmitBodySchema(cmd.OutOrStdout(), "resolveQueueItem")
-	}
-	req, err := flagutil.BuildRequest[operations.ResolveQueueItemRequest](cmd, resolveCmdMeta, "Body", "body")
+	req, err := flagutil.BuildRequest[operations.ResolveQueueItemRequest](cmd, resolveCmdMeta, "", "")
 	if err != nil {
 		return flagutil.WithCLIValidation(err)
 	}

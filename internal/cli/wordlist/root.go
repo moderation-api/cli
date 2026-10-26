@@ -31,6 +31,10 @@ func InitWordlistRoot(parent *cobra.Command) error {
 		return err
 	}
 
+	if err := initCreateCmd(WordlistCmd); err != nil {
+		return err
+	}
+
 	if err := initRetrieveCmd(WordlistCmd); err != nil {
 		return err
 	}

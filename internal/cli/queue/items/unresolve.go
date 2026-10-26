@@ -14,10 +14,9 @@ import (
 )
 
 var unresolveCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "id", FieldPath: "ID", Kind: flagutil.FlagKindString, Required: true, Description: "The queue ID [required]"},
-	{FlagName: "item-id", FieldPath: "ItemID", Kind: flagutil.FlagKindString, Required: true, Description: "The item ID to unresolve [required]"},
+	{FlagName: "id", FieldPath: "ID", Kind: flagutil.FlagKindString, Required: true, Description: "The queue ID. [required]"},
+	{FlagName: "item-id", FieldPath: "ItemID", Kind: flagutil.FlagKindString, Required: true, Description: "The item ID to unresolve. [required]"},
 	{FlagName: "project-id", Shorthand: "p", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Optional: true, Description: "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error."},
-	{FlagName: "comment", Shorthand: "c", FieldPath: "Body.Comment", Kind: flagutil.FlagKindString, Optional: true, Description: "Optional reason for unresolving the item"},
 }
 
 // initUnresolveCmd initializes the unresolve command.
@@ -25,7 +24,7 @@ func initUnresolveCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "unresolve",
 		Short:   "Unresolve a queue item",
-		Long:    "Mark a previously resolved queue item as unresolved/pending",
+		Long:    "Mark a resolved item of a queue as pending again. It is the same as removing a check-off in the dashboard: the item comes back in the pending list.",
 		Example: "  modapi queue items unresolve --id <id> --item-id <id>",
 		Args:    cobra.NoArgs,
 		RunE:    runUnresolveCmd,
@@ -37,14 +36,6 @@ func initUnresolveCmd(parent *cobra.Command) error {
 	if err := flagutil.ValidateMeta[operations.UnresolveQueueItemRequest](unresolveCmdMeta); err != nil {
 		return fmt.Errorf("invalid metadata for unresolve: %w", err)
 	}
-	cmd.Flags().String("body", "", "Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF. Use --schema to print the exact JSON Schema.")
-	_ = flagutil.AnnotatePromptFlag(cmd, "body", flagutil.PromptFlagSpec{Required: false, Kind: "json", BodyFlag: true})
-	cmd.Annotations[flagutil.AnnotationWholeBodyFlag] = "body"
-	if err := flagutil.AnnotateBodyFields(cmd, unresolveCmdMeta, "Body", "body"); err != nil {
-		return fmt.Errorf("annotate body fields for unresolve: %w", err)
-	}
-	cmd.Flags().Bool("schema", false, "Print the exact JSON Schema of the request body and exit")
-	_ = flagutil.AnnotatePromptFlag(cmd, "schema", flagutil.PromptFlagSpec{Kind: "bool", DocSurface: true})
 	parent.AddCommand(cmd)
 	return nil
 }
@@ -54,10 +45,7 @@ func runUnresolveCmd(cmd *cobra.Command, args []string) error {
 	if usage.UsageRequested(cmd) {
 		return usage.EmitSchema(cmd, cmd.OutOrStdout())
 	}
-	if requested, _ := cmd.Flags().GetBool("schema"); requested {
-		return usage.EmitBodySchema(cmd.OutOrStdout(), "unresolveQueueItem")
-	}
-	req, err := flagutil.BuildRequest[operations.UnresolveQueueItemRequest](cmd, unresolveCmdMeta, "Body", "body")
+	req, err := flagutil.BuildRequest[operations.UnresolveQueueItemRequest](cmd, unresolveCmdMeta, "", "")
 	if err != nil {
 		return flagutil.WithCLIValidation(err)
 	}

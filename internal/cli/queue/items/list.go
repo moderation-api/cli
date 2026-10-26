@@ -15,18 +15,17 @@ import (
 )
 
 var listCmdMeta = []flagutil.FlagMeta{
-	{FlagName: "id", Shorthand: "i", FieldPath: "ID", Kind: flagutil.FlagKindString, Required: true, Description: "The queue ID [required]"},
+	{FlagName: "id", Shorthand: "i", FieldPath: "ID", Kind: flagutil.FlagKindString, Required: true, Description: "The queue ID. [required]"},
 	{FlagName: "page", FieldPath: "Page", Kind: flagutil.FlagKindInt64, Optional: true, HasDefault: true, DefaultInt: 1, HasMinimum: true, Minimum: 1, HasMaximum: true, Maximum: 100000, Description: "integer value"},
 	{FlagName: "page-size", FieldPath: "PageSize", Kind: flagutil.FlagKindInt64, Optional: true, HasDefault: true, DefaultInt: 20, HasMinimum: true, Minimum: 1, HasMaximum: true, Maximum: 100, Description: "integer value"},
-	{FlagName: "sort-field", FieldPath: "SortField", Kind: flagutil.FlagKindEnum, Optional: true, EnumValues: []string{"createdAt", "severity", "reviewedAt"}, Description: "options: createdAt, severity, reviewedAt"},
-	{FlagName: "sort-direction", FieldPath: "SortDirection", Kind: flagutil.FlagKindEnum, Optional: true, HasDefault: true, DefaultStr: "desc", EnumValues: []string{"asc", "desc"}, Description: "Sort direction (options: asc, desc)"},
+	{FlagName: "sort", Shorthand: "s", FieldPath: "Sort", Kind: flagutil.FlagKindEnum, Optional: true, EnumValues: []string{"FIFO", "LIFO", "RANDOM", "SEVERITY_DESC"}, Description: "options: FIFO, LIFO, RANDOM, SEVERITY_DESC"},
+	{FlagName: "include-resolved", FieldPath: "IncludeResolved", Kind: flagutil.FlagKindBool, Optional: true, Description: "boolean flag"},
 	{FlagName: "conversation-ids", Shorthand: "c", FieldPath: "ConversationIds", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "list of values"},
 	{FlagName: "labels", Shorthand: "l", FieldPath: "Labels", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "list of values"},
-	{FlagName: "after-date", FieldPath: "AfterDate", Kind: flagutil.FlagKindString, Optional: true, Description: "string value"},
-	{FlagName: "before-date", Shorthand: "b", FieldPath: "BeforeDate", Kind: flagutil.FlagKindString, Optional: true, Description: "string value"},
-	{FlagName: "include-resolved", FieldPath: "IncludeResolved", Kind: flagutil.FlagKindBool, Optional: true, Description: "boolean flag"},
 	{FlagName: "author-id", FieldPath: "AuthorID", Kind: flagutil.FlagKindString, Optional: true, Description: "string value"},
 	{FlagName: "filtered-action-ids", Shorthand: "f", FieldPath: "FilteredActionIds", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "list of values"},
+	{FlagName: "after-date", FieldPath: "AfterDate", Kind: flagutil.FlagKindString, Optional: true, Description: "string value"},
+	{FlagName: "before-date", Shorthand: "b", FieldPath: "BeforeDate", Kind: flagutil.FlagKindString, Optional: true, Description: "string value"},
 	{FlagName: "project-id", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Optional: true, Description: "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error."},
 }
 
@@ -34,8 +33,8 @@ var listCmdMeta = []flagutil.FlagMeta{
 func initListCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "list [id]",
-		Short:   "Get queue items",
-		Long:    "Get paginated list of items in a moderation queue with filtering options",
+		Short:   "List queue items",
+		Long:    "List the items of a review queue, with the filters and the date window of the queue applied. By default only pending items. The list is paginated. Use the item `id` to resolve or unresolve an item.",
 		Example: "  modapi queue items list --id <id>",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runListCmd,
@@ -49,11 +48,11 @@ func initListCmd(parent *cobra.Command) error {
 	}
 	cmd.Flags().BoolP("all", "a", false, "Automatically paginate and fetch all results (streams NDJSON for JSON output)")
 	cmd.Flags().Int("max-pages", 0, "Maximum number of pages to fetch when using --all (0 = no limit)")
-	if err := flagutil.DeclarePositionalFlag(cmd, "id", "The queue ID (or pass it as the [id] argument)", true); err != nil {
+	if err := flagutil.DeclarePositionalFlag(cmd, "id", "The queue ID. (or pass it as the [id] argument)", true); err != nil {
 		return err
 	}
 	if err := interactive.Declare(cmd, interactive.CommandSpec{Args: []interactive.ArgSpec{
-		{Name: "id", Summary: "The queue ID", Required: true, SatisfiedBy: []string{"id"}},
+		{Name: "id", Summary: "The queue ID.", Required: true, SatisfiedBy: []string{"id"}},
 	}}); err != nil {
 		return fmt.Errorf("declare interactive arguments for list: %w", err)
 	}

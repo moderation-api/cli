@@ -7,26 +7,13 @@ import (
 	"github.com/moderation-api/cli/internal/sdk/sdkinternal/utils"
 )
 
-type UnresolveQueueItemRequestBody struct {
-	// Optional reason for unresolving the item
-	Comment *string `json:"comment,omitzero"`
-}
-
-func (u *UnresolveQueueItemRequestBody) GetComment() *string {
-	if u == nil {
-		return nil
-	}
-	return u.Comment
-}
-
 type UnresolveQueueItemRequest struct {
-	// The queue ID
+	// The queue ID.
 	ID string `pathParam:"style=simple,explode=false,name=id"`
-	// The item ID to unresolve
+	// The item ID to unresolve.
 	ItemID string `pathParam:"style=simple,explode=false,name=itemId"`
 	// The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.
-	ProjectID *string                       `header:"style=simple,explode=false,name=Project-Id"`
-	Body      UnresolveQueueItemRequestBody `request:"mediaType=application/json"`
+	ProjectID *string `header:"style=simple,explode=false,name=Project-Id"`
 }
 
 func (u *UnresolveQueueItemRequest) GetID() string {
@@ -50,19 +37,35 @@ func (u *UnresolveQueueItemRequest) GetProjectID() *string {
 	return u.ProjectID
 }
 
-func (u *UnresolveQueueItemRequest) GetBody() UnresolveQueueItemRequestBody {
-	if u == nil {
-		return UnresolveQueueItemRequestBody{}
+// UnresolveQueueItemStatus - `pending` waits for review. `resolved` is reviewed.
+type UnresolveQueueItemStatus string
+
+const (
+	UnresolveQueueItemStatusPending  UnresolveQueueItemStatus = "pending"
+	UnresolveQueueItemStatusResolved UnresolveQueueItemStatus = "resolved"
+)
+
+func (e UnresolveQueueItemStatus) ToPointer() *UnresolveQueueItemStatus {
+	return &e
+}
+
+// IsExact returns true if the value matches a known enum value, false otherwise.
+func (e *UnresolveQueueItemStatus) IsExact() bool {
+	if e != nil {
+		switch *e {
+		case "pending", "resolved":
+			return true
+		}
 	}
-	return u.Body
+	return false
 }
 
 // UnresolveQueueItemResponseBody - Successful response
 type UnresolveQueueItemResponseBody struct {
 	Success bool `json:"success"`
-	// New status of the item
-	Status string `json:"status"`
-	// Timestamp when the item was unresolved
+	// `pending` waits for review. `resolved` is reviewed.
+	Status UnresolveQueueItemStatus `json:"status"`
+	// When the item was unresolved (ISO 8601).
 	UnresolvedAt string `json:"unresolvedAt"`
 }
 
@@ -73,9 +76,9 @@ func (u *UnresolveQueueItemResponseBody) GetSuccess() bool {
 	return u.Success
 }
 
-func (u *UnresolveQueueItemResponseBody) GetStatus() string {
+func (u *UnresolveQueueItemResponseBody) GetStatus() UnresolveQueueItemStatus {
 	if u == nil {
-		return ""
+		return UnresolveQueueItemStatus("")
 	}
 	return u.Status
 }

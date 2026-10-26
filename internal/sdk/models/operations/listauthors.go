@@ -14,7 +14,6 @@ type SortBy string
 const (
 	SortByTrustLevel          SortBy = "trustLevel"
 	SortByViolationCount      SortBy = "violationCount"
-	SortByReportCount         SortBy = "reportCount"
 	SortByMemberSince         SortBy = "memberSince"
 	SortByLastActive          SortBy = "lastActive"
 	SortByContentCount        SortBy = "contentCount"
@@ -35,8 +34,6 @@ func (e *SortBy) UnmarshalJSON(data []byte) error {
 		fallthrough
 	case "violationCount":
 		fallthrough
-	case "reportCount":
-		fallthrough
 	case "memberSince":
 		fallthrough
 	case "lastActive":
@@ -53,18 +50,18 @@ func (e *SortBy) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// ListAuthorsSortDirection - Sort direction
-type ListAuthorsSortDirection string
+// SortDirection - Sort direction
+type SortDirection string
 
 const (
-	ListAuthorsSortDirectionAsc  ListAuthorsSortDirection = "asc"
-	ListAuthorsSortDirectionDesc ListAuthorsSortDirection = "desc"
+	SortDirectionAsc  SortDirection = "asc"
+	SortDirectionDesc SortDirection = "desc"
 )
 
-func (e ListAuthorsSortDirection) ToPointer() *ListAuthorsSortDirection {
+func (e SortDirection) ToPointer() *SortDirection {
 	return &e
 }
-func (e *ListAuthorsSortDirection) UnmarshalJSON(data []byte) error {
+func (e *SortDirection) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -73,10 +70,10 @@ func (e *ListAuthorsSortDirection) UnmarshalJSON(data []byte) error {
 	case "asc":
 		fallthrough
 	case "desc":
-		*e = ListAuthorsSortDirection(v)
+		*e = SortDirection(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for ListAuthorsSortDirection: %v", v)
+		return fmt.Errorf("invalid value for SortDirection: %v", v)
 	}
 }
 
@@ -85,10 +82,9 @@ type ListAuthorsRequest struct {
 	PageSize *int64  `default:"20" queryParam:"style=form,explode=true,name=pageSize"`
 	SortBy   *SortBy `queryParam:"style=form,explode=true,name=sortBy"`
 	// Sort direction
-	SortDirection   *ListAuthorsSortDirection `default:"desc" queryParam:"style=form,explode=true,name=sortDirection"`
-	MemberSinceDate *string                   `queryParam:"style=form,explode=true,name=memberSinceDate"`
-	LastActiveDate  *string                   `queryParam:"style=form,explode=true,name=lastActiveDate"`
-	ContentTypes    []string                  `queryParam:"style=form,explode=true,name=contentTypes"`
+	SortDirection   *SortDirection `default:"desc" queryParam:"style=form,explode=true,name=sortDirection"`
+	MemberSinceDate *string        `queryParam:"style=form,explode=true,name=memberSinceDate"`
+	LastActiveDate  *string        `queryParam:"style=form,explode=true,name=lastActiveDate"`
 	// The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.
 	ProjectID *string `header:"style=simple,explode=false,name=Project-Id"`
 }
@@ -125,7 +121,7 @@ func (l *ListAuthorsRequest) GetSortBy() *SortBy {
 	return l.SortBy
 }
 
-func (l *ListAuthorsRequest) GetSortDirection() *ListAuthorsSortDirection {
+func (l *ListAuthorsRequest) GetSortDirection() *SortDirection {
 	if l == nil {
 		return nil
 	}
@@ -144,13 +140,6 @@ func (l *ListAuthorsRequest) GetLastActiveDate() *string {
 		return nil
 	}
 	return l.LastActiveDate
-}
-
-func (l *ListAuthorsRequest) GetContentTypes() []string {
-	if l == nil {
-		return nil
-	}
-	return l.ContentTypes
 }
 
 func (l *ListAuthorsRequest) GetProjectID() *string {

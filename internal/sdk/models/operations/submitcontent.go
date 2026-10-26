@@ -4114,7 +4114,7 @@ func (t *TrustLevel) GetManual() bool {
 	return t.Manual
 }
 
-type Author struct {
+type SubmitContentAuthor struct {
 	// Author ID in Moderation API
 	ID string `json:"id"`
 	// The author's ID from your system
@@ -4126,39 +4126,39 @@ type Author struct {
 	TrustLevel TrustLevel   `json:"trust_level"`
 }
 
-func (a *Author) GetID() string {
-	if a == nil {
+func (s *SubmitContentAuthor) GetID() string {
+	if s == nil {
 		return ""
 	}
-	return a.ID
+	return s.ID
 }
 
-func (a *Author) GetExternalID() optionalnullable.OptionalNullable[string] {
-	if a == nil {
+func (s *SubmitContentAuthor) GetExternalID() optionalnullable.OptionalNullable[string] {
+	if s == nil {
 		return nil
 	}
-	return a.ExternalID
+	return s.ExternalID
 }
 
-func (a *Author) GetBlock() *Block {
-	if a == nil {
+func (s *SubmitContentAuthor) GetBlock() *Block {
+	if s == nil {
 		return nil
 	}
-	return a.Block
+	return s.Block
 }
 
-func (a *Author) GetStatus() AuthorStatus {
-	if a == nil {
+func (s *SubmitContentAuthor) GetStatus() AuthorStatus {
+	if s == nil {
 		return AuthorStatus("")
 	}
-	return a.Status
+	return s.Status
 }
 
-func (a *Author) GetTrustLevel() TrustLevel {
-	if a == nil {
+func (s *SubmitContentAuthor) GetTrustLevel() TrustLevel {
+	if s == nil {
 		return TrustLevel{}
 	}
-	return a.TrustLevel
+	return s.TrustLevel
 }
 
 // Evaluation - The evaluation of the content after running the channel policies.
@@ -4210,21 +4210,21 @@ func (e *Evaluation) GetShadowFlagged() *bool {
 	return e.ShadowFlagged
 }
 
-// SubmitContentRecommendationAction - The action to take based on the recommendation
-type SubmitContentRecommendationAction string
+// ActionResponse - The action to take based on the recommendation
+type ActionResponse string
 
 const (
-	SubmitContentRecommendationActionReview SubmitContentRecommendationAction = "review"
-	SubmitContentRecommendationActionAllow  SubmitContentRecommendationAction = "allow"
-	SubmitContentRecommendationActionReject SubmitContentRecommendationAction = "reject"
+	ActionResponseReview ActionResponse = "review"
+	ActionResponseAllow  ActionResponse = "allow"
+	ActionResponseReject ActionResponse = "reject"
 )
 
-func (e SubmitContentRecommendationAction) ToPointer() *SubmitContentRecommendationAction {
+func (e ActionResponse) ToPointer() *ActionResponse {
 	return &e
 }
 
 // IsExact returns true if the value matches a known enum value, false otherwise.
-func (e *SubmitContentRecommendationAction) IsExact() bool {
+func (e *ActionResponse) IsExact() bool {
 	if e != nil {
 		switch *e {
 		case "review", "allow", "reject":
@@ -4409,7 +4409,7 @@ func (m *MatchedRule) GetName() string {
 // Recommendation - The recommendation for the content based on the evaluation.
 type Recommendation struct {
 	// The action to take based on the recommendation
-	Action SubmitContentRecommendationAction `json:"action"`
+	Action ActionResponse `json:"action"`
 	// Reason codes for the recommendation. Standard codes plus a `rule:<key>` code identifying the rule that produced the action. Can be used to display a reason to the user.
 	ReasonCodes []ReasonCode `json:"reason_codes"`
 	// Rules that matched during evaluation, if rules engine is active.
@@ -4427,9 +4427,9 @@ func (r *Recommendation) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (r *Recommendation) GetAction() SubmitContentRecommendationAction {
+func (r *Recommendation) GetAction() ActionResponse {
 	if r == nil {
-		return SubmitContentRecommendationAction("")
+		return ActionResponse("")
 	}
 	return r.Action
 }
@@ -4812,50 +4812,50 @@ func (e *EntityMatcherOutput) GetMatches() []Match {
 	return e.Matches
 }
 
-type SubmitContentLabel struct {
+type Label struct {
 	ID            string  `json:"id"`
 	Probability   float64 `json:"probability"`
 	Flagged       bool    `json:"flagged"`
 	ShadowFlagged *bool   `json:"shadowFlagged,omitzero"`
 }
 
-func (s SubmitContentLabel) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(s, "", false)
+func (l Label) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(l, "", false)
 }
 
-func (s *SubmitContentLabel) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &s, "", false, nil); err != nil {
+func (l *Label) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &l, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (s *SubmitContentLabel) GetID() string {
-	if s == nil {
+func (l *Label) GetID() string {
+	if l == nil {
 		return ""
 	}
-	return s.ID
+	return l.ID
 }
 
-func (s *SubmitContentLabel) GetProbability() float64 {
-	if s == nil {
+func (l *Label) GetProbability() float64 {
+	if l == nil {
 		return 0.0
 	}
-	return s.Probability
+	return l.Probability
 }
 
-func (s *SubmitContentLabel) GetFlagged() bool {
-	if s == nil {
+func (l *Label) GetFlagged() bool {
+	if l == nil {
 		return false
 	}
-	return s.Flagged
+	return l.Flagged
 }
 
-func (s *SubmitContentLabel) GetShadowFlagged() *bool {
-	if s == nil {
+func (l *Label) GetShadowFlagged() *bool {
+	if l == nil {
 		return nil
 	}
-	return s.ShadowFlagged
+	return l.ShadowFlagged
 }
 
 // ClassifierOutput - Classifier policy.
@@ -4867,8 +4867,8 @@ type ClassifierOutput struct {
 	Probability float64 `json:"probability"`
 	Flagged     bool    `json:"flagged"`
 	// The keys of the flagged fields if submitting an object.
-	FlaggedFields []string             `json:"flagged_fields,omitzero"`
-	Labels        []SubmitContentLabel `json:"labels,omitzero"`
+	FlaggedFields []string `json:"flagged_fields,omitzero"`
+	Labels        []Label  `json:"labels,omitzero"`
 	// Optional structured data produced by the policy. For face detection: { count, faces: [{ confidence, gender, age }] }.
 	Data map[string]any `json:"data,omitzero"`
 }
@@ -4916,7 +4916,7 @@ func (c *ClassifierOutput) GetFlaggedFields() []string {
 	return c.FlaggedFields
 }
 
-func (c *ClassifierOutput) GetLabels() []SubmitContentLabel {
+func (c *ClassifierOutput) GetLabels() []Label {
 	if c == nil {
 		return nil
 	}
@@ -4930,59 +4930,59 @@ func (c *ClassifierOutput) GetData() map[string]any {
 	return c.Data
 }
 
-type PolicyResponseType string
+type SubmitContentPolicyResponseType string
 
 const (
-	PolicyResponseTypeClassifier    PolicyResponseType = "classifier"
-	PolicyResponseTypeEntityMatcher PolicyResponseType = "entity_matcher"
-	PolicyResponseTypeUnknown       PolicyResponseType = "UNKNOWN"
+	SubmitContentPolicyResponseTypeClassifier    SubmitContentPolicyResponseType = "classifier"
+	SubmitContentPolicyResponseTypeEntityMatcher SubmitContentPolicyResponseType = "entity_matcher"
+	SubmitContentPolicyResponseTypeUnknown       SubmitContentPolicyResponseType = "UNKNOWN"
 )
 
-// PolicyResponse - Policy output schema.
-type PolicyResponse struct {
+// SubmitContentPolicyResponse - Policy output schema.
+type SubmitContentPolicyResponse struct {
 	ClassifierOutput    *ClassifierOutput    `queryParam:"inline" union:"member"`
 	EntityMatcherOutput *EntityMatcherOutput `queryParam:"inline" union:"member"`
 	UnknownRaw          json.RawMessage      `json:"-" union:"unknown"`
 
-	Type PolicyResponseType
+	Type SubmitContentPolicyResponseType
 }
 
-func CreatePolicyResponseClassifier(classifier ClassifierOutput) PolicyResponse {
-	typ := PolicyResponseTypeClassifier
+func CreateSubmitContentPolicyResponseClassifier(classifier ClassifierOutput) SubmitContentPolicyResponse {
+	typ := SubmitContentPolicyResponseTypeClassifier
 
-	return PolicyResponse{
+	return SubmitContentPolicyResponse{
 		ClassifierOutput: &classifier,
 		Type:             typ,
 	}
 }
 
-func CreatePolicyResponseEntityMatcher(entityMatcher EntityMatcherOutput) PolicyResponse {
-	typ := PolicyResponseTypeEntityMatcher
+func CreateSubmitContentPolicyResponseEntityMatcher(entityMatcher EntityMatcherOutput) SubmitContentPolicyResponse {
+	typ := SubmitContentPolicyResponseTypeEntityMatcher
 
-	return PolicyResponse{
+	return SubmitContentPolicyResponse{
 		EntityMatcherOutput: &entityMatcher,
 		Type:                typ,
 	}
 }
 
-func CreatePolicyResponseUnknown(raw json.RawMessage) PolicyResponse {
-	return PolicyResponse{
+func CreateSubmitContentPolicyResponseUnknown(raw json.RawMessage) SubmitContentPolicyResponse {
+	return SubmitContentPolicyResponse{
 		UnknownRaw: raw,
-		Type:       PolicyResponseTypeUnknown,
+		Type:       SubmitContentPolicyResponseTypeUnknown,
 	}
 }
 
-func (u PolicyResponse) GetUnknownRaw() json.RawMessage {
+func (u SubmitContentPolicyResponse) GetUnknownRaw() json.RawMessage {
 	return u.UnknownRaw
 }
 
-func (u PolicyResponse) IsUnknown() bool {
-	return u.Type == PolicyResponseTypeUnknown
+func (u SubmitContentPolicyResponse) IsUnknown() bool {
+	return u.Type == SubmitContentPolicyResponseTypeUnknown
 }
 
-func (u *PolicyResponse) UnmarshalJSON(data []byte) (err error) {
+func (u *SubmitContentPolicyResponse) UnmarshalJSON(data []byte) (err error) {
 	previous := *u
-	*u = PolicyResponse{}
+	*u = SubmitContentPolicyResponse{}
 	defer func() {
 		if err != nil {
 			*u = previous
@@ -5000,12 +5000,12 @@ func (u *PolicyResponse) UnmarshalJSON(data []byte) (err error) {
 			return fmt.Errorf("could not unmarshal discriminator: %w", err)
 		}
 		u.UnknownRaw = json.RawMessage(data)
-		u.Type = PolicyResponseTypeUnknown
+		u.Type = SubmitContentPolicyResponseTypeUnknown
 		return nil
 	}
 	if dis == nil {
 		u.UnknownRaw = json.RawMessage(data)
-		u.Type = PolicyResponseTypeUnknown
+		u.Type = SubmitContentPolicyResponseTypeUnknown
 		return nil
 	}
 
@@ -5013,30 +5013,30 @@ func (u *PolicyResponse) UnmarshalJSON(data []byte) (err error) {
 	case "classifier":
 		classifierOutput := new(ClassifierOutput)
 		if err := utils.UnmarshalJSON(data, &classifierOutput, "", true, nil); err != nil {
-			return fmt.Errorf("could not unmarshal `%s` into expected (Type == classifier) type ClassifierOutput within PolicyResponse: %w", string(data), err)
+			return fmt.Errorf("could not unmarshal `%s` into expected (Type == classifier) type ClassifierOutput within SubmitContentPolicyResponse: %w", string(data), err)
 		}
 
 		u.ClassifierOutput = classifierOutput
-		u.Type = PolicyResponseTypeClassifier
+		u.Type = SubmitContentPolicyResponseTypeClassifier
 		return nil
 	case "entity_matcher":
 		entityMatcherOutput := new(EntityMatcherOutput)
 		if err := utils.UnmarshalJSON(data, &entityMatcherOutput, "", true, nil); err != nil {
-			return fmt.Errorf("could not unmarshal `%s` into expected (Type == entity_matcher) type EntityMatcherOutput within PolicyResponse: %w", string(data), err)
+			return fmt.Errorf("could not unmarshal `%s` into expected (Type == entity_matcher) type EntityMatcherOutput within SubmitContentPolicyResponse: %w", string(data), err)
 		}
 
 		u.EntityMatcherOutput = entityMatcherOutput
-		u.Type = PolicyResponseTypeEntityMatcher
+		u.Type = SubmitContentPolicyResponseTypeEntityMatcher
 		return nil
 	default:
 		u.UnknownRaw = json.RawMessage(data)
-		u.Type = PolicyResponseTypeUnknown
+		u.Type = SubmitContentPolicyResponseTypeUnknown
 		return nil
 	}
 
 }
 
-func (u PolicyResponse) MarshalJSON() ([]byte, error) {
+func (u SubmitContentPolicyResponse) MarshalJSON() ([]byte, error) {
 	if u.ClassifierOutput != nil {
 		return utils.MarshalJSON(u.ClassifierOutput, "", true)
 	}
@@ -5048,7 +5048,7 @@ func (u PolicyResponse) MarshalJSON() ([]byte, error) {
 	if u.UnknownRaw != nil {
 		return json.RawMessage(u.UnknownRaw), nil
 	}
-	return nil, errors.New("could not marshal union type PolicyResponse: all fields are null")
+	return nil, errors.New("could not marshal union type SubmitContentPolicyResponse: all fields are null")
 }
 
 // CompassionInsight - Compassion insight. Identifies with or shows concern, empathy, or support for the feelings/emotions of others.
@@ -5685,7 +5685,7 @@ type SubmitContentResponseBody struct {
 	// Potentially modified content.
 	Content ContentResponse `json:"content"`
 	// The author of the content if your account has authors enabled. Requires you to send authorId when submitting content.
-	Author *Author `json:"author"`
+	Author *SubmitContentAuthor `json:"author"`
 	// The evaluation of the content after running the channel policies.
 	Evaluation Evaluation `json:"evaluation"`
 	// The recommendation for the content based on the evaluation.
@@ -5693,7 +5693,7 @@ type SubmitContentResponseBody struct {
 	// What your casebook — the record of your past moderation decisions — found for this content, or null when it had nothing close enough to say, when the matching cases disagreed, or when casebook lookups are not switched on for this channel. Reports what the casebook found; whether it decided the outcome is shown in `recommendation`, where a higher-priority rule may have settled the item first.
 	Casebook *Casebook `json:"casebook"`
 	// Results of all policies in the channel. Sorted by highest probability.
-	Policies []PolicyResponse `json:"policies"`
+	Policies []SubmitContentPolicyResponse `json:"policies"`
 	// Results of all insights enabled in the channel.
 	Insights []Insight `json:"insights"`
 	// Metadata about the moderation request
@@ -5720,7 +5720,7 @@ func (s *SubmitContentResponseBody) GetContent() ContentResponse {
 	return s.Content
 }
 
-func (s *SubmitContentResponseBody) GetAuthor() *Author {
+func (s *SubmitContentResponseBody) GetAuthor() *SubmitContentAuthor {
 	if s == nil {
 		return nil
 	}
@@ -5748,9 +5748,9 @@ func (s *SubmitContentResponseBody) GetCasebook() *Casebook {
 	return s.Casebook
 }
 
-func (s *SubmitContentResponseBody) GetPolicies() []PolicyResponse {
+func (s *SubmitContentResponseBody) GetPolicies() []SubmitContentPolicyResponse {
 	if s == nil {
-		return []PolicyResponse{}
+		return []SubmitContentPolicyResponse{}
 	}
 	return s.Policies
 }

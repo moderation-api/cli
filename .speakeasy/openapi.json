@@ -36,6 +36,10 @@
       "description": "Endpoints that receive events, and the events they receive."
     },
     {
+      "name": "Analytics",
+      "description": "Moderation numbers for a project, as on the dashboard overview."
+    },
+    {
       "name": "Account",
       "description": "The account that owns the API key."
     },
@@ -50,17 +54,1394 @@
     {
       "name": "Voice",
       "description": "Real-time voice moderation over WebSocket."
+    },
+    {
+      "name": "Feedback",
+      "description": "Send feature requests and product feedback to the Moderation API team."
     }
   ],
   "externalDocs": {
     "url": "https://docs.moderationapi.com"
   },
   "paths": {
+    "/analytics/summary": {
+      "get": {
+        "operationId": "getAnalyticsSummary",
+        "summary": "Get the analytics summary",
+        "description": "Get the totals of the project for a time window: requests, flags, flag rate, allowed, rejected and sent to review, with the window before for the trend. Also the review queue backlog and a flag-rate spike, if there is one.",
+        "tags": [
+          "Analytics"
+        ],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "range",
+            "schema": {
+              "default": "30d",
+              "description": "The time window. `24h` is the last 24 hours, in hourly buckets. `7d`, `30d` and `90d` are whole UTC days that end with today, in daily buckets.",
+              "type": "string",
+              "enum": [
+                "24h",
+                "7d",
+                "30d",
+                "90d"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "channel",
+            "schema": {
+              "type": "string",
+              "description": "A channel ID or key. Only count content from this channel. Leave out to count all channels."
+            }
+          },
+          {
+            "in": "header",
+            "name": "Project-Id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
+            "x-speakeasy-name-override": "projectId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "range": {
+                      "type": "string",
+                      "enum": [
+                        "24h",
+                        "7d",
+                        "30d",
+                        "90d"
+                      ],
+                      "description": "The time window of the numbers."
+                    },
+                    "channelId": {
+                      "description": "The channel the numbers are for. Null when they are for all channels.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "totals": {
+                      "type": "object",
+                      "properties": {
+                        "requests": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "description": "Requests received. Every request counts, also repeats and edits of the same content."
+                        },
+                        "flagged": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "description": "Requests that were flagged."
+                        },
+                        "flagRate": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1,
+                          "description": "The share of requests that were flagged: flagged / requests. 0 when there were no requests."
+                        },
+                        "allowed": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "description": "Requests with the recommendation \"allow\". Includes content that was not flagged."
+                        },
+                        "rejected": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "description": "Requests with the recommendation \"reject\". All of them were flagged."
+                        },
+                        "sentToReview": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "description": "Requests with the recommendation \"review\". This counts requests, not the deduplicated items in the review queue."
+                        },
+                        "handledAutomatically": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "description": "Flagged requests that were settled without human review: rejected plus flaggedButAllowed."
+                        },
+                        "flaggedButAllowed": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "description": "Flagged requests that were allowed without human review."
+                        },
+                        "distinctAuthors": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "description": "Distinct authors that sent content in the window. Approximate."
+                        }
+                      },
+                      "required": [
+                        "requests",
+                        "flagged",
+                        "flagRate",
+                        "allowed",
+                        "rejected",
+                        "sentToReview",
+                        "handledAutomatically",
+                        "flaggedButAllowed",
+                        "distinctAuthors"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Request counts for the window. A flagged request has one recommendation: allow, reject or review."
+                    },
+                    "previousPeriod": {
+                      "type": "object",
+                      "properties": {
+                        "requests": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "description": "Requests received. Every request counts, also repeats and edits of the same content."
+                        },
+                        "flagged": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "description": "Requests that were flagged."
+                        },
+                        "flagRate": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1,
+                          "description": "The share of requests that were flagged: flagged / requests. 0 when there were no requests."
+                        },
+                        "allowed": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "description": "Requests with the recommendation \"allow\". Includes content that was not flagged."
+                        },
+                        "rejected": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "description": "Requests with the recommendation \"reject\". All of them were flagged."
+                        },
+                        "sentToReview": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "description": "Requests with the recommendation \"review\". This counts requests, not the deduplicated items in the review queue."
+                        },
+                        "handledAutomatically": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "description": "Flagged requests that were settled without human review: rejected plus flaggedButAllowed."
+                        },
+                        "flaggedButAllowed": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "description": "Flagged requests that were allowed without human review."
+                        }
+                      },
+                      "required": [
+                        "requests",
+                        "flagged",
+                        "flagRate",
+                        "allowed",
+                        "rejected",
+                        "sentToReview",
+                        "handledAutomatically",
+                        "flaggedButAllowed"
+                      ],
+                      "additionalProperties": false,
+                      "description": "The same counts for the window of equal length just before this one. Compare with `totals` to see the trend."
+                    },
+                    "pendingReview": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Items in the default review queue that nobody has reviewed yet, counted as the queue counts them (repeats count once). The queue looks back 30 days, so older items are not included. The range does not change it."
+                    },
+                    "flagRateSpike": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "multiple": {
+                              "type": "number",
+                              "description": "How many times higher the recent flag rate is than the baseline, for example 2.4."
+                            },
+                            "recentFlagRate": {
+                              "type": "number",
+                              "minimum": 0,
+                              "maximum": 1,
+                              "description": "The flag rate in the last 2 days."
+                            },
+                            "baselineFlagRate": {
+                              "type": "number",
+                              "minimum": 0,
+                              "maximum": 1,
+                              "description": "The flag rate in the 30 days before that."
+                            },
+                            "recentFlagged": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "description": "Flagged requests in the last 2 days."
+                            },
+                            "recentRequests": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "description": "Requests in the last 2 days."
+                            }
+                          },
+                          "required": [
+                            "multiple",
+                            "recentFlagRate",
+                            "baselineFlagRate",
+                            "recentFlagged",
+                            "recentRequests"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "description": "Set when the flag rate of the last 2 days is at least 2 times the rate of the 30 days before, with at least 50 flagged requests. Null when there is no spike. Always for the full project: the range and channel do not change it."
+                    }
+                  },
+                  "required": [
+                    "range",
+                    "channelId",
+                    "totals",
+                    "previousPeriod",
+                    "pendingReview",
+                    "flagRateSpike"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDeniedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests. Retry after the number of seconds in the `Retry-After` header.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        },
+        "x-speakeasy-group": "analytics",
+        "x-speakeasy-name-override": "summary",
+        "x-speakeasy-mcp": {
+          "title": "Get the analytics summary",
+          "scopes": [
+            "read"
+          ],
+          "readOnlyHint": true,
+          "destructiveHint": false
+        }
+      }
+    },
+    "/analytics/policies": {
+      "get": {
+        "operationId": "getAnalyticsPolicies",
+        "summary": "Get the most flagged policies",
+        "description": "Get the policy labels that flagged the most content in a time window, largest first, with the count in the window before.",
+        "tags": [
+          "Analytics"
+        ],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "range",
+            "schema": {
+              "default": "30d",
+              "description": "The time window. `24h` is the last 24 hours, in hourly buckets. `7d`, `30d` and `90d` are whole UTC days that end with today, in daily buckets.",
+              "type": "string",
+              "enum": [
+                "24h",
+                "7d",
+                "30d",
+                "90d"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "channel",
+            "schema": {
+              "type": "string",
+              "description": "A channel ID or key. Only count content from this channel. Leave out to count all channels."
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 8,
+              "description": "How many entries to return, largest first. 1 to 50.",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          },
+          {
+            "in": "header",
+            "name": "Project-Id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
+            "x-speakeasy-name-override": "projectId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "range": {
+                      "type": "string",
+                      "enum": [
+                        "24h",
+                        "7d",
+                        "30d",
+                        "90d"
+                      ],
+                      "description": "The time window of the numbers."
+                    },
+                    "channelId": {
+                      "description": "The channel the numbers are for. Null when they are for all channels.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "policies": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "label": {
+                            "type": "string",
+                            "description": "The policy label, for example `toxicity`."
+                          },
+                          "flagged": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "description": "Flagged requests with this label in the window. Repeats count each time."
+                          },
+                          "previousFlagged": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "description": "Flagged requests with this label in the window of equal length before."
+                          }
+                        },
+                        "required": [
+                          "label",
+                          "flagged",
+                          "previousFlagged"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The policy labels with the most flagged requests, largest first."
+                    }
+                  },
+                  "required": [
+                    "range",
+                    "channelId",
+                    "policies"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDeniedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests. Retry after the number of seconds in the `Retry-After` header.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        },
+        "x-speakeasy-group": "analytics",
+        "x-speakeasy-name-override": "policies",
+        "x-speakeasy-mcp": {
+          "title": "Get the most flagged policies",
+          "scopes": [
+            "read"
+          ],
+          "readOnlyHint": true,
+          "destructiveHint": false
+        }
+      }
+    },
+    "/analytics/authors": {
+      "get": {
+        "operationId": "getAnalyticsAuthors",
+        "summary": "Get the most flagged authors",
+        "description": "Get the authors with the most flagged content in a time window, largest first.",
+        "tags": [
+          "Analytics"
+        ],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "range",
+            "schema": {
+              "default": "30d",
+              "description": "The time window. `24h` is the last 24 hours, in hourly buckets. `7d`, `30d` and `90d` are whole UTC days that end with today, in daily buckets.",
+              "type": "string",
+              "enum": [
+                "24h",
+                "7d",
+                "30d",
+                "90d"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "channel",
+            "schema": {
+              "type": "string",
+              "description": "A channel ID or key. Only count content from this channel. Leave out to count all channels."
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 6,
+              "description": "How many entries to return, largest first. 1 to 50.",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          },
+          {
+            "in": "header",
+            "name": "Project-Id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
+            "x-speakeasy-name-override": "projectId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "range": {
+                      "type": "string",
+                      "enum": [
+                        "24h",
+                        "7d",
+                        "30d",
+                        "90d"
+                      ],
+                      "description": "The time window of the numbers."
+                    },
+                    "channelId": {
+                      "description": "The channel the numbers are for. Null when they are for all channels.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "authors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "authorId": {
+                            "type": "string",
+                            "description": "The author ID from your system. Use it with the authors endpoints."
+                          },
+                          "name": {
+                            "description": "The author name, if known.",
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "flagged": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "description": "Flagged requests from this author in the window."
+                          }
+                        },
+                        "required": [
+                          "authorId",
+                          "name",
+                          "flagged"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The authors with the most flagged requests, largest first. Requests without an author are not included."
+                    }
+                  },
+                  "required": [
+                    "range",
+                    "channelId",
+                    "authors"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDeniedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests. Retry after the number of seconds in the `Retry-After` header.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        },
+        "x-speakeasy-group": "analytics",
+        "x-speakeasy-name-override": "authors",
+        "x-speakeasy-mcp": {
+          "title": "Get the most flagged authors",
+          "scopes": [
+            "read"
+          ],
+          "readOnlyHint": true,
+          "destructiveHint": false
+        }
+      }
+    },
+    "/analytics/channels": {
+      "get": {
+        "operationId": "getAnalyticsChannels",
+        "summary": "Get analytics per channel",
+        "description": "Get requests, flags and flag rate for each channel of the project in a time window.",
+        "tags": [
+          "Analytics"
+        ],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "range",
+            "schema": {
+              "default": "30d",
+              "description": "The time window. `24h` is the last 24 hours, in hourly buckets. `7d`, `30d` and `90d` are whole UTC days that end with today, in daily buckets.",
+              "type": "string",
+              "enum": [
+                "24h",
+                "7d",
+                "30d",
+                "90d"
+              ]
+            }
+          },
+          {
+            "in": "header",
+            "name": "Project-Id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
+            "x-speakeasy-name-override": "projectId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "range": {
+                      "type": "string",
+                      "enum": [
+                        "24h",
+                        "7d",
+                        "30d",
+                        "90d"
+                      ],
+                      "description": "The time window of the numbers."
+                    },
+                    "channels": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "The channel ID."
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "The channel name."
+                          },
+                          "requests": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "description": "Requests received in this channel."
+                          },
+                          "flagged": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "description": "Requests flagged in this channel."
+                          },
+                          "flagRate": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1,
+                            "description": "The share of requests in this channel that were flagged: flagged / requests."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "requests",
+                          "flagged",
+                          "flagRate"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "Requests and flags per channel. Channels with no requests in the window are not included."
+                    }
+                  },
+                  "required": [
+                    "range",
+                    "channels"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDeniedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests. Retry after the number of seconds in the `Retry-After` header.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        },
+        "x-speakeasy-group": "analytics",
+        "x-speakeasy-name-override": "channels",
+        "x-speakeasy-mcp": {
+          "title": "Get analytics per channel",
+          "scopes": [
+            "read"
+          ],
+          "readOnlyHint": true,
+          "destructiveHint": false
+        }
+      }
+    },
+    "/analytics/volumes": {
+      "get": {
+        "operationId": "getAnalyticsVolumes",
+        "summary": "Get volumes over time",
+        "description": "Get requests, flags, rejections and reviews per hour (24h) or per day (7d, 30d, 90d), oldest first.",
+        "tags": [
+          "Analytics"
+        ],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "range",
+            "schema": {
+              "default": "30d",
+              "description": "The time window. `24h` is the last 24 hours, in hourly buckets. `7d`, `30d` and `90d` are whole UTC days that end with today, in daily buckets.",
+              "type": "string",
+              "enum": [
+                "24h",
+                "7d",
+                "30d",
+                "90d"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "channel",
+            "schema": {
+              "type": "string",
+              "description": "A channel ID or key. Only count content from this channel. Leave out to count all channels."
+            }
+          },
+          {
+            "in": "header",
+            "name": "Project-Id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
+            "x-speakeasy-name-override": "projectId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "range": {
+                      "type": "string",
+                      "enum": [
+                        "24h",
+                        "7d",
+                        "30d",
+                        "90d"
+                      ],
+                      "description": "The time window of the numbers."
+                    },
+                    "channelId": {
+                      "description": "The channel the numbers are for. Null when they are for all channels.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "bucket": {
+                      "type": "string",
+                      "enum": [
+                        "hour",
+                        "day"
+                      ],
+                      "description": "The size of each entry in `volumes`."
+                    },
+                    "volumes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "start": {
+                            "type": "string",
+                            "description": "Start of the bucket, as an ISO 8601 timestamp in UTC."
+                          },
+                          "requests": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "description": "Requests received in the bucket."
+                          },
+                          "flagged": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "description": "Requests flagged in the bucket."
+                          },
+                          "rejected": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "description": "Requests with the recommendation \"reject\" in the bucket."
+                          },
+                          "sentToReview": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "description": "Requests with the recommendation \"review\" in the bucket."
+                          }
+                        },
+                        "required": [
+                          "start",
+                          "requests",
+                          "flagged",
+                          "rejected",
+                          "sentToReview"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "Counts over time, oldest first. Buckets with no requests are included with zeros."
+                    }
+                  },
+                  "required": [
+                    "range",
+                    "channelId",
+                    "bucket",
+                    "volumes"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDeniedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests. Retry after the number of seconds in the `Retry-After` header.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        },
+        "x-speakeasy-group": "analytics",
+        "x-speakeasy-name-override": "volumes",
+        "x-speakeasy-mcp": {
+          "title": "Get volumes over time",
+          "scopes": [
+            "read"
+          ],
+          "readOnlyHint": true,
+          "destructiveHint": false
+        }
+      }
+    },
+    "/analytics/automation": {
+      "get": {
+        "operationId": "getAnalyticsAutomation",
+        "summary": "Get the automation breakdown",
+        "description": "Get how flagged content was handled in a time window: settled by rules or the casebook, or sent to human review, and what the reviewers decided.",
+        "tags": [
+          "Analytics"
+        ],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "range",
+            "schema": {
+              "default": "30d",
+              "description": "The time window. `24h` is the last 24 hours, in hourly buckets. `7d`, `30d` and `90d` are whole UTC days that end with today, in daily buckets.",
+              "type": "string",
+              "enum": [
+                "24h",
+                "7d",
+                "30d",
+                "90d"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "channel",
+            "schema": {
+              "type": "string",
+              "description": "A channel ID or key. Only count content from this channel. Leave out to count all channels."
+            }
+          },
+          {
+            "in": "header",
+            "name": "Project-Id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
+            "x-speakeasy-name-override": "projectId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "range": {
+                      "type": "string",
+                      "enum": [
+                        "24h",
+                        "7d",
+                        "30d",
+                        "90d"
+                      ],
+                      "description": "The time window of the numbers."
+                    },
+                    "channelId": {
+                      "description": "The channel the numbers are for. Null when they are for all channels.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "flagged": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Flagged requests in the window. Counted on a rolling window from the raw requests, so it can be a little different from the summary."
+                    },
+                    "handledByRules": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Flagged requests that a rule allowed or rejected without human review."
+                    },
+                    "handledByCasebook": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Flagged requests that the casebook settled without human review."
+                    },
+                    "sentToReview": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Distinct content items sent to the review queue. Repeats of the same content count once, as in the queue."
+                    },
+                    "mergedDuplicates": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Flagged requests that the review queue merged into an item it already shows: repeats, edits and content that was settled later."
+                    },
+                    "automationRate": {
+                      "anyOf": [
+                        {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1,
+                          "description": "The share of flagged requests that did not need their own human review: (flagged - sentToReview) / flagged."
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "reviewsAllowed": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Review queue items from this window that a moderator allowed."
+                    },
+                    "reviewsRejected": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Review queue items from this window that a moderator rejected."
+                    },
+                    "reviewsResolvedWithoutDecision": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Review queue items from this window that a moderator marked as done without allow or reject."
+                    },
+                    "reviewsUnresolved": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Review queue items from this window that are still open."
+                    },
+                    "casebookOverrulings": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Requests where the casebook decision was different from the decision based on severity."
+                    },
+                    "rules": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string",
+                            "description": "The rule name. \"Other rules\" holds all rules after the largest ones."
+                          },
+                          "count": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "description": "Flagged requests that this rule settled."
+                          }
+                        },
+                        "required": [
+                          "name",
+                          "count"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "The rules that settled flagged requests without review, largest first. The 5 largest have their own entry. The casebook is one of the rules."
+                    }
+                  },
+                  "required": [
+                    "range",
+                    "channelId",
+                    "flagged",
+                    "handledByRules",
+                    "handledByCasebook",
+                    "sentToReview",
+                    "mergedDuplicates",
+                    "automationRate",
+                    "reviewsAllowed",
+                    "reviewsRejected",
+                    "reviewsResolvedWithoutDecision",
+                    "reviewsUnresolved",
+                    "casebookOverrulings",
+                    "rules"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDeniedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests. Retry after the number of seconds in the `Retry-After` header.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        },
+        "x-speakeasy-group": "analytics",
+        "x-speakeasy-name-override": "automation",
+        "x-speakeasy-mcp": {
+          "title": "Get the automation breakdown",
+          "scopes": [
+            "read"
+          ],
+          "readOnlyHint": true,
+          "destructiveHint": false
+        }
+      }
+    },
     "/authors": {
       "get": {
         "operationId": "listAuthors",
         "summary": "List authors",
-        "description": "List authors with their activity metrics and reputation. The list is paginated.",
+        "description": "List the authors of the project, with their status, trust level and content metrics. The list is paginated. By default, the authors that were active most recently come first.",
         "tags": [
           "Authors"
         ],
@@ -100,7 +1481,6 @@
               "enum": [
                 "trustLevel",
                 "violationCount",
-                "reportCount",
                 "memberSince",
                 "lastActive",
                 "contentCount",
@@ -134,16 +1514,6 @@
             "name": "lastActiveDate",
             "schema": {
               "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "contentTypes",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
             }
           },
           {
@@ -861,10 +2231,10 @@
         "x-speakeasy-mcp": {
           "title": "Update author details",
           "scopes": [
-            "write"
+            "destructive"
           ],
           "readOnlyHint": false,
-          "destructiveHint": false
+          "destructiveHint": true
         }
       },
       "delete": {
@@ -994,11 +2364,328 @@
         }
       }
     },
+    "/feedback": {
+      "post": {
+        "operationId": "createFeedback",
+        "summary": "Send feedback",
+        "description": "Sends a feature request, bug report or other feedback to the Moderation API team. The team reads every request and can reply by email. Limited to 5 requests per minute per organization.",
+        "tags": [
+          "Feedback"
+        ],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Project-Id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
+            "x-speakeasy-name-override": "projectId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 120,
+                    "description": "A short summary of the request."
+                  },
+                  "description": {
+                    "type": "string",
+                    "minLength": 10,
+                    "maxLength": 5000,
+                    "description": "What you tried to do, why, and what is missing or does not work. Plain text. Blank lines start new paragraphs."
+                  },
+                  "type": {
+                    "default": "feature_request",
+                    "description": "The kind of feedback.",
+                    "type": "string",
+                    "enum": [
+                      "feature_request",
+                      "bug",
+                      "other"
+                    ]
+                  },
+                  "source": {
+                    "default": "api",
+                    "description": "Where the feedback was written: MCP server, agent skill, CLI or API.",
+                    "type": "string",
+                    "enum": [
+                      "mcp",
+                      "skill",
+                      "cli",
+                      "api"
+                    ]
+                  }
+                },
+                "required": [
+                  "title",
+                  "description"
+                ]
+              },
+              "example": {
+                "title": "Filter queue items by author trust level",
+                "description": "We review queue items by hand. We want to see items from new authors first, so we need a filter for trust level on the queue items list.",
+                "type": "feature_request",
+                "source": "mcp"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Feedback received",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "ID of the feedback."
+                    },
+                    "status": {
+                      "type": "string",
+                      "const": "received",
+                      "description": "The team received the feedback."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "status"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests. Retry after the number of seconds in the `Retry-After` header.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitError"
+                }
+              }
+            }
+          }
+        },
+        "x-speakeasy-group": "feedback",
+        "x-speakeasy-name-override": "create",
+        "x-speakeasy-mcp": {
+          "title": "Send feedback",
+          "scopes": [
+            "write"
+          ],
+          "readOnlyHint": false,
+          "destructiveHint": false
+        }
+      }
+    },
+    "/queue": {
+      "get": {
+        "operationId": "listQueues",
+        "summary": "List queues",
+        "description": "List the review queues of the project. The default queue comes first. The list is paginated. To get the item counts of a queue, use `GET /queue/{id}`.",
+        "tags": [
+          "Review queues"
+        ],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "default": 1,
+              "description": "Page number, starting at 1.",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100000
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "schema": {
+              "default": 20,
+              "description": "Number of items per page. Maximum 100.",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "in": "header",
+            "name": "Project-Id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
+            "x-speakeasy-name-override": "projectId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Queue"
+                      },
+                      "description": "The items on this page."
+                    },
+                    "pagination": {
+                      "$ref": "#/components/schemas/Pagination"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "pagination"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDeniedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests. Retry after the number of seconds in the `Retry-After` header.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        },
+        "x-speakeasy-group": "queue",
+        "x-speakeasy-name-override": "list",
+        "x-speakeasy-mcp": {
+          "title": "List queues",
+          "scopes": [
+            "read"
+          ],
+          "readOnlyHint": true,
+          "destructiveHint": false
+        },
+        "x-speakeasy-pagination": {
+          "type": "offsetLimit",
+          "inputs": [
+            {
+              "name": "page",
+              "in": "parameters",
+              "type": "page"
+            },
+            {
+              "name": "pageSize",
+              "in": "parameters",
+              "type": "limit"
+            }
+          ],
+          "outputs": {
+            "results": "$.data",
+            "numPages": "$.pagination.totalPages"
+          }
+        }
+      }
+    },
     "/queue/{id}": {
       "get": {
         "operationId": "getQueue",
         "summary": "Get a queue",
-        "description": "Get a queue",
+        "description": "Get a review queue with its item counts. The counts use the filters and the date window of the queue, the same as the dashboard.",
         "tags": [
           "Review queues"
         ],
@@ -1013,10 +2700,10 @@
             "name": "id",
             "schema": {
               "type": "string",
-              "description": "The queue ID"
+              "description": "The queue ID."
             },
             "required": true,
-            "description": "The queue ID"
+            "description": "The queue ID."
           },
           {
             "in": "header",
@@ -1038,283 +2725,7 @@
                   "type": "object",
                   "properties": {
                     "queue": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "string"
-                        },
-                        "name": {
-                          "type": "string"
-                        },
-                        "description": {
-                          "type": "string"
-                        },
-                        "filter": {
-                          "type": "object",
-                          "properties": {
-                            "isFlagged": {
-                              "type": "string",
-                              "enum": [
-                                "ALL",
-                                "FLAGGED",
-                                "NOT_FLAGGED",
-                                "SHADOW_FLAGGED"
-                              ]
-                            },
-                            "casebookAnswer": {
-                              "type": "string",
-                              "enum": [
-                                "ALL",
-                                "ALLOWED",
-                                "REJECTED",
-                                "NO_ANSWER"
-                              ]
-                            },
-                            "casebookAgreement": {
-                              "type": "string",
-                              "enum": [
-                                "ALL",
-                                "OVERRULED",
-                                "AGREED"
-                              ]
-                            },
-                            "labels": {
-                              "type": "array",
-                              "items": {
-                                "type": "string"
-                              }
-                            },
-                            "filterLabels": {
-                              "type": "array",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "label": {
-                                    "type": "string"
-                                  },
-                                  "type": {
-                                    "type": "string",
-                                    "enum": [
-                                      "FLAGGED",
-                                      "NOT_FLAGGED",
-                                      "THRESHOLDS",
-                                      "MATCHED"
-                                    ]
-                                  },
-                                  "minThreshold": {
-                                    "anyOf": [
-                                      {
-                                        "type": "number",
-                                        "minimum": 0,
-                                        "maximum": 100
-                                      },
-                                      {
-                                        "type": "null"
-                                      }
-                                    ]
-                                  },
-                                  "maxThreshold": {
-                                    "anyOf": [
-                                      {
-                                        "type": "number",
-                                        "minimum": 0,
-                                        "maximum": 100
-                                      },
-                                      {
-                                        "type": "null"
-                                      }
-                                    ]
-                                  }
-                                },
-                                "required": [
-                                  "label",
-                                  "type"
-                                ],
-                                "additionalProperties": false
-                              }
-                            },
-                            "metadataFilters": {
-                              "type": "array",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "key": {
-                                    "type": "string",
-                                    "minLength": 1,
-                                    "maxLength": 128
-                                  },
-                                  "value": {
-                                    "type": "string",
-                                    "maxLength": 512
-                                  }
-                                },
-                                "required": [
-                                  "key",
-                                  "value"
-                                ],
-                                "additionalProperties": false
-                              }
-                            },
-                            "filteredChannelIds": {
-                              "type": "array",
-                              "items": {
-                                "type": "string"
-                              }
-                            },
-                            "filteredActionIds": {
-                              "type": "array",
-                              "items": {
-                                "type": "string"
-                              }
-                            },
-                            "languages": {
-                              "type": "array",
-                              "items": {
-                                "type": "string"
-                              }
-                            },
-                            "contentTypes": {
-                              "type": "array",
-                              "items": {
-                                "type": "string",
-                                "enum": [
-                                  "profile",
-                                  "message",
-                                  "post",
-                                  "comment",
-                                  "event",
-                                  "product",
-                                  "review",
-                                  "voice",
-                                  "other"
-                                ]
-                              }
-                            },
-                            "mediaTypes": {
-                              "type": "array",
-                              "items": {
-                                "type": "string",
-                                "enum": [
-                                  "text",
-                                  "image",
-                                  "video",
-                                  "object",
-                                  "audio"
-                                ]
-                              }
-                            },
-                            "authorTrustLevels": {
-                              "type": "array",
-                              "items": {
-                                "type": "integer",
-                                "minimum": -1,
-                                "maximum": 4
-                              }
-                            },
-                            "recommendationActions": {
-                              "type": "array",
-                              "items": {
-                                "type": "string",
-                                "enum": [
-                                  "review",
-                                  "allow",
-                                  "reject"
-                                ]
-                              }
-                            },
-                            "minSeverity": {
-                              "type": "integer",
-                              "minimum": 0,
-                              "maximum": 100
-                            },
-                            "maxSeverity": {
-                              "type": "integer",
-                              "minimum": 0,
-                              "maximum": 100
-                            },
-                            "afterDate": {
-                              "type": "string"
-                            },
-                            "beforeDate": {
-                              "type": "string"
-                            },
-                            "within": {
-                              "type": "number",
-                              "exclusiveMinimum": 0
-                            },
-                            "withinUnit": {
-                              "type": "string",
-                              "enum": [
-                                "MINUTES",
-                                "HOURS",
-                                "DAYS",
-                                "WEEKS",
-                                "MONTHS",
-                                "YEARS"
-                              ]
-                            },
-                            "clearDateWindow": {
-                              "type": "boolean"
-                            },
-                            "checkStatus": {
-                              "anyOf": [
-                                {
-                                  "type": "string",
-                                  "enum": [
-                                    "all",
-                                    "checked",
-                                    "unchecked"
-                                  ]
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            },
-                            "authorID": {
-                              "type": "string"
-                            },
-                            "contentID": {
-                              "type": "string"
-                            },
-                            "conversationIds": {
-                              "type": "array",
-                              "items": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
-                              }
-                            },
-                            "search": {
-                              "type": "array",
-                              "items": {
-                                "type": "string"
-                              }
-                            }
-                          },
-                          "additionalProperties": false
-                        },
-                        "unresolvedItemsCount": {
-                          "type": "number"
-                        },
-                        "resolvedItemsCount": {
-                          "type": "number"
-                        },
-                        "totalItemsCount": {
-                          "type": "number"
-                        }
-                      },
-                      "required": [
-                        "id",
-                        "name",
-                        "description",
-                        "filter",
-                        "unresolvedItemsCount",
-                        "resolvedItemsCount",
-                        "totalItemsCount"
-                      ],
-                      "additionalProperties": false
+                      "$ref": "#/components/schemas/QueueWithCounts"
                     }
                   },
                   "required": [
@@ -1402,7 +2813,7 @@
       "get": {
         "operationId": "getQueueStats",
         "summary": "Get queue statistics",
-        "description": "Get detailed statistics about a moderation queue including review times, action counts, and trends",
+        "description": "Get review statistics of a queue for a period: resolved and pending items, the top reviewers and the resolved items per day.",
         "tags": [
           "Review queues"
         ],
@@ -1417,17 +2828,17 @@
             "name": "id",
             "schema": {
               "type": "string",
-              "description": "The queue ID"
+              "description": "The queue ID."
             },
             "required": true,
-            "description": "The queue ID"
+            "description": "The queue ID."
           },
           {
             "in": "query",
             "name": "withinDays",
             "schema": {
               "default": 30,
-              "description": "Number of days to analyze statistics for",
+              "description": "Length of the period in days, up to now.",
               "type": "integer",
               "minimum": 1,
               "maximum": 365
@@ -1455,56 +2866,20 @@
                     "reviewStats": {
                       "type": "object",
                       "properties": {
-                        "averageTimeToReview": {
-                          "type": "number",
-                          "description": "Average time in milliseconds to review an item"
-                        },
                         "totalReviewed": {
-                          "type": "number",
-                          "description": "Total number of items reviewed"
+                          "type": "integer",
+                          "description": "Number of items resolved in this queue in the period."
                         },
                         "totalPending": {
-                          "type": "number",
-                          "description": "Total number of items pending review"
+                          "type": "integer",
+                          "description": "Number of items submitted in the period that wait for review now."
                         }
                       },
                       "required": [
-                        "averageTimeToReview",
                         "totalReviewed",
                         "totalPending"
                       ],
                       "additionalProperties": false
-                    },
-                    "actionStats": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "actionId": {
-                            "type": "string",
-                            "description": "ID of the moderation action"
-                          },
-                          "actionName": {
-                            "type": "string",
-                            "description": "Name of the moderation action"
-                          },
-                          "count": {
-                            "type": "number",
-                            "description": "Number of times this action was taken"
-                          },
-                          "percentageOfTotal": {
-                            "type": "number",
-                            "description": "Percentage this action represents of all actions"
-                          }
-                        },
-                        "required": [
-                          "actionId",
-                          "actionName",
-                          "count",
-                          "percentageOfTotal"
-                        ],
-                        "additionalProperties": false
-                      }
                     },
                     "topReviewers": {
                       "type": "array",
@@ -1512,63 +2887,32 @@
                         "type": "object",
                         "properties": {
                           "userId": {
-                            "type": "string",
-                            "description": "ID of the reviewer"
+                            "description": "The user ID of the reviewer. `null` for items resolved with an API key.",
+                            "type": [
+                              "string",
+                              "null"
+                            ]
                           },
                           "name": {
-                            "type": "string",
-                            "description": "Name of the reviewer"
+                            "description": "The name of the reviewer.",
+                            "type": [
+                              "string",
+                              "null"
+                            ]
                           },
                           "reviewCount": {
-                            "type": "number",
-                            "description": "Number of items reviewed"
-                          },
-                          "averageTimePerReview": {
-                            "type": "number",
-                            "description": "Average review time in milliseconds"
-                          },
-                          "accuracyScore": {
-                            "description": "Optional accuracy score based on review quality metrics",
-                            "type": "number"
-                          },
-                          "topActions": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "actionId": {
-                                  "type": "string",
-                                  "description": "Most used action by this reviewer"
-                                },
-                                "actionName": {
-                                  "type": "string",
-                                  "description": "Name of the most used action"
-                                },
-                                "count": {
-                                  "type": "number",
-                                  "description": "Number of times this action was used"
-                                }
-                              },
-                              "required": [
-                                "actionId",
-                                "actionName",
-                                "count"
-                              ],
-                              "additionalProperties": false
-                            },
-                            "description": "Most common actions taken by this reviewer"
+                            "type": "integer",
+                            "description": "Number of items the reviewer resolved in the period."
                           }
                         },
                         "required": [
                           "userId",
                           "name",
-                          "reviewCount",
-                          "averageTimePerReview",
-                          "topActions"
+                          "reviewCount"
                         ],
                         "additionalProperties": false
                       },
-                      "description": "List of top reviewers and their statistics"
+                      "description": "Reviewers with the most resolved items, most first. Up to 10."
                     },
                     "trends": {
                       "type": "object",
@@ -1580,11 +2924,11 @@
                             "properties": {
                               "date": {
                                 "type": "string",
-                                "description": "Date in YYYY-MM-DD format"
+                                "description": "Date in YYYY-MM-DD format (UTC)."
                               },
                               "count": {
-                                "type": "number",
-                                "description": "Number of reviews on this date"
+                                "type": "integer",
+                                "description": "Number of items resolved."
                               }
                             },
                             "required": [
@@ -1592,40 +2936,18 @@
                               "count"
                             ],
                             "additionalProperties": false
-                          }
-                        },
-                        "flaggedContentTrends": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "label": {
-                                "type": "string",
-                                "description": "Content flag/label"
-                              },
-                              "trend": {
-                                "type": "number",
-                                "description": "Trend indicator (-1 to 1) showing if this type of flagged content is increasing or decreasing"
-                              }
-                            },
-                            "required": [
-                              "label",
-                              "trend"
-                            ],
-                            "additionalProperties": false
-                          }
+                          },
+                          "description": "Resolved items per day. Days with no reviews are left out."
                         }
                       },
                       "required": [
-                        "dailyReviewCounts",
-                        "flaggedContentTrends"
+                        "dailyReviewCounts"
                       ],
                       "additionalProperties": false
                     }
                   },
                   "required": [
                     "reviewStats",
-                    "actionStats",
                     "topReviewers",
                     "trends"
                   ],
@@ -1710,8 +3032,8 @@
     "/queue/{id}/items": {
       "get": {
         "operationId": "listQueueItems",
-        "summary": "Get queue items",
-        "description": "Get paginated list of items in a moderation queue with filtering options",
+        "summary": "List queue items",
+        "description": "List the items of a review queue, with the filters and the date window of the queue applied. By default only pending items. The list is paginated. Use the item `id` to resolve or unresolve an item.",
         "tags": [
           "Review queues"
         ],
@@ -1726,10 +3048,10 @@
             "name": "id",
             "schema": {
               "type": "string",
-              "description": "The queue ID"
+              "description": "The queue ID."
             },
             "required": true,
-            "description": "The queue ID"
+            "description": "The queue ID."
           },
           {
             "in": "query",
@@ -1755,27 +3077,22 @@
           },
           {
             "in": "query",
-            "name": "sortField",
+            "name": "sort",
             "schema": {
               "type": "string",
               "enum": [
-                "createdAt",
-                "severity",
-                "reviewedAt"
+                "FIFO",
+                "LIFO",
+                "RANDOM",
+                "SEVERITY_DESC"
               ]
             }
           },
           {
             "in": "query",
-            "name": "sortDirection",
+            "name": "includeResolved",
             "schema": {
-              "default": "desc",
-              "description": "Sort direction",
-              "type": "string",
-              "enum": [
-                "asc",
-                "desc"
-              ]
+              "type": "boolean"
             }
           },
           {
@@ -1800,27 +3117,6 @@
           },
           {
             "in": "query",
-            "name": "afterDate",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "beforeDate",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "includeResolved",
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
-            "in": "query",
             "name": "authorId",
             "schema": {
               "type": "string"
@@ -1834,6 +3130,20 @@
               "items": {
                 "type": "string"
               }
+            }
+          },
+          {
+            "in": "query",
+            "name": "afterDate",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "beforeDate",
+            "schema": {
+              "type": "string"
             }
           },
           {
@@ -1858,119 +3168,7 @@
                     "data": {
                       "type": "array",
                       "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string",
-                            "description": "Content ID"
-                          },
-                          "content": {
-                            "type": "string",
-                            "description": "The content to be moderated"
-                          },
-                          "language": {
-                            "description": "Content language",
-                            "type": "string"
-                          },
-                          "labels": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "label": {
-                                  "type": "string",
-                                  "description": "Label name"
-                                },
-                                "score": {
-                                  "type": "number",
-                                  "description": "Confidence score of the label"
-                                },
-                                "flagged": {
-                                  "type": "boolean",
-                                  "description": "Whether this label caused a flag"
-                                }
-                              },
-                              "required": [
-                                "label",
-                                "score",
-                                "flagged"
-                              ],
-                              "additionalProperties": false
-                            }
-                          },
-                          "conversationId": {
-                            "description": "Conversation ID",
-                            "type": "string"
-                          },
-                          "authorId": {
-                            "description": "Author ID",
-                            "type": "string"
-                          },
-                          "actions": {
-                            "description": "Action IDs taken on this item",
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "string",
-                                  "description": "Action ID"
-                                },
-                                "name": {
-                                  "type": "string",
-                                  "description": "Action name"
-                                },
-                                "comment": {
-                                  "description": "Action comment",
-                                  "type": "string"
-                                },
-                                "timestamp": {
-                                  "type": "number",
-                                  "description": "Unix timestamp of when the action was taken"
-                                },
-                                "reviewer": {
-                                  "description": "Moderator userID",
-                                  "type": "string"
-                                }
-                              },
-                              "required": [
-                                "id",
-                                "name",
-                                "timestamp"
-                              ],
-                              "additionalProperties": false
-                            }
-                          },
-                          "flagged": {
-                            "type": "boolean",
-                            "description": "Whether the item is flagged by any label"
-                          },
-                          "status": {
-                            "type": "string",
-                            "enum": [
-                              "pending",
-                              "resolved"
-                            ],
-                            "description": "Status of the item"
-                          },
-                          "timestamp": {
-                            "type": "number",
-                            "description": "Unix timestamp of when the item was created"
-                          },
-                          "contentType": {
-                            "description": "Type of the content object",
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "id",
-                          "content",
-                          "labels",
-                          "flagged",
-                          "status",
-                          "timestamp"
-                        ],
-                        "additionalProperties": false
+                        "$ref": "#/components/schemas/QueueItem"
                       },
                       "description": "The items on this page."
                     },
@@ -2051,7 +3249,7 @@
         "x-speakeasy-group": "queue.items",
         "x-speakeasy-name-override": "list",
         "x-speakeasy-mcp": {
-          "title": "Get queue items",
+          "title": "List queue items",
           "scopes": [
             "read"
           ],
@@ -2083,7 +3281,7 @@
       "post": {
         "operationId": "resolveQueueItem",
         "summary": "Resolve a queue item",
-        "description": "Mark a queue item as resolved with a specific moderation action",
+        "description": "Mark an item of a queue as resolved. It is the same as a check-off in the dashboard: the item leaves the pending list and a QUEUE_ITEM_COMPLETED webhook is sent. To also take a moderation action, use `POST /actions/execute`.",
         "tags": [
           "Review queues"
         ],
@@ -2098,20 +3296,20 @@
             "name": "id",
             "schema": {
               "type": "string",
-              "description": "The queue ID"
+              "description": "The queue ID."
             },
             "required": true,
-            "description": "The queue ID"
+            "description": "The queue ID."
           },
           {
             "in": "path",
             "name": "itemId",
             "schema": {
               "type": "string",
-              "description": "The item ID to resolve"
+              "description": "The item ID to resolve."
             },
             "required": true,
-            "description": "The item ID to resolve"
+            "description": "The item ID to resolve."
           },
           {
             "in": "header",
@@ -2124,25 +3322,6 @@
             "x-speakeasy-name-override": "projectId"
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "comment": {
-                    "description": "Optional comment",
-                    "type": "string"
-                  }
-                }
-              },
-              "example": {
-                "comment": "Reviewed: no violation."
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": "Successful response",
@@ -2156,11 +3335,7 @@
                     },
                     "resolvedAt": {
                       "type": "string",
-                      "description": "Timestamp when the item was resolved"
-                    },
-                    "comment": {
-                      "description": "Optional comment",
-                      "type": "string"
+                      "description": "When the item was resolved (ISO 8601)."
                     }
                   },
                   "required": [
@@ -2235,11 +3410,11 @@
         }
       }
     },
-    "/queue/{id}/items/{itemId}/unresolve": {
+    "/queue/{id}/items/resolve": {
       "post": {
-        "operationId": "unresolveQueueItem",
-        "summary": "Unresolve a queue item",
-        "description": "Mark a previously resolved queue item as unresolved/pending",
+        "operationId": "resolveQueueItems",
+        "summary": "Resolve queue items",
+        "description": "Mark up to 100 items of a queue as resolved in one request. Each item is resolved the same as with `POST /queue/{id}/items/{itemId}/resolve`. IDs that do not exist in the project are skipped and returned in `notFoundIds`.",
         "tags": [
           "Review queues"
         ],
@@ -2254,20 +3429,10 @@
             "name": "id",
             "schema": {
               "type": "string",
-              "description": "The queue ID"
+              "description": "The queue ID."
             },
             "required": true,
-            "description": "The queue ID"
-          },
-          {
-            "in": "path",
-            "name": "itemId",
-            "schema": {
-              "type": "string",
-              "description": "The item ID to unresolve"
-            },
-            "required": true,
-            "description": "The item ID to unresolve"
+            "description": "The queue ID."
           },
           {
             "in": "header",
@@ -2287,18 +3452,166 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "comment": {
-                    "description": "Optional reason for unresolving the item",
-                    "type": "string"
+                  "itemIds": {
+                    "minItems": 1,
+                    "maxItems": 100,
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The item IDs to resolve. Up to 100."
                   }
-                }
+                },
+                "required": [
+                  "itemIds"
+                ]
               },
               "example": {
-                "comment": "Reopened after an appeal."
+                "itemIds": [
+                  "clx8k2v0e000108l4a9bz3f7q",
+                  "clx8k2v0e000208l4h2mc6d1r"
+                ]
               }
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "resolved": {
+                      "type": "integer",
+                      "description": "Number of items resolved."
+                    },
+                    "notFoundIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Item IDs that do not exist in the project."
+                    }
+                  },
+                  "required": [
+                    "resolved",
+                    "notFoundIds"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionDeniedError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests. Retry after the number of seconds in the `Retry-After` header.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        },
+        "x-speakeasy-group": "queue.items",
+        "x-speakeasy-name-override": "resolveMany",
+        "x-speakeasy-mcp": {
+          "title": "Resolve queue items",
+          "scopes": [
+            "write"
+          ],
+          "readOnlyHint": false,
+          "destructiveHint": false
+        }
+      }
+    },
+    "/queue/{id}/items/{itemId}/unresolve": {
+      "post": {
+        "operationId": "unresolveQueueItem",
+        "summary": "Unresolve a queue item",
+        "description": "Mark a resolved item of a queue as pending again. It is the same as removing a check-off in the dashboard: the item comes back in the pending list.",
+        "tags": [
+          "Review queues"
+        ],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "description": "The queue ID."
+            },
+            "required": true,
+            "description": "The queue ID."
+          },
+          {
+            "in": "path",
+            "name": "itemId",
+            "schema": {
+              "type": "string",
+              "description": "The item ID to unresolve."
+            },
+            "required": true,
+            "description": "The item ID to unresolve."
+          },
+          {
+            "in": "header",
+            "name": "Project-Id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
+            "x-speakeasy-name-override": "projectId"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -2312,11 +3625,15 @@
                     },
                     "status": {
                       "type": "string",
-                      "description": "New status of the item"
+                      "enum": [
+                        "pending",
+                        "resolved"
+                      ],
+                      "description": "`pending` waits for review. `resolved` is reviewed."
                     },
                     "unresolvedAt": {
                       "type": "string",
-                      "description": "Timestamp when the item was unresolved"
+                      "description": "When the item was unresolved (ISO 8601)."
                     }
                   },
                   "required": [
@@ -3605,10 +4922,10 @@
         "x-speakeasy-mcp": {
           "title": "Update an action",
           "scopes": [
-            "write"
+            "destructive"
           ],
           "readOnlyHint": false,
-          "destructiveHint": false
+          "destructiveHint": true
         }
       },
       "delete": {
@@ -4773,10 +6090,10 @@
         "x-speakeasy-mcp": {
           "title": "Update a webhook",
           "scopes": [
-            "write"
+            "destructive"
           ],
           "readOnlyHint": false,
-          "destructiveHint": false
+          "destructiveHint": true
         }
       },
       "delete": {
@@ -6096,6 +7413,176 @@
             "numPages": "$.pagination.totalPages"
           }
         }
+      },
+      "post": {
+        "operationId": "createWordlist",
+        "summary": "Create wordlist",
+        "description": "Create a wordlist in the organization. You can add words now or later. Each word is embedded in the background for similarity matching. Use the embedding status endpoint to follow the progress. To use the wordlist in moderation, add it to a policy.",
+        "tags": [
+          "Wordlists"
+        ],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Project-Id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
+            "x-speakeasy-name-override": "projectId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100,
+                    "description": "Name of the wordlist"
+                  },
+                  "key": {
+                    "description": "Key of the wordlist. Default: made from the name. If the key is already in use, a suffix is added.",
+                    "type": "string"
+                  },
+                  "description": {
+                    "description": "Description of the wordlist",
+                    "type": "string"
+                  },
+                  "words": {
+                    "description": "Words to add to the wordlist. Words are converted to lowercase. Duplicate and empty words are ignored. Maximum 5000 words.",
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Wordlist created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "ID of the wordlist"
+                    },
+                    "name": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "description": "Name of the wordlist"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "words": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Words in the wordlist"
+                    },
+                    "createdAt": {
+                      "description": "Creation date of the wordlist",
+                      "type": "string"
+                    },
+                    "organizationId": {
+                      "type": "string",
+                      "description": "ID of the organization"
+                    },
+                    "userId": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "description": "ID of the user"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "strict": {
+                      "type": "boolean",
+                      "description": "Strict mode"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "words",
+                    "createdAt",
+                    "organizationId",
+                    "userId",
+                    "strict"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests. Retry after the number of seconds in the `Retry-After` header.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitError"
+                }
+              }
+            }
+          }
+        },
+        "x-speakeasy-group": "wordlist",
+        "x-speakeasy-name-override": "create",
+        "x-speakeasy-mcp": {
+          "title": "Create wordlist",
+          "scopes": [
+            "write"
+          ],
+          "readOnlyHint": false,
+          "destructiveHint": false
+        }
       }
     },
     "/wordlist/{id}": {
@@ -6276,7 +7763,7 @@
       "put": {
         "operationId": "updateWordlist",
         "summary": "Update wordlist",
-        "description": "Update a wordlist",
+        "description": "Update a wordlist. Fields that you do not send stay the same. If you send words, they replace all existing words, and the embeddings are updated in the background.",
         "tags": [
           "Wordlists"
         ],
@@ -6327,7 +7814,7 @@
                     "type": "string"
                   },
                   "words": {
-                    "description": "New words for the wordlist. Replace the existing words with these new ones. Duplicate words will be ignored.",
+                    "description": "New words for the wordlist. Replace the existing words with these new ones. Words are converted to lowercase. Duplicate and empty words are ignored. Maximum 5000 words.",
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -6456,10 +7943,10 @@
         "x-speakeasy-mcp": {
           "title": "Update wordlist",
           "scopes": [
-            "write"
+            "destructive"
           ],
           "readOnlyHint": false,
-          "destructiveHint": false
+          "destructiveHint": true
         }
       }
     },
@@ -9776,10 +11263,10 @@
         "x-speakeasy-mcp": {
           "title": "Update a project",
           "scopes": [
-            "write"
+            "destructive"
           ],
           "readOnlyHint": false,
-          "destructiveHint": false
+          "destructiveHint": true
         }
       },
       "delete": {
@@ -10704,10 +12191,10 @@
         "x-speakeasy-mcp": {
           "title": "Update a channel",
           "scopes": [
-            "write"
+            "destructive"
           ],
           "readOnlyHint": false,
-          "destructiveHint": false
+          "destructiveHint": true
         }
       },
       "delete": {
@@ -11282,6 +12769,555 @@
           "risk_evaluation",
           "metrics",
           "metadata"
+        ],
+        "additionalProperties": false
+      },
+      "Queue": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The queue ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "The queue name."
+          },
+          "description": {
+            "description": "The queue description.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "isDefault": {
+            "type": "boolean",
+            "description": "Whether this is the default queue of the project."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "isDefault"
+        ],
+        "additionalProperties": false
+      },
+      "QueueWithCounts": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The queue ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "The queue name."
+          },
+          "description": {
+            "description": "The queue description.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "isDefault": {
+            "type": "boolean",
+            "description": "Whether this is the default queue of the project."
+          },
+          "unresolvedItemsCount": {
+            "type": "integer",
+            "description": "Number of items that wait for review."
+          },
+          "resolvedItemsCount": {
+            "type": "integer",
+            "description": "Number of items that are resolved."
+          },
+          "totalItemsCount": {
+            "type": "integer",
+            "description": "Number of items in the queue, resolved and unresolved."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "isDefault",
+          "unresolvedItemsCount",
+          "resolvedItemsCount",
+          "totalItemsCount"
+        ],
+        "additionalProperties": false
+      },
+      "QueueItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The item ID. Use it to resolve or unresolve the item in this queue."
+          },
+          "contentId": {
+            "type": "string",
+            "description": "Your content ID, as you sent it to `POST /moderate`."
+          },
+          "content": {
+            "anyOf": [
+              {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "text"
+                      },
+                      "text": {
+                        "type": "string",
+                        "maxLength": 100000,
+                        "description": "The content text"
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "text"
+                    ],
+                    "additionalProperties": false,
+                    "description": "Text",
+                    "title": "Text"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "image"
+                      },
+                      "url": {
+                        "description": "A public URL of the image content. Either url or data must be provided.",
+                        "type": "string",
+                        "format": "uri"
+                      },
+                      "data": {
+                        "description": "Base64-encoded image data. Either url or data must be provided. Note: base64 images are not stored and will not appear in the review queue.",
+                        "type": "string",
+                        "maxLength": 5500000
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ],
+                    "additionalProperties": false,
+                    "description": "Image",
+                    "title": "Image"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "video"
+                      },
+                      "url": {
+                        "type": "string",
+                        "format": "uri",
+                        "description": "A public URL of the video content"
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "url"
+                    ],
+                    "additionalProperties": false,
+                    "description": "Video",
+                    "title": "Video"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "audio"
+                      },
+                      "url": {
+                        "type": "string",
+                        "format": "uri",
+                        "description": "The URL of the audio content"
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "url"
+                    ],
+                    "additionalProperties": false,
+                    "description": "Audio",
+                    "title": "Audio"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "object"
+                      },
+                      "data": {
+                        "type": "object",
+                        "propertyNames": {
+                          "type": "string",
+                          "description": "The key of the content node"
+                        },
+                        "additionalProperties": {
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string",
+                                  "const": "text"
+                                },
+                                "text": {
+                                  "type": "string",
+                                  "maxLength": 100000,
+                                  "description": "The content text"
+                                }
+                              },
+                              "required": [
+                                "type",
+                                "text"
+                              ],
+                              "additionalProperties": false,
+                              "description": "Text",
+                              "title": "Text"
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string",
+                                  "const": "image"
+                                },
+                                "url": {
+                                  "description": "A public URL of the image content. Either url or data must be provided.",
+                                  "type": "string",
+                                  "format": "uri"
+                                },
+                                "data": {
+                                  "description": "Base64-encoded image data. Either url or data must be provided. Note: base64 images are not stored and will not appear in the review queue.",
+                                  "type": "string",
+                                  "maxLength": 5500000
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ],
+                              "additionalProperties": false,
+                              "description": "Image",
+                              "title": "Image"
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string",
+                                  "const": "video"
+                                },
+                                "url": {
+                                  "type": "string",
+                                  "format": "uri",
+                                  "description": "A public URL of the video content"
+                                }
+                              },
+                              "required": [
+                                "type",
+                                "url"
+                              ],
+                              "additionalProperties": false,
+                              "description": "Video",
+                              "title": "Video"
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string",
+                                  "const": "audio"
+                                },
+                                "url": {
+                                  "type": "string",
+                                  "format": "uri",
+                                  "description": "The URL of the audio content"
+                                }
+                              },
+                              "required": [
+                                "type",
+                                "url"
+                              ],
+                              "additionalProperties": false,
+                              "description": "Audio",
+                              "title": "Audio"
+                            }
+                          ],
+                          "title": "Content leaf",
+                          "type": "object"
+                        },
+                        "description": "Values in the object. Can be mixed content types."
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "data"
+                    ],
+                    "additionalProperties": false,
+                    "description": "Object",
+                    "title": "Object"
+                  }
+                ],
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The submitted content."
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "The label name"
+                },
+                "score": {
+                  "type": "number",
+                  "description": "Confidence score between 0 and 1"
+                },
+                "manual": {
+                  "description": "True if the label was applied manually by a moderator",
+                  "type": "boolean"
+                },
+                "flagged": {
+                  "description": "Whether this label crossed its flagging threshold",
+                  "type": "boolean"
+                },
+                "shadow_flagged": {
+                  "description": "Whether this label crossed its threshold under a shadowed policy \u2014 reported for visibility, never counted toward a flagging decision",
+                  "type": "boolean"
+                },
+                "matches": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "match": {
+                        "type": "string",
+                        "description": "The matched substring"
+                      },
+                      "probability": {
+                        "type": "number",
+                        "description": "Match confidence between 0 and 1"
+                      },
+                      "span": {
+                        "type": "array",
+                        "prefixItems": [
+                          {
+                            "type": "number"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ],
+                        "items": false,
+                        "minItems": 2,
+                        "maxItems": 2,
+                        "description": "[start, end] character offsets in the source text"
+                      },
+                      "mask": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "reasons": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "signals": {
+                        "type": "object",
+                        "properties": {
+                          "brand_impersonation": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "brand": {
+                                    "type": "string"
+                                  },
+                                  "method": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "brand",
+                                  "method"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "has_suspicious_characters": {
+                            "type": "boolean"
+                          },
+                          "is_link_shortener": {
+                            "type": "boolean"
+                          },
+                          "domain_age_days": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "has_email_setup": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "redirect_count": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "final_url": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "bot_protection": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "is_reported": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "brand_impersonation",
+                          "has_suspicious_characters",
+                          "is_link_shortener",
+                          "domain_age_days",
+                          "has_email_setup",
+                          "redirect_count",
+                          "final_url",
+                          "bot_protection",
+                          "is_reported"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "entity_type": {
+                        "type": "string"
+                      },
+                      "scripts": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "skeleton": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "match",
+                      "probability",
+                      "span"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "label",
+                "score"
+              ],
+              "additionalProperties": false
+            },
+            "description": "The moderation labels of the content."
+          },
+          "flagged": {
+            "type": "boolean",
+            "description": "Whether moderation flagged the content."
+          },
+          "severity": {
+            "description": "Severity score from 0 to 1, if available.",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "resolved"
+            ],
+            "description": "`pending` waits for review. `resolved` is reviewed."
+          },
+          "timestamp": {
+            "type": "number",
+            "description": "When the content was submitted, as Unix time in milliseconds."
+          },
+          "language": {
+            "description": "Detected ISO language code.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "conversationId": {
+            "description": "Conversation ID, if any.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "authorId": {
+            "description": "Your author ID, if any.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "contentType": {
+            "description": "Content type, for example `message` or `profile`.",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "contentId",
+          "content",
+          "labels",
+          "flagged",
+          "severity",
+          "status",
+          "timestamp",
+          "language",
+          "conversationId",
+          "authorId",
+          "contentType"
         ],
         "additionalProperties": false
       },
@@ -13868,13 +15904,14 @@
               "action_not_found",
               "author_not_found",
               "queue_not_found",
+              "queue_item_not_found",
               "wordlist_not_found",
               "webhook_not_found",
               "project_not_found",
               "channel_not_found"
             ],
             "x-speakeasy-unknown-values": "allow",
-            "description": "Exactly what went wrong. Stable; safe to branch on. New codes may be added.\n\n- `resource_not_found`: The resource does not exist.\n- `action_not_found`: The action does not exist.\n- `author_not_found`: The author does not exist.\n- `queue_not_found`: The review queue does not exist.\n- `wordlist_not_found`: The wordlist does not exist.\n- `webhook_not_found`: The webhook does not exist.\n- `project_not_found`: The project does not exist.\n- `channel_not_found`: The channel does not exist.",
+            "description": "Exactly what went wrong. Stable; safe to branch on. New codes may be added.\n\n- `resource_not_found`: The resource does not exist.\n- `action_not_found`: The action does not exist.\n- `author_not_found`: The author does not exist.\n- `queue_not_found`: The review queue does not exist.\n- `queue_item_not_found`: The queue item does not exist in the project.\n- `wordlist_not_found`: The wordlist does not exist.\n- `webhook_not_found`: The webhook does not exist.\n- `project_not_found`: The project does not exist.\n- `channel_not_found`: The channel does not exist.",
             "example": "resource_not_found"
           },
           "message": {

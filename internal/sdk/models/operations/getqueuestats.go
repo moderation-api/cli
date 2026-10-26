@@ -8,7 +8,7 @@ import (
 )
 
 type GetQueueStatsRequest struct {
-	// The queue ID
+	// The queue ID.
 	ID         string `pathParam:"style=simple,explode=false,name=id"`
 	WithinDays *int64 `default:"30" queryParam:"style=form,explode=true,name=withinDays"`
 	// The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.
@@ -48,166 +48,61 @@ func (g *GetQueueStatsRequest) GetProjectID() *string {
 }
 
 type ReviewStats struct {
-	// Average time in milliseconds to review an item
-	AverageTimeToReview float64 `json:"averageTimeToReview"`
-	// Total number of items reviewed
-	TotalReviewed float64 `json:"totalReviewed"`
-	// Total number of items pending review
-	TotalPending float64 `json:"totalPending"`
+	// Number of items resolved in this queue in the period.
+	TotalReviewed int64 `json:"totalReviewed"`
+	// Number of items submitted in the period that wait for review now.
+	TotalPending int64 `json:"totalPending"`
 }
 
-func (r *ReviewStats) GetAverageTimeToReview() float64 {
+func (r *ReviewStats) GetTotalReviewed() int64 {
 	if r == nil {
-		return 0.0
-	}
-	return r.AverageTimeToReview
-}
-
-func (r *ReviewStats) GetTotalReviewed() float64 {
-	if r == nil {
-		return 0.0
+		return 0
 	}
 	return r.TotalReviewed
 }
 
-func (r *ReviewStats) GetTotalPending() float64 {
+func (r *ReviewStats) GetTotalPending() int64 {
 	if r == nil {
-		return 0.0
+		return 0
 	}
 	return r.TotalPending
 }
 
-type ActionStat struct {
-	// ID of the moderation action
-	ActionID string `json:"actionId"`
-	// Name of the moderation action
-	ActionName string `json:"actionName"`
-	// Number of times this action was taken
-	Count float64 `json:"count"`
-	// Percentage this action represents of all actions
-	PercentageOfTotal float64 `json:"percentageOfTotal"`
-}
-
-func (a *ActionStat) GetActionID() string {
-	if a == nil {
-		return ""
-	}
-	return a.ActionID
-}
-
-func (a *ActionStat) GetActionName() string {
-	if a == nil {
-		return ""
-	}
-	return a.ActionName
-}
-
-func (a *ActionStat) GetCount() float64 {
-	if a == nil {
-		return 0.0
-	}
-	return a.Count
-}
-
-func (a *ActionStat) GetPercentageOfTotal() float64 {
-	if a == nil {
-		return 0.0
-	}
-	return a.PercentageOfTotal
-}
-
-type TopAction struct {
-	// Most used action by this reviewer
-	ActionID string `json:"actionId"`
-	// Name of the most used action
-	ActionName string `json:"actionName"`
-	// Number of times this action was used
-	Count float64 `json:"count"`
-}
-
-func (t *TopAction) GetActionID() string {
-	if t == nil {
-		return ""
-	}
-	return t.ActionID
-}
-
-func (t *TopAction) GetActionName() string {
-	if t == nil {
-		return ""
-	}
-	return t.ActionName
-}
-
-func (t *TopAction) GetCount() float64 {
-	if t == nil {
-		return 0.0
-	}
-	return t.Count
-}
-
 type TopReviewer struct {
-	// ID of the reviewer
-	UserID string `json:"userId"`
-	// Name of the reviewer
-	Name string `json:"name"`
-	// Number of items reviewed
-	ReviewCount float64 `json:"reviewCount"`
-	// Average review time in milliseconds
-	AverageTimePerReview float64 `json:"averageTimePerReview"`
-	// Optional accuracy score based on review quality metrics
-	AccuracyScore *float64 `json:"accuracyScore,omitzero"`
-	// Most common actions taken by this reviewer
-	TopActions []TopAction `json:"topActions"`
+	// The user ID of the reviewer. `null` for items resolved with an API key.
+	UserID *string `json:"userId"`
+	// The name of the reviewer.
+	Name *string `json:"name"`
+	// Number of items the reviewer resolved in the period.
+	ReviewCount int64 `json:"reviewCount"`
 }
 
-func (t *TopReviewer) GetUserID() string {
+func (t *TopReviewer) GetUserID() *string {
 	if t == nil {
-		return ""
+		return nil
 	}
 	return t.UserID
 }
 
-func (t *TopReviewer) GetName() string {
+func (t *TopReviewer) GetName() *string {
 	if t == nil {
-		return ""
+		return nil
 	}
 	return t.Name
 }
 
-func (t *TopReviewer) GetReviewCount() float64 {
+func (t *TopReviewer) GetReviewCount() int64 {
 	if t == nil {
-		return 0.0
+		return 0
 	}
 	return t.ReviewCount
 }
 
-func (t *TopReviewer) GetAverageTimePerReview() float64 {
-	if t == nil {
-		return 0.0
-	}
-	return t.AverageTimePerReview
-}
-
-func (t *TopReviewer) GetAccuracyScore() *float64 {
-	if t == nil {
-		return nil
-	}
-	return t.AccuracyScore
-}
-
-func (t *TopReviewer) GetTopActions() []TopAction {
-	if t == nil {
-		return []TopAction{}
-	}
-	return t.TopActions
-}
-
 type DailyReviewCount struct {
-	// Date in YYYY-MM-DD format
+	// Date in YYYY-MM-DD format (UTC).
 	Date string `json:"date"`
-	// Number of reviews on this date
-	Count float64 `json:"count"`
+	// Number of items resolved.
+	Count int64 `json:"count"`
 }
 
 func (d *DailyReviewCount) GetDate() string {
@@ -217,37 +112,16 @@ func (d *DailyReviewCount) GetDate() string {
 	return d.Date
 }
 
-func (d *DailyReviewCount) GetCount() float64 {
+func (d *DailyReviewCount) GetCount() int64 {
 	if d == nil {
-		return 0.0
+		return 0
 	}
 	return d.Count
 }
 
-type FlaggedContentTrend struct {
-	// Content flag/label
-	Label string `json:"label"`
-	// Trend indicator (-1 to 1) showing if this type of flagged content is increasing or decreasing
-	Trend float64 `json:"trend"`
-}
-
-func (f *FlaggedContentTrend) GetLabel() string {
-	if f == nil {
-		return ""
-	}
-	return f.Label
-}
-
-func (f *FlaggedContentTrend) GetTrend() float64 {
-	if f == nil {
-		return 0.0
-	}
-	return f.Trend
-}
-
 type Trends struct {
-	DailyReviewCounts    []DailyReviewCount    `json:"dailyReviewCounts"`
-	FlaggedContentTrends []FlaggedContentTrend `json:"flaggedContentTrends"`
+	// Resolved items per day. Days with no reviews are left out.
+	DailyReviewCounts []DailyReviewCount `json:"dailyReviewCounts"`
 }
 
 func (t *Trends) GetDailyReviewCounts() []DailyReviewCount {
@@ -257,18 +131,10 @@ func (t *Trends) GetDailyReviewCounts() []DailyReviewCount {
 	return t.DailyReviewCounts
 }
 
-func (t *Trends) GetFlaggedContentTrends() []FlaggedContentTrend {
-	if t == nil {
-		return []FlaggedContentTrend{}
-	}
-	return t.FlaggedContentTrends
-}
-
 // GetQueueStatsResponseBody - Successful response
 type GetQueueStatsResponseBody struct {
-	ReviewStats ReviewStats  `json:"reviewStats"`
-	ActionStats []ActionStat `json:"actionStats"`
-	// List of top reviewers and their statistics
+	ReviewStats ReviewStats `json:"reviewStats"`
+	// Reviewers with the most resolved items, most first. Up to 10.
 	TopReviewers []TopReviewer `json:"topReviewers"`
 	Trends       Trends        `json:"trends"`
 }
@@ -278,13 +144,6 @@ func (g *GetQueueStatsResponseBody) GetReviewStats() ReviewStats {
 		return ReviewStats{}
 	}
 	return g.ReviewStats
-}
-
-func (g *GetQueueStatsResponseBody) GetActionStats() []ActionStat {
-	if g == nil {
-		return []ActionStat{}
-	}
-	return g.ActionStats
 }
 
 func (g *GetQueueStatsResponseBody) GetTopReviewers() []TopReviewer {
