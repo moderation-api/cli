@@ -4,7 +4,7 @@ List authors
 
 ### Synopsis
 
-List authors with their activity metrics and reputation. The list is paginated.
+List the authors of the project, with their status, trust level and content metrics. The list is paginated. By default, the authors that were active most recently come first.
 
 ```
 modapi authors list [flags]
@@ -19,17 +19,16 @@ modapi authors list [flags]
 ### Options
 
 ```
-  -a, --all                         Automatically paginate and fetch all results (streams NDJSON for JSON output)
-  -c, --content-types stringArray   list of values
-  -h, --help                        help for list
-  -l, --last-active-date string     string value
-      --max-pages int               Maximum number of pages to fetch when using --all (0 = no limit)
-  -m, --member-since-date string    string value
-      --page int                    integer value (default 1)
-      --page-size int               integer value (default 20)
-      --project-id string           The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.
-      --sort-by string              options: trustLevel, violationCount, reportCount, memberSince, lastActive, contentCount, flaggedContentRatio, averageSentiment
-      --sort-direction string       Sort direction (options: asc, desc) (default "desc")
+  -a, --all                        Automatically paginate and fetch all results (streams NDJSON for JSON output)
+  -h, --help                       help for list
+  -l, --last-active-date string    string value
+      --max-pages int              Maximum number of pages to fetch when using --all (0 = no limit)
+  -m, --member-since-date string   string value
+      --page int                   integer value (default 1)
+      --page-size int              integer value (default 20)
+      --project-id string          The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.
+      --sort-by string             options: trustLevel, violationCount, memberSince, lastActive, contentCount, flaggedContentRatio, averageSentiment
+      --sort-direction string      Sort direction (options: asc, desc) (default "desc")
 ```
 
 ### Options inherited from parent commands

@@ -1,10 +1,10 @@
 ## modapi queue items list
 
-Get queue items
+List queue items
 
 ### Synopsis
 
-Get paginated list of items in a moderation queue with filtering options
+List the items of a review queue, with the filters and the date window of the queue applied. By default only pending items. The list is paginated. Use the item `id` to resolve or unresolve an item.
 
 ```
 modapi queue items list [id] [flags]
@@ -26,15 +26,14 @@ modapi queue items list [id] [flags]
   -c, --conversation-ids stringArray      list of values
   -f, --filtered-action-ids stringArray   list of values
   -h, --help                              help for list
-  -i, --id string                         The queue ID (or pass it as the [id] argument)
+  -i, --id string                         The queue ID. (or pass it as the [id] argument)
       --include-resolved                  boolean flag
   -l, --labels stringArray                list of values
       --max-pages int                     Maximum number of pages to fetch when using --all (0 = no limit)
       --page int                          integer value (default 1)
       --page-size int                     integer value (default 20)
       --project-id string                 The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.
-      --sort-direction string             Sort direction (options: asc, desc) (default "desc")
-      --sort-field string                 options: createdAt, severity, reviewedAt
+  -s, --sort string                       options: FIFO, LIFO, RANDOM, SEVERITY_DESC
 ```
 
 ### Options inherited from parent commands

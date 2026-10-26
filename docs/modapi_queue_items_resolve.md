@@ -4,7 +4,7 @@ Resolve a queue item
 
 ### Synopsis
 
-Mark a queue item as resolved with a specific moderation action
+Mark an item of a queue as resolved. It is the same as a check-off in the dashboard: the item leaves the pending list and a QUEUE_ITEM_COMPLETED webhook is sent. To also take a moderation action, use `POST /actions/execute`.
 
 ```
 modapi queue items resolve [flags]
@@ -19,13 +19,10 @@ modapi queue items resolve [flags]
 ### Options
 
 ```
-      --body string         Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF. Use --schema to print the exact JSON Schema.
-  -c, --comment string      Optional comment
   -h, --help                help for resolve
-      --id string           The queue ID [required]
-      --item-id string      The item ID to resolve [required]
+      --id string           The queue ID. [required]
+      --item-id string      The item ID to resolve. [required]
   -p, --project-id string   The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.
-      --schema              Print the exact JSON Schema of the request body and exit
 ```
 
 ### Options inherited from parent commands
@@ -57,7 +54,6 @@ modapi queue items resolve [flags]
 ### Machine interface
 
 * `modapi queue items resolve --usage` — this command's flags, defaults and env vars as machine-readable KDL
-* `modapi queue items resolve --schema` — the exact JSON Schema of the request body (all `$ref`s bundled)
 * `modapi queue items resolve --dry-run` — preview the request without OS-keychain access or a network call (human preview on stderr)
 * `--dry-run --output-format json` (or a caller-explicit `--jq`) writes one preview object per request as NDJSON on stdout; jq is not applied to previews
 * `--output-format json` or `--jq <expr>` for machine-readable live output; in agent mode errors are a JSON envelope on stderr

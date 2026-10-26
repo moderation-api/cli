@@ -38,6 +38,7 @@ modapi [flags]
 
 * [modapi account](modapi_account.md)	 - Operations for account
 * [modapi actions](modapi_actions.md)	 - Operations for actions
+* [modapi analytics](modapi_analytics.md)	 - Operations for analytics
 * [modapi auth](modapi_auth.md)	 - Manage authentication credentials
 * [modapi authors](modapi_authors.md)	 - Operations for authors
 * [modapi channels](modapi_channels.md)	 - Operations for channels
@@ -45,6 +46,7 @@ modapi [flags]
 * [modapi content](modapi_content.md)	 - Operations for content
 * [modapi doctor](modapi_doctor.md)	 - Check the Moderation API setup of this project
 * [modapi explore](modapi_explore.md)	 - Interactively browse and run commands
+* [modapi feedback](modapi_feedback.md)	 - Operations for feedback
 * [modapi init](modapi_init.md)	 - Set up Moderation API in this project
 * [modapi link](modapi_link.md)	 - Connect this directory to an existing Moderation API project
 * [modapi login](modapi_login.md)	 - Sign in with your Moderation API account

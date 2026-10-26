@@ -4,7 +4,7 @@ Get queue statistics
 
 ### Synopsis
 
-Get detailed statistics about a moderation queue including review times, action counts, and trends
+Get review statistics of a queue for a period: resolved and pending items, the top reviewers and the resolved items per day.
 
 ```
 modapi queue get-stats [id] [flags]
@@ -20,7 +20,7 @@ modapi queue get-stats [id] [flags]
 
 ```
   -h, --help                help for get-stats
-  -i, --id string           The queue ID (or pass it as the [id] argument)
+  -i, --id string           The queue ID. (or pass it as the [id] argument)
   -p, --project-id string   The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.
   -w, --within-days int     integer value (default 30)
 ```

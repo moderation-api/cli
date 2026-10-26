@@ -4,7 +4,7 @@ Get a queue
 
 ### Synopsis
 
-Get a queue
+Get a review queue with its item counts. The counts use the filters and the date window of the queue, the same as the dashboard.
 
 ```
 modapi queue retrieve [id] [flags]
@@ -20,7 +20,7 @@ modapi queue retrieve [id] [flags]
 
 ```
   -h, --help                help for retrieve
-  -i, --id string           The queue ID (or pass it as the [id] argument)
+  -i, --id string           The queue ID. (or pass it as the [id] argument)
   -p, --project-id string   The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.
 ```
 

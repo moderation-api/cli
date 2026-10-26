@@ -4,7 +4,7 @@ Unresolve a queue item
 
 ### Synopsis
 
-Mark a previously resolved queue item as unresolved/pending
+Mark a resolved item of a queue as pending again. It is the same as removing a check-off in the dashboard: the item comes back in the pending list.
 
 ```
 modapi queue items unresolve [flags]
@@ -19,13 +19,10 @@ modapi queue items unresolve [flags]
 ### Options
 
 ```
-      --body string         Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF. Use --schema to print the exact JSON Schema.
-  -c, --comment string      Optional reason for unresolving the item
   -h, --help                help for unresolve
-      --id string           The queue ID [required]
-      --item-id string      The item ID to unresolve [required]
+      --id string           The queue ID. [required]
+      --item-id string      The item ID to unresolve. [required]
   -p, --project-id string   The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.
-      --schema              Print the exact JSON Schema of the request body and exit
 ```
 
 ### Options inherited from parent commands
@@ -57,7 +54,6 @@ modapi queue items unresolve [flags]
 ### Machine interface
 
 * `modapi queue items unresolve --usage` — this command's flags, defaults and env vars as machine-readable KDL
-* `modapi queue items unresolve --schema` — the exact JSON Schema of the request body (all `$ref`s bundled)
 * `modapi queue items unresolve --dry-run` — preview the request without OS-keychain access or a network call (human preview on stderr)
 * `--dry-run --output-format json` (or a caller-explicit `--jq`) writes one preview object per request as NDJSON on stdout; jq is not applied to previews
 * `--output-format json` or `--jq <expr>` for machine-readable live output; in agent mode errors are a JSON envelope on stderr

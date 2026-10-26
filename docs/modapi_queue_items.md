@@ -41,8 +41,9 @@ modapi queue items [flags]
 ### SEE ALSO
 
 * [modapi queue](modapi_queue.md)	 - Operations for queue
-* [modapi queue items list](modapi_queue_items_list.md)	 - Get queue items
+* [modapi queue items list](modapi_queue_items_list.md)	 - List queue items
 * [modapi queue items resolve](modapi_queue_items_resolve.md)	 - Resolve a queue item
+* [modapi queue items resolve-many](modapi_queue_items_resolve-many.md)	 - Resolve queue items
 * [modapi queue items unresolve](modapi_queue_items_unresolve.md)	 - Unresolve a queue item
 
 Exit codes: 0 ok · 1 runtime · 2 usage · 3 authentication/authorization

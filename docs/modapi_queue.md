@@ -43,6 +43,7 @@ modapi queue [flags]
 * [modapi](modapi.md)	 - Moderation API: Moderate text, images, video and audio in real time, manage authors, review queues and actions, and receive webhooks
 * [modapi queue get-stats](modapi_queue_get-stats.md)	 - Get queue statistics
 * [modapi queue items](modapi_queue_items.md)	 - Operations for items
+* [modapi queue list](modapi_queue_list.md)	 - List queues
 * [modapi queue retrieve](modapi_queue_retrieve.md)	 - Get a queue
 
 Exit codes: 0 ok · 1 runtime · 2 usage · 3 authentication/authorization

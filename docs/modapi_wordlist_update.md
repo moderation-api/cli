@@ -4,7 +4,7 @@ Update wordlist
 
 ### Synopsis
 
-Update a wordlist
+Update a wordlist. Fields that you do not send stay the same. If you send words, they replace all existing words, and the embeddings are updated in the background.
 
 ```
 modapi wordlist update [id] [flags]
@@ -28,7 +28,7 @@ modapi wordlist update [id] [flags]
   -p, --project-id string    The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.
       --schema               Print the exact JSON Schema of the request body and exit
   -s, --strict               Deprecated. Now using threshold in project settings.
-  -w, --words stringArray    New words for the wordlist. Replace the existing words with these new ones. Duplicate words will be ignored.
+  -w, --words stringArray    New words for the wordlist. Replace the existing words with these new ones. Words are converted to lowercase. Duplicate and empty words are ignored. Maximum 5000 words.
 ```
 
 ### Options inherited from parent commands
