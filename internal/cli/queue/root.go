@@ -27,6 +27,10 @@ func InitQueueRoot(parent *cobra.Command) error {
 		return err
 	}
 
+	if err := initListCmd(QueueCmd); err != nil {
+		return err
+	}
+
 	if err := initRetrieveCmd(QueueCmd); err != nil {
 		return err
 	}

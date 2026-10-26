@@ -1,5 +1,104 @@
 # Changelog
 
+## 0.5.0 (2026-10-26)
+
+Full Changelog: [v0.4.0...v0.5.0](https://github.com/moderation-api/cli/compare/v0.4.0...v0.5.0)
+
+### ⚠ Breaking changes
+
+- `GET /authors`: removed the enum value `reportCount` from the `query` request parameter `sortBy`
+- `GET /queue/{id}`: the response property `queue/description` became nullable for the status `200`
+- `GET /queue/{id}`: removed the required property `queue/filter` from the response with the `200` status
+- `GET /queue/{id}/items`: added `subschema #1, subschema #2` to the `data/items/content` response property `anyOf` list for the response status `200`
+- `GET /queue/{id}/items`: the response property `data/items/authorId` became nullable for the status `200`
+- `GET /queue/{id}/items`: the response property `data/items/contentType` became nullable for the status `200`
+- `GET /queue/{id}/items`: the response property `data/items/conversationId` became nullable for the status `200`
+- `GET /queue/{id}/items`: the response property `data/items/language` became nullable for the status `200`
+- `GET /queue/{id}/items`: the response property `data/items/labels/items/flagged` became optional for the status `200`
+- `GET /queue/{id}/items`: the `data/items/content` response's property `type` changed from `string` to `any` for status `200`
+- `POST /queue/{id}/items/{itemId}/resolve`: removed the request body
+- `POST /queue/{id}/items/{itemId}/unresolve`: removed the request body
+- `GET /queue/{id}/stats`: the response property `topReviewers/items/name` became nullable for the status `200`
+- `GET /queue/{id}/stats`: the response property `topReviewers/items/userId` became nullable for the status `200`
+- `GET /queue/{id}/stats`: removed the required property `actionStats` from the response with the `200` status
+- `GET /queue/{id}/stats`: removed the required property `reviewStats/averageTimeToReview` from the response with the `200` status
+- `GET /queue/{id}/stats`: removed the required property `topReviewers/items/averageTimePerReview` from the response with the `200` status
+- `GET /queue/{id}/stats`: removed the required property `topReviewers/items/topActions` from the response with the `200` status
+- `GET /queue/{id}/stats`: removed the required property `trends/flaggedContentTrends` from the response with the `200` status
+
+### API changes
+
+- `GET /actions`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `POST /actions/execute`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `POST /actions/{actionId}/execute`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `DELETE /actions/{id}`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `GET /actions/{id}`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `PUT /actions/{id}`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `GET /auth`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `GET /authors`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `DELETE /authors/{id}`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `GET /authors/{id}`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `PUT /authors/{id}`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `DELETE /channels/{id}`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `GET /channels/{id}`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `PUT /channels/{id}`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `POST /channels/{id}/duplicate`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `DELETE /projects/{id}`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `GET /projects/{id}`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `PUT /projects/{id}`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `POST /projects/{id}/api-keys`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `POST /projects/{id}/duplicate`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `GET /projects/{projectId}/channels`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `POST /projects/{projectId}/channels`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `GET /queue/{id}`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `GET /queue/{id}/items`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `GET /queue/{id}/stats`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `DELETE /webhooks/{id}`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `GET /webhooks/{id}`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `PUT /webhooks/{id}`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `GET /wordlist`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `GET /wordlist/{id}`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `PUT /wordlist/{id}`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `GET /wordlist/{id}/embedding-status`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `DELETE /wordlist/{id}/words`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `POST /wordlist/{id}/words`: added the new `queue_item_not_found` enum value to the `code` response property for the response status `404`
+- `GET /authors`: deleted the `query` request parameter `contentTypes`
+- `GET /queue/{id}/items`: deleted the `query` request parameter `sortDirection`
+- `GET /queue/{id}/items`: deleted the `query` request parameter `sortField`
+- a breaking change was detected but the version is still `1.1.0`
+- `GET /analytics/authors`: endpoint added
+- `GET /analytics/automation`: endpoint added
+- `GET /analytics/channels`: endpoint added
+- `GET /analytics/policies`: endpoint added
+- `GET /analytics/summary`: endpoint added
+- `GET /analytics/volumes`: endpoint added
+- `POST /feedback`: endpoint added
+- `GET /queue`: endpoint added
+- `GET /queue/{id}`: the `queue/resolvedItemsCount` response's property `type` was narrowed from `number` to `integer` for status `200`
+- `GET /queue/{id}`: the `queue/totalItemsCount` response's property `type` was narrowed from `number` to `integer` for status `200`
+- `GET /queue/{id}`: the `queue/unresolvedItemsCount` response's property `type` was narrowed from `number` to `integer` for status `200`
+- `GET /queue/{id}`: added the required property `queue/isDefault` to the response with the `200` status
+- `GET /queue/{id}/items`: added the new optional `query` request parameter `sort`
+- `GET /queue/{id}/items`: added the optional property `data/items/labels/items/manual` to the response with the `200` status
+- `GET /queue/{id}/items`: added the optional property `data/items/labels/items/matches` to the response with the `200` status
+- `GET /queue/{id}/items`: added the optional property `data/items/labels/items/shadow_flagged` to the response with the `200` status
+- `GET /queue/{id}/items`: removed the optional property `data/items/actions` from the response with the `200` status
+- `GET /queue/{id}/items`: the response property `data/items/authorId` became required for the status `200`
+- `GET /queue/{id}/items`: the response property `data/items/contentType` became required for the status `200`
+- `GET /queue/{id}/items`: the response property `data/items/conversationId` became required for the status `200`
+- `GET /queue/{id}/items`: the response property `data/items/language` became required for the status `200`
+- `GET /queue/{id}/items`: added the required property `data/items/contentId` to the response with the `200` status
+- `GET /queue/{id}/items`: added the required property `data/items/severity` to the response with the `200` status
+- `POST /queue/{id}/items/resolve`: endpoint added
+- `POST /queue/{id}/items/{itemId}/resolve`: removed the optional property `comment` from the response with the `200` status
+- `POST /queue/{id}/items/{itemId}/unresolve`: the `status` response property for the response status `200` was restricted to a list of enum values
+- `GET /queue/{id}/stats`: removed the optional property `topReviewers/items/accuracyScore` from the response with the `200` status
+- `GET /queue/{id}/stats`: the `reviewStats/totalPending` response's property `type` was narrowed from `number` to `integer` for status `200`
+- `GET /queue/{id}/stats`: the `reviewStats/totalReviewed` response's property `type` was narrowed from `number` to `integer` for status `200`
+- `GET /queue/{id}/stats`: the `topReviewers/items/reviewCount` response's property `type` was narrowed from `number` to `integer` for status `200`
+- `GET /queue/{id}/stats`: the `trends/dailyReviewCounts/items/count` response's property `type` was narrowed from `number` to `integer` for status `200`
+- `POST /wordlist`: endpoint added
+
 ## 0.4.0 (2026-10-23)
 
 Full Changelog: [v0.3.3...v0.4.0](https://github.com/moderation-api/cli/compare/v0.3.3...v0.4.0)

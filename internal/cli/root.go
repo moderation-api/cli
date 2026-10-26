@@ -7,9 +7,11 @@ import (
 	"fmt"
 	"github.com/moderation-api/cli/internal/cli/account"
 	"github.com/moderation-api/cli/internal/cli/actions"
+	"github.com/moderation-api/cli/internal/cli/analytics"
 	"github.com/moderation-api/cli/internal/cli/authors"
 	"github.com/moderation-api/cli/internal/cli/channels"
 	"github.com/moderation-api/cli/internal/cli/content"
+	"github.com/moderation-api/cli/internal/cli/feedback"
 	"github.com/moderation-api/cli/internal/cli/projects"
 	"github.com/moderation-api/cli/internal/cli/queue"
 	"github.com/moderation-api/cli/internal/cli/webhooks"
@@ -83,8 +85,14 @@ func NewRootCommand() (*cobra.Command, error) {
 			return nil
 		},
 	}
+	if err := analytics.InitAnalyticsRoot(rootCmd); err != nil {
+		return nil, fmt.Errorf("init analytics: %w", err)
+	}
 	if err := authors.InitAuthorsRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init authors: %w", err)
+	}
+	if err := feedback.InitFeedbackRoot(rootCmd); err != nil {
+		return nil, fmt.Errorf("init feedback: %w", err)
 	}
 	if err := queue.InitQueueRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init queue: %w", err)

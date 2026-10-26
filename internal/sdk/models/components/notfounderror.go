@@ -8,6 +8,7 @@ package components
 // - `action_not_found`: The action does not exist.
 // - `author_not_found`: The author does not exist.
 // - `queue_not_found`: The review queue does not exist.
+// - `queue_item_not_found`: The queue item does not exist in the project.
 // - `wordlist_not_found`: The wordlist does not exist.
 // - `webhook_not_found`: The webhook does not exist.
 // - `project_not_found`: The project does not exist.
@@ -15,14 +16,15 @@ package components
 type NotFoundErrorCode string
 
 const (
-	NotFoundErrorCodeResourceNotFound NotFoundErrorCode = "resource_not_found"
-	NotFoundErrorCodeActionNotFound   NotFoundErrorCode = "action_not_found"
-	NotFoundErrorCodeAuthorNotFound   NotFoundErrorCode = "author_not_found"
-	NotFoundErrorCodeQueueNotFound    NotFoundErrorCode = "queue_not_found"
-	NotFoundErrorCodeWordlistNotFound NotFoundErrorCode = "wordlist_not_found"
-	NotFoundErrorCodeWebhookNotFound  NotFoundErrorCode = "webhook_not_found"
-	NotFoundErrorCodeProjectNotFound  NotFoundErrorCode = "project_not_found"
-	NotFoundErrorCodeChannelNotFound  NotFoundErrorCode = "channel_not_found"
+	NotFoundErrorCodeResourceNotFound  NotFoundErrorCode = "resource_not_found"
+	NotFoundErrorCodeActionNotFound    NotFoundErrorCode = "action_not_found"
+	NotFoundErrorCodeAuthorNotFound    NotFoundErrorCode = "author_not_found"
+	NotFoundErrorCodeQueueNotFound     NotFoundErrorCode = "queue_not_found"
+	NotFoundErrorCodeQueueItemNotFound NotFoundErrorCode = "queue_item_not_found"
+	NotFoundErrorCodeWordlistNotFound  NotFoundErrorCode = "wordlist_not_found"
+	NotFoundErrorCodeWebhookNotFound   NotFoundErrorCode = "webhook_not_found"
+	NotFoundErrorCodeProjectNotFound   NotFoundErrorCode = "project_not_found"
+	NotFoundErrorCodeChannelNotFound   NotFoundErrorCode = "channel_not_found"
 )
 
 func (e NotFoundErrorCode) ToPointer() *NotFoundErrorCode {
@@ -33,7 +35,7 @@ func (e NotFoundErrorCode) ToPointer() *NotFoundErrorCode {
 func (e *NotFoundErrorCode) IsExact() bool {
 	if e != nil {
 		switch *e {
-		case "resource_not_found", "action_not_found", "author_not_found", "queue_not_found", "wordlist_not_found", "webhook_not_found", "project_not_found", "channel_not_found":
+		case "resource_not_found", "action_not_found", "author_not_found", "queue_not_found", "queue_item_not_found", "wordlist_not_found", "webhook_not_found", "project_not_found", "channel_not_found":
 			return true
 		}
 	}

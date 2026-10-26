@@ -7,26 +7,13 @@ import (
 	"github.com/moderation-api/cli/internal/sdk/sdkinternal/utils"
 )
 
-type ResolveQueueItemRequestBody struct {
-	// Optional comment
-	Comment *string `json:"comment,omitzero"`
-}
-
-func (r *ResolveQueueItemRequestBody) GetComment() *string {
-	if r == nil {
-		return nil
-	}
-	return r.Comment
-}
-
 type ResolveQueueItemRequest struct {
-	// The queue ID
+	// The queue ID.
 	ID string `pathParam:"style=simple,explode=false,name=id"`
-	// The item ID to resolve
+	// The item ID to resolve.
 	ItemID string `pathParam:"style=simple,explode=false,name=itemId"`
 	// The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.
-	ProjectID *string                     `header:"style=simple,explode=false,name=Project-Id"`
-	Body      ResolveQueueItemRequestBody `request:"mediaType=application/json"`
+	ProjectID *string `header:"style=simple,explode=false,name=Project-Id"`
 }
 
 func (r *ResolveQueueItemRequest) GetID() string {
@@ -50,20 +37,11 @@ func (r *ResolveQueueItemRequest) GetProjectID() *string {
 	return r.ProjectID
 }
 
-func (r *ResolveQueueItemRequest) GetBody() ResolveQueueItemRequestBody {
-	if r == nil {
-		return ResolveQueueItemRequestBody{}
-	}
-	return r.Body
-}
-
 // ResolveQueueItemResponseBody - Successful response
 type ResolveQueueItemResponseBody struct {
 	Success bool `json:"success"`
-	// Timestamp when the item was resolved
+	// When the item was resolved (ISO 8601).
 	ResolvedAt string `json:"resolvedAt"`
-	// Optional comment
-	Comment *string `json:"comment,omitzero"`
 }
 
 func (r *ResolveQueueItemResponseBody) GetSuccess() bool {
@@ -78,13 +56,6 @@ func (r *ResolveQueueItemResponseBody) GetResolvedAt() string {
 		return ""
 	}
 	return r.ResolvedAt
-}
-
-func (r *ResolveQueueItemResponseBody) GetComment() *string {
-	if r == nil {
-		return nil
-	}
-	return r.Comment
 }
 
 type ResolveQueueItemResponse struct {

@@ -128,7 +128,7 @@ modapi content submit --content '{"type":"text","text":"Hey, check out my profil
 <!-- Start Custom [guide] -->
 ## Set up Moderation API in your project
 
-Run `init` in your project's directory. It signs you in if needed, creates a Moderation API project, and writes the project's keys to your env file:
+Run `init` in your project's directory. It links one of your Moderation API projects or creates a new one, and writes the project's keys to your env file:
 
 ```bash
 modapi login   # once per machine; opens the browser
@@ -143,6 +143,8 @@ modapi init --domain acme.com \
   --context "Marketplace where buyers and sellers chat before a booking" \
   --brief "Stop contact details shared outside the platform, scams and harassment"
 ```
+
+To connect a directory to a project you already have, run `modapi link` (or `modapi link "<project name>"`). It makes a new key for the project, so you can revoke it on its own. Agents and scripts pass `init --project <id or name>` or `init --new` instead of answering the question.
 
 `init` does not change your code. To add the moderation calls, let your coding agent do it with the [setup skill](https://github.com/moderation-api/skills):
 
@@ -362,18 +364,29 @@ modapi projects list --secret-key "$MODAPI_ORGANIZATION_KEY"
 <details open>
 <summary>Available commands</summary>
 
+* [`analytics`](docs/modapi_analytics.md) - Operations for analytics
+  * [`summary`](docs/modapi_analytics_summary.md) - Get the analytics summary
+  * [`policies`](docs/modapi_analytics_policies.md) - Get the most flagged policies
+  * [`authors`](docs/modapi_analytics_authors.md) - Get the most flagged authors
+  * [`channels`](docs/modapi_analytics_channels.md) - Get analytics per channel
+  * [`volumes`](docs/modapi_analytics_volumes.md) - Get volumes over time
+  * [`automation`](docs/modapi_analytics_automation.md) - Get the automation breakdown
 * [`authors`](docs/modapi_authors.md) - Operations for authors
   * [`list`](docs/modapi_authors_list.md) - List authors
   * [`create`](docs/modapi_authors_create.md) - Create a new author
   * [`retrieve`](docs/modapi_authors_retrieve.md) - Get author details
   * [`update`](docs/modapi_authors_update.md) - Update author details
   * [`delete`](docs/modapi_authors_delete.md) - Delete an author
+* [`feedback`](docs/modapi_feedback.md) - Operations for feedback
+  * [`create`](docs/modapi_feedback_create.md) - Send feedback
 * [`queue`](docs/modapi_queue.md) - Operations for queue
+  * [`list`](docs/modapi_queue_list.md) - List queues
   * [`retrieve`](docs/modapi_queue_retrieve.md) - Get a queue
   * [`get-stats`](docs/modapi_queue_get-stats.md) - Get queue statistics
   * [`items`](docs/modapi_queue_items.md) - Operations for items
-    * [`list`](docs/modapi_queue_items_list.md) - Get queue items
+    * [`list`](docs/modapi_queue_items_list.md) - List queue items
     * [`resolve`](docs/modapi_queue_items_resolve.md) - Resolve a queue item
+    * [`resolve-many`](docs/modapi_queue_items_resolve-many.md) - Resolve queue items
     * [`unresolve`](docs/modapi_queue_items_unresolve.md) - Unresolve a queue item
 * [`actions`](docs/modapi_actions.md) - Operations for actions
   * [`list`](docs/modapi_actions_list.md) - List moderation actions
@@ -394,6 +407,7 @@ modapi projects list --secret-key "$MODAPI_ORGANIZATION_KEY"
   * [`retrieve`](docs/modapi_account_retrieve.md) - Get account details
 * [`wordlist`](docs/modapi_wordlist.md) - Operations for wordlist
   * [`list`](docs/modapi_wordlist_list.md) - List wordlists
+  * [`create`](docs/modapi_wordlist_create.md) - Create wordlist
   * [`retrieve`](docs/modapi_wordlist_retrieve.md) - Get wordlist
   * [`update`](docs/modapi_wordlist_update.md) - Update wordlist
   * [`get-embedding-status`](docs/modapi_wordlist_get-embedding-status.md) - Get embedding status

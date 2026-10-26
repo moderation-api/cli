@@ -20,7 +20,7 @@ var updateCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "name", Shorthand: "n", FieldPath: "Body.Name", Kind: flagutil.FlagKindString, Optional: true, Description: "New name for the wordlist"},
 	{FlagName: "key", Shorthand: "k", FieldPath: "Body.Key", Kind: flagutil.FlagKindString, Optional: true, Description: "New key for the wordlist"},
 	{FlagName: "description", FieldPath: "Body.Description", Kind: flagutil.FlagKindString, Optional: true, Description: "New description for the wordlist"},
-	{FlagName: "words", Shorthand: "w", FieldPath: "Body.Words", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "New words for the wordlist. Replace the existing words with these new ones. Duplicate words will be ignored."},
+	{FlagName: "words", Shorthand: "w", FieldPath: "Body.Words", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "New words for the wordlist. Replace the existing words with these new ones. Words are converted to lowercase. Duplicate and empty words are ignored. Maximum 5000 words."},
 	{FlagName: "strict", Shorthand: "s", FieldPath: "Body.Strict", Kind: flagutil.FlagKindBool, Optional: true, Description: "Deprecated. Now using threshold in project settings."},
 }
 
@@ -29,7 +29,7 @@ func initUpdateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "update [id]",
 		Short:   "Update wordlist",
-		Long:    "Update a wordlist",
+		Long:    "Update a wordlist. Fields that you do not send stay the same. If you send words, they replace all existing words, and the embeddings are updated in the background.",
 		Example: "  modapi wordlist update --id <id>",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runUpdateCmd,

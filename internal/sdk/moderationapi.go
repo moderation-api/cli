@@ -52,7 +52,9 @@ func Pointer[T any](v T) *T { return &v }
 // https://docs.moderationapi.com
 type ModerationAPI struct {
 	SDKVersion    string
+	Analytics     *Analytics
 	Authors       *Authors
+	Feedback      *Feedback
 	Queue         *Queue
 	Actions       *Actions
 	Webhooks      *Webhooks
@@ -137,10 +139,10 @@ func WithTimeout(timeout time.Duration) SDKOption {
 // New creates a new instance of the SDK with the provided options
 func New(opts ...SDKOption) *ModerationAPI {
 	sdk := &ModerationAPI{
-		SDKVersion: "0.4.0",
+		SDKVersion: "0.5.0",
 		sdkConfiguration: config.SDKConfiguration{
-			UserAgent:         "speakeasy-sdk/go 0.4.0 internal 1.1.0 github.com/moderation-api/cli/internal/sdk",
-			SDKVersion:        "0.4.0",
+			UserAgent:         "speakeasy-sdk/go 0.5.0 internal 1.1.0 github.com/moderation-api/cli/internal/sdk",
+			SDKVersion:        "0.5.0",
 			GenVersion:        "internal",
 			OpenAPIDocVersion: "1.1.0",
 			ServerList:        ServerList,
@@ -158,7 +160,9 @@ func New(opts ...SDKOption) *ModerationAPI {
 
 	sdk.sdkConfiguration = sdk.hooks.SDKInit(sdk.sdkConfiguration)
 
+	sdk.Analytics = newAnalytics(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Authors = newAuthors(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Feedback = newFeedback(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Queue = newQueue(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Actions = newActions(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Webhooks = newWebhooks(sdk, sdk.sdkConfiguration, sdk.hooks)

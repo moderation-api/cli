@@ -30,6 +30,10 @@ func InitItemsRoot(parent *cobra.Command) error {
 		return err
 	}
 
+	if err := initResolveManyCmd(ItemsCmd); err != nil {
+		return err
+	}
+
 	if err := initUnresolveCmd(ItemsCmd); err != nil {
 		return err
 	}

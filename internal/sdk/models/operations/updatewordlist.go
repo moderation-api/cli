@@ -14,7 +14,7 @@ type UpdateWordlistRequestBody struct {
 	Key *string `json:"key,omitzero"`
 	// New description for the wordlist
 	Description *string `json:"description,omitzero"`
-	// New words for the wordlist. Replace the existing words with these new ones. Duplicate words will be ignored.
+	// New words for the wordlist. Replace the existing words with these new ones. Words are converted to lowercase. Duplicate and empty words are ignored. Maximum 5000 words.
 	Words []string `json:"words,omitzero"`
 	// Deprecated. Now using threshold in project settings.
 	Strict *bool `json:"strict,omitzero"`
