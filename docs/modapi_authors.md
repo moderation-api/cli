@@ -41,10 +41,13 @@ modapi authors [flags]
 ### SEE ALSO
 
 * [modapi](modapi.md)	 - Moderation API: Moderate text, images, video and audio in real time, manage authors, review queues and actions, and receive webhooks
+* [modapi authors block](modapi_authors_block.md)	 - Block author
 * [modapi authors create](modapi_authors_create.md)	 - Create a new author
 * [modapi authors delete](modapi_authors_delete.md)	 - Delete an author
 * [modapi authors list](modapi_authors_list.md)	 - List authors
 * [modapi authors retrieve](modapi_authors_retrieve.md)	 - Get author details
+* [modapi authors suspend](modapi_authors_suspend.md)	 - Suspend author
+* [modapi authors unblock](modapi_authors_unblock.md)	 - Unblock author
 * [modapi authors update](modapi_authors_update.md)	 - Update author details
 
 Exit codes: 0 ok · 1 runtime · 2 usage · 3 authentication/authorization

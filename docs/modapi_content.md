@@ -41,6 +41,8 @@ modapi content [flags]
 ### SEE ALSO
 
 * [modapi](modapi.md)	 - Moderation API: Moderate text, images, video and audio in real time, manage authors, review queues and actions, and receive webhooks
+* [modapi content allow](modapi_content_allow.md)	 - Allow content
+* [modapi content reject](modapi_content_reject.md)	 - Reject content
 * [modapi content submit](modapi_content_submit.md)	 - Submit content
 
 Exit codes: 0 ok · 1 runtime · 2 usage · 3 authentication/authorization

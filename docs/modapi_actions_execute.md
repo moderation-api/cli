@@ -22,9 +22,11 @@ modapi actions execute [flags]
       --action-key string         ID or key of the action to execute [required]
       --author-ids stringArray    IDs of the authors to apply the action to. Provide this or contentIds.
       --body string               Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF. Use --schema to print the exact JSON Schema.
-  -c, --content-ids stringArray   IDs of the content items to apply the action to. Provide this or authorIds.
+      --content-ids stringArray   IDs of the content items to apply the action to. Provide this or authorIds.
+      --create-casebook-case      Record an allow or reject decision as a casebook case. Defaults to true when 'moderator' is set, else false. Without 'moderator', the case is recorded as System.
       --duration float            Optional duration in milliseconds for actions with timeouts
   -h, --help                      help for execute
+  -m, --moderator string          The user ID or email of the organization member who made the decision. The action is recorded as theirs.
   -p, --project-id string         The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.
       --queue-id string           Optional queue ID if the action is queue-specific
       --schema                    Print the exact JSON Schema of the request body and exit
