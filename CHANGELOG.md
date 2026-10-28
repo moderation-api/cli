@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.6.0 (2026-10-28)
+
+Full Changelog: [v0.5.0...v0.6.0](https://github.com/moderation-api/cli/compare/v0.5.0...v0.6.0)
+
+### API changes
+
+- `POST /actions/execute`: added the new optional request property `createCasebookCase`
+- `POST /actions/execute`: added the new optional request property `moderator`
+- `POST /authors/{id}/block`: endpoint added
+- `POST /authors/{id}/suspend`: endpoint added
+- `POST /authors/{id}/unblock`: endpoint added
+- `POST /content/{id}/allow`: endpoint added
+- `POST /content/{id}/reject`: endpoint added
+
 ## 0.5.0 (2026-10-26)
 
 Full Changelog: [v0.4.0...v0.5.0](https://github.com/moderation-api/cli/compare/v0.4.0...v0.5.0)

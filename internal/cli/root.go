@@ -100,6 +100,9 @@ func NewRootCommand() (*cobra.Command, error) {
 	if err := actions.InitActionsRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init actions: %w", err)
 	}
+	if err := content.InitContentRoot(rootCmd); err != nil {
+		return nil, fmt.Errorf("init content: %w", err)
+	}
 	if err := webhooks.InitWebhooksRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init webhooks: %w", err)
 	}
@@ -111,9 +114,6 @@ func NewRootCommand() (*cobra.Command, error) {
 	}
 	if err := wordlist.InitWordlistRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init wordlist: %w", err)
-	}
-	if err := content.InitContentRoot(rootCmd); err != nil {
-		return nil, fmt.Errorf("init content: %w", err)
 	}
 	if err := projects.InitProjectsRoot(rootCmd); err != nil {
 		return nil, fmt.Errorf("init projects: %w", err)

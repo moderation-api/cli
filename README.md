@@ -377,6 +377,9 @@ modapi projects list --secret-key "$MODAPI_ORGANIZATION_KEY"
   * [`retrieve`](docs/modapi_authors_retrieve.md) - Get author details
   * [`update`](docs/modapi_authors_update.md) - Update author details
   * [`delete`](docs/modapi_authors_delete.md) - Delete an author
+  * [`block`](docs/modapi_authors_block.md) - Block author
+  * [`suspend`](docs/modapi_authors_suspend.md) - Suspend author
+  * [`unblock`](docs/modapi_authors_unblock.md) - Unblock author
 * [`feedback`](docs/modapi_feedback.md) - Operations for feedback
   * [`create`](docs/modapi_feedback_create.md) - Send feedback
 * [`queue`](docs/modapi_queue.md) - Operations for queue
@@ -395,6 +398,10 @@ modapi projects list --secret-key "$MODAPI_ORGANIZATION_KEY"
   * [`update`](docs/modapi_actions_update.md) - Update an action
   * [`delete`](docs/modapi_actions_delete.md) - Delete an action
   * [`execute`](docs/modapi_actions_execute.md) - Execute moderation action
+* [`content`](docs/modapi_content.md) - Operations for content
+  * [`reject`](docs/modapi_content_reject.md) - Reject content
+  * [`allow`](docs/modapi_content_allow.md) - Allow content
+  * [`submit`](docs/modapi_content_submit.md) - Submit content
 * [`webhooks`](docs/modapi_webhooks.md) - Operations for webhooks
   * [`list`](docs/modapi_webhooks_list.md) - List webhooks
   * [`create`](docs/modapi_webhooks_create.md) - Create a webhook
@@ -414,8 +421,6 @@ modapi projects list --secret-key "$MODAPI_ORGANIZATION_KEY"
   * [`words`](docs/modapi_wordlist_words.md) - Operations for words
     * [`add`](docs/modapi_wordlist_words_add.md) - Add words to wordlist
     * [`remove`](docs/modapi_wordlist_words_remove.md) - Remove words from wordlist
-* [`content`](docs/modapi_content.md) - Operations for content
-  * [`submit`](docs/modapi_content_submit.md) - Submit content
 * [`projects`](docs/modapi_projects.md) - Operations for projects
   * [`list`](docs/modapi_projects_list.md) - List projects
   * [`create`](docs/modapi_projects_create.md) - Create a project
