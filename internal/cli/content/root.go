@@ -22,6 +22,14 @@ func InitContentRoot(parent *cobra.Command) error {
 		},
 	}
 
+	if err := initRejectCmd(ContentCmd); err != nil {
+		return err
+	}
+
+	if err := initAllowCmd(ContentCmd); err != nil {
+		return err
+	}
+
 	if err := initSubmitCmd(ContentCmd); err != nil {
 		return err
 	}

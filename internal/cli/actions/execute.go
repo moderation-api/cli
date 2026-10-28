@@ -16,11 +16,13 @@ import (
 var executeCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "project-id", Shorthand: "p", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Optional: true, Description: "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error."},
 	{FlagName: "action-key", FieldPath: "Body.ActionKey", Kind: flagutil.FlagKindString, Required: true, Description: "ID or key of the action to execute [required]"},
-	{FlagName: "content-ids", Shorthand: "c", FieldPath: "Body.ContentIds", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "IDs of the content items to apply the action to. Provide this or authorIds."},
+	{FlagName: "content-ids", FieldPath: "Body.ContentIds", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "IDs of the content items to apply the action to. Provide this or authorIds."},
 	{FlagName: "author-ids", FieldPath: "Body.AuthorIds", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "IDs of the authors to apply the action to. Provide this or contentIds."},
 	{FlagName: "value", Shorthand: "v", FieldPath: "Body.Value", Kind: flagutil.FlagKindString, Optional: true, Description: "Optional value to provide with the action"},
 	{FlagName: "queue-id", FieldPath: "Body.QueueID", Kind: flagutil.FlagKindString, Optional: true, Description: "Optional queue ID if the action is queue-specific"},
 	{FlagName: "duration", FieldPath: "Body.Duration", Kind: flagutil.FlagKindFloat64, Optional: true, HasMinimum: true, Minimum: 0, Description: "Optional duration in milliseconds for actions with timeouts"},
+	{FlagName: "moderator", Shorthand: "m", FieldPath: "Body.Moderator", Kind: flagutil.FlagKindString, Optional: true, Description: "The user ID or email of the organization member who made the decision. The action is recorded as theirs."},
+	{FlagName: "create-casebook-case", FieldPath: "Body.CreateCasebookCase", Kind: flagutil.FlagKindBool, Optional: true, Description: "Record an allow or reject decision as a casebook case. Defaults to true when 'moderator' is set, else false. Without 'moderator', the case is recorded as System."},
 }
 
 // initExecuteCmd initializes the execute command.

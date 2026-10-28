@@ -21,6 +21,10 @@ type ExecuteActionRequestBody struct {
 	QueueID *string `json:"queueId,omitzero"`
 	// Optional duration in milliseconds for actions with timeouts
 	Duration *float64 `json:"duration,omitzero"`
+	// The user ID or email of the organization member who made the decision. The action is recorded as theirs.
+	Moderator *string `json:"moderator,omitzero"`
+	// Record an allow or reject decision as a casebook case. Defaults to true when `moderator` is set, else false. Without `moderator`, the case is recorded as System.
+	CreateCasebookCase *bool `json:"createCasebookCase,omitzero"`
 }
 
 func (e ExecuteActionRequestBody) MarshalJSON() ([]byte, error) {
@@ -74,6 +78,20 @@ func (e *ExecuteActionRequestBody) GetDuration() *float64 {
 		return nil
 	}
 	return e.Duration
+}
+
+func (e *ExecuteActionRequestBody) GetModerator() *string {
+	if e == nil {
+		return nil
+	}
+	return e.Moderator
+}
+
+func (e *ExecuteActionRequestBody) GetCreateCasebookCase() *bool {
+	if e == nil {
+		return nil
+	}
+	return e.CreateCasebookCase
 }
 
 type ExecuteActionRequest struct {

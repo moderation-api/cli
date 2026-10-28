@@ -57,11 +57,11 @@ type ModerationAPI struct {
 	Feedback      *Feedback
 	Queue         *Queue
 	Actions       *Actions
+	Content       *Content
 	Webhooks      *Webhooks
 	WebhookSecret *WebhookSecret
 	Account       *Account
 	Wordlist      *Wordlist
-	Content       *Content
 	Projects      *Projects
 	Channels      *Channels
 
@@ -139,10 +139,10 @@ func WithTimeout(timeout time.Duration) SDKOption {
 // New creates a new instance of the SDK with the provided options
 func New(opts ...SDKOption) *ModerationAPI {
 	sdk := &ModerationAPI{
-		SDKVersion: "0.5.0",
+		SDKVersion: "0.6.0",
 		sdkConfiguration: config.SDKConfiguration{
-			UserAgent:         "speakeasy-sdk/go 0.5.0 internal 1.1.0 github.com/moderation-api/cli/internal/sdk",
-			SDKVersion:        "0.5.0",
+			UserAgent:         "speakeasy-sdk/go 0.6.0 internal 1.1.0 github.com/moderation-api/cli/internal/sdk",
+			SDKVersion:        "0.6.0",
 			GenVersion:        "internal",
 			OpenAPIDocVersion: "1.1.0",
 			ServerList:        ServerList,
@@ -165,11 +165,11 @@ func New(opts ...SDKOption) *ModerationAPI {
 	sdk.Feedback = newFeedback(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Queue = newQueue(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Actions = newActions(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Content = newContent(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Webhooks = newWebhooks(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.WebhookSecret = newWebhookSecret(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Account = newAccount(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Wordlist = newWordlist(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.Content = newContent(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Projects = newProjects(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Channels = newChannels(sdk, sdk.sdkConfiguration, sdk.hooks)
 

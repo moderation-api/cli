@@ -5103,6 +5103,14 @@
                     "description": "Optional duration in milliseconds for actions with timeouts",
                     "type": "number",
                     "minimum": 0
+                  },
+                  "moderator": {
+                    "description": "The user ID or email of the organization member who made the decision. The action is recorded as theirs.",
+                    "type": "string"
+                  },
+                  "createCasebookCase": {
+                    "description": "Record an allow or reject decision as a casebook case. Defaults to true when `moderator` is set, else false. Without `moderator`, the case is recorded as System.",
+                    "type": "boolean"
                   }
                 },
                 "required": [
@@ -5340,6 +5348,672 @@
           }
         },
         "x-speakeasy-ignore": true
+      }
+    },
+    "/content/{id}/reject": {
+      "post": {
+        "operationId": "rejectContent",
+        "summary": "Reject content",
+        "description": "Reject a content item with the built-in reject action, and resolve it in the review queue.",
+        "tags": [
+          "Content"
+        ],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "description": "The content ID you sent when you submitted the content, or the ID Moderation API assigned."
+            },
+            "required": true,
+            "description": "The content ID you sent when you submitted the content, or the ID Moderation API assigned."
+          },
+          {
+            "in": "header",
+            "name": "Project-Id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
+            "x-speakeasy-name-override": "projectId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reason": {
+                    "description": "Why the action was taken. Saved with the action and sent in the webhook event.",
+                    "type": "string"
+                  },
+                  "queueId": {
+                    "description": "The queue the content is reviewed in. Defaults to the project's default queue.",
+                    "type": "string"
+                  },
+                  "moderator": {
+                    "description": "The user ID or email of the organization member who made the decision. The action is recorded as theirs.",
+                    "type": "string"
+                  },
+                  "createCasebookCase": {
+                    "description": "Record an allow or reject decision as a casebook case. Defaults to true when `moderator` is set, else false. Without `moderator`, the case is recorded as System.",
+                    "type": "boolean"
+                  }
+                }
+              },
+              "example": {
+                "reason": "Spam"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Action executed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the action was executed successfully"
+                    }
+                  },
+                  "required": [
+                    "success"
+                  ],
+                  "additionalProperties": false,
+                  "description": "Execution result"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests. Retry after the number of seconds in the `Retry-After` header.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitError"
+                }
+              }
+            }
+          }
+        },
+        "x-speakeasy-group": "content",
+        "x-speakeasy-name-override": "reject",
+        "x-speakeasy-mcp": {
+          "title": "Reject content",
+          "scopes": [
+            "destructive"
+          ],
+          "readOnlyHint": false,
+          "destructiveHint": true
+        }
+      }
+    },
+    "/content/{id}/allow": {
+      "post": {
+        "operationId": "allowContent",
+        "summary": "Allow content",
+        "description": "Allow a content item with the built-in allow action, and resolve it in the review queue.",
+        "tags": [
+          "Content"
+        ],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "description": "The content ID you sent when you submitted the content, or the ID Moderation API assigned."
+            },
+            "required": true,
+            "description": "The content ID you sent when you submitted the content, or the ID Moderation API assigned."
+          },
+          {
+            "in": "header",
+            "name": "Project-Id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
+            "x-speakeasy-name-override": "projectId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reason": {
+                    "description": "Why the action was taken. Saved with the action and sent in the webhook event.",
+                    "type": "string"
+                  },
+                  "queueId": {
+                    "description": "The queue the content is reviewed in. Defaults to the project's default queue.",
+                    "type": "string"
+                  },
+                  "moderator": {
+                    "description": "The user ID or email of the organization member who made the decision. The action is recorded as theirs.",
+                    "type": "string"
+                  },
+                  "createCasebookCase": {
+                    "description": "Record an allow or reject decision as a casebook case. Defaults to true when `moderator` is set, else false. Without `moderator`, the case is recorded as System.",
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Action executed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the action was executed successfully"
+                    }
+                  },
+                  "required": [
+                    "success"
+                  ],
+                  "additionalProperties": false,
+                  "description": "Execution result"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests. Retry after the number of seconds in the `Retry-After` header.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitError"
+                }
+              }
+            }
+          }
+        },
+        "x-speakeasy-group": "content",
+        "x-speakeasy-name-override": "allow",
+        "x-speakeasy-mcp": {
+          "title": "Allow content",
+          "scopes": [
+            "write"
+          ],
+          "readOnlyHint": false,
+          "destructiveHint": false
+        }
+      }
+    },
+    "/authors/{id}/block": {
+      "post": {
+        "operationId": "blockAuthor",
+        "summary": "Block author",
+        "description": "Block an author with the built-in block action. A blocked author cannot post new content until unblocked.",
+        "tags": [
+          "Authors"
+        ],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "description": "Either external ID or the ID assigned by moderation API."
+            },
+            "required": true,
+            "description": "Either external ID or the ID assigned by moderation API."
+          },
+          {
+            "in": "header",
+            "name": "Project-Id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
+            "x-speakeasy-name-override": "projectId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reason": {
+                    "description": "Why the action was taken. Saved with the action and sent in the webhook event.",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Action executed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the action was executed successfully"
+                    }
+                  },
+                  "required": [
+                    "success"
+                  ],
+                  "additionalProperties": false,
+                  "description": "Execution result"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests. Retry after the number of seconds in the `Retry-After` header.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitError"
+                }
+              }
+            }
+          }
+        },
+        "x-speakeasy-group": "authors",
+        "x-speakeasy-name-override": "block",
+        "x-speakeasy-mcp": {
+          "title": "Block author",
+          "scopes": [
+            "destructive"
+          ],
+          "readOnlyHint": false,
+          "destructiveHint": true
+        }
+      }
+    },
+    "/authors/{id}/suspend": {
+      "post": {
+        "operationId": "suspendAuthor",
+        "summary": "Suspend author",
+        "description": "Block an author for a limited time with the built-in suspend action.",
+        "tags": [
+          "Authors"
+        ],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "description": "Either external ID or the ID assigned by moderation API."
+            },
+            "required": true,
+            "description": "Either external ID or the ID assigned by moderation API."
+          },
+          {
+            "in": "header",
+            "name": "Project-Id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
+            "x-speakeasy-name-override": "projectId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reason": {
+                    "description": "Why the action was taken. Saved with the action and sent in the webhook event.",
+                    "type": "string"
+                  },
+                  "duration": {
+                    "description": "How long the suspension lasts, in milliseconds. Defaults to 24 hours.",
+                    "type": "number",
+                    "minimum": 0
+                  }
+                }
+              },
+              "example": {
+                "reason": "Violation of community guidelines",
+                "duration": 604800000
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Action executed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the action was executed successfully"
+                    }
+                  },
+                  "required": [
+                    "success"
+                  ],
+                  "additionalProperties": false,
+                  "description": "Execution result"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests. Retry after the number of seconds in the `Retry-After` header.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitError"
+                }
+              }
+            }
+          }
+        },
+        "x-speakeasy-group": "authors",
+        "x-speakeasy-name-override": "suspend",
+        "x-speakeasy-mcp": {
+          "title": "Suspend author",
+          "scopes": [
+            "destructive"
+          ],
+          "readOnlyHint": false,
+          "destructiveHint": true
+        }
+      }
+    },
+    "/authors/{id}/unblock": {
+      "post": {
+        "operationId": "unblockAuthor",
+        "summary": "Unblock author",
+        "description": "Unblock a blocked or suspended author with the built-in unblock action, so they can post new content again.",
+        "tags": [
+          "Authors"
+        ],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "description": "Either external ID or the ID assigned by moderation API."
+            },
+            "required": true,
+            "description": "Either external ID or the ID assigned by moderation API."
+          },
+          {
+            "in": "header",
+            "name": "Project-Id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
+            "x-speakeasy-name-override": "projectId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reason": {
+                    "description": "Why the action was taken. Saved with the action and sent in the webhook event.",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Action executed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the action was executed successfully"
+                    }
+                  },
+                  "required": [
+                    "success"
+                  ],
+                  "additionalProperties": false,
+                  "description": "Execution result"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests. Retry after the number of seconds in the `Retry-After` header.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitError"
+                }
+              }
+            }
+          }
+        },
+        "x-speakeasy-group": "authors",
+        "x-speakeasy-name-override": "unblock",
+        "x-speakeasy-mcp": {
+          "title": "Unblock author",
+          "scopes": [
+            "write"
+          ],
+          "readOnlyHint": false,
+          "destructiveHint": false
+        }
       }
     },
     "/webhooks": {

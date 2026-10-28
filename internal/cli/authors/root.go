@@ -42,6 +42,18 @@ func InitAuthorsRoot(parent *cobra.Command) error {
 		return err
 	}
 
+	if err := initBlockCmd(AuthorsCmd); err != nil {
+		return err
+	}
+
+	if err := initSuspendCmd(AuthorsCmd); err != nil {
+		return err
+	}
+
+	if err := initUnblockCmd(AuthorsCmd); err != nil {
+		return err
+	}
+
 	parent.AddCommand(AuthorsCmd)
 	return nil
 }

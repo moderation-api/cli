@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: f6fec850-ef66-45dd-9a18-cec7cc0801ce
 management:
-  docChecksum: ed2fd953cba3e99fb81365252925a0d4
+  docChecksum: d6bce8a263f0ec11d54bdf026957ba2f
   docVersion: 1.1.0
   speakeasyVersion: internal
   generationVersion: internal
-  releaseVersion: 0.5.0
-  configChecksum: 02a247def0b187defcac9b37ddb44f1f
+  releaseVersion: 0.6.0
+  configChecksum: 4cc78732410808a71d9e1e939e1e4dc3
   repoURL: https://github.com/moderation-api/cli
   installationURL: https://github.com/moderation-api/cli
   published: true
@@ -51,7 +51,7 @@ trackedFiles:
   internal/cli/actions/delete.go:
     last_write_checksum: sha1:c71d0687c59b64159890fec7b396414008aa123b
   internal/cli/actions/execute.go:
-    last_write_checksum: sha1:bb337d261800a8d89f30e634c97fac2dddec248e
+    last_write_checksum: sha1:4e3e4e3af01895f2f7afe1d7823f245139399f80
   internal/cli/actions/list.go:
     last_write_checksum: sha1:cb002d17fddd5b5eabee0c3ff054a53bc74633be
   internal/cli/actions/retrieve.go:
@@ -76,6 +76,8 @@ trackedFiles:
     last_write_checksum: sha1:324996d8d12662d1d801978a342779b4b8ed4572
   internal/cli/auth.go:
     last_write_checksum: sha1:b4a5f6a9339e2f0c230ecdab7a4da8a907feb0d8
+  internal/cli/authors/block.go:
+    last_write_checksum: sha1:0f104961102e3f7506e49a733679085a3fcde8b1
   internal/cli/authors/create.go:
     last_write_checksum: sha1:e71ddd0d952a6ccbf8d24a93bee125156d915bff
   internal/cli/authors/delete.go:
@@ -85,7 +87,11 @@ trackedFiles:
   internal/cli/authors/retrieve.go:
     last_write_checksum: sha1:fd4a28868414d15ce664f8f632e3da12bfdb4c1b
   internal/cli/authors/root.go:
-    last_write_checksum: sha1:95705c7a4cfdae581b8627ab77fbdabc9817504d
+    last_write_checksum: sha1:6f0741f5f0ff31108ba804bd8648b48fba2774b5
+  internal/cli/authors/suspend.go:
+    last_write_checksum: sha1:b4762cf936b2ee9a623e4ffee8a497bdb93c3718
+  internal/cli/authors/unblock.go:
+    last_write_checksum: sha1:6a3bd242b8aaa1f2782a6522a5dea213aedcea32
   internal/cli/authors/update.go:
     last_write_checksum: sha1:0c5b4bc8f0af5f445a8b0cafe2df7da28540896a
   internal/cli/channels/create.go:
@@ -104,8 +110,12 @@ trackedFiles:
     last_write_checksum: sha1:de897645adfed72311ae26864695c225bb260b5a
   internal/cli/configure.go:
     last_write_checksum: sha1:187a7058682f79b18d9da7357259b9e5f2af1309
+  internal/cli/content/allow.go:
+    last_write_checksum: sha1:7356d2cbdeab6d89b77caca73a4dc01115920e98
+  internal/cli/content/reject.go:
+    last_write_checksum: sha1:2721a7dcb763361facf664575b4a6c934bc26b99
   internal/cli/content/root.go:
-    last_write_checksum: sha1:3c9d297eb0c6908e4efa9ab881dfefd9909c1595
+    last_write_checksum: sha1:785c6f2a7a640f7d8c59f657a2648e31f78661c9
   internal/cli/content/submit.go:
     last_write_checksum: sha1:5db89edd5a5f6b7867090c973744f629e4498422
   internal/cli/feedback/create.go:
@@ -151,9 +161,9 @@ trackedFiles:
   internal/cli/queue/root.go:
     last_write_checksum: sha1:ce2788b28359a23ff98a244ac90b71a827c16e63
   internal/cli/root.go:
-    last_write_checksum: sha1:1bc5de6fbf6e903d6ce21034fbfd82719e4bd5e3
+    last_write_checksum: sha1:e5d1b2211d9b4aaa93e95f248ce7db2af0a1844c
   internal/cli/version.go:
-    last_write_checksum: sha1:3d31261c59e8a154342e9ad6376ff39e5e54b2f7
+    last_write_checksum: sha1:8ec1fd280177b7de452c747511fd0ad1c8619898
   internal/cli/webhooks/create.go:
     last_write_checksum: sha1:98c73266c8954efcf0da2493ae41909df45a38f0
   internal/cli/webhooks/delete.go:
@@ -257,11 +267,11 @@ trackedFiles:
   internal/sdk/apikeys.go:
     last_write_checksum: sha1:eb2143b8ecfa3044b599462841bd90d70671bf3b
   internal/sdk/authors.go:
-    last_write_checksum: sha1:6634e98d71de59478161a5e9e0ce21c9109536af
+    last_write_checksum: sha1:d6ee77fd488d6dfd1225315f04691fbddf772e11
   internal/sdk/channels.go:
     last_write_checksum: sha1:9725f5e3d5a0f5de727883345c47910195549294
   internal/sdk/content.go:
-    last_write_checksum: sha1:e8867fac2baae5fb6d85d330f8411add76c594e7
+    last_write_checksum: sha1:cccfa1b907ecf93c3f82bb8c15e599ada01e50fd
   internal/sdk/feedback.go:
     last_write_checksum: sha1:e851165bd315e8c590b4df1a5b6d40d4e2fa4a92
   internal/sdk/items.go:
@@ -306,6 +316,10 @@ trackedFiles:
     last_write_checksum: sha1:510eb3e6e24062a550cb732ea312c8963882f0e2
   internal/sdk/models/operations/addwordlistwords.go:
     last_write_checksum: sha1:67b4548755cf27fc01bbceac7f0255b26cbdfb5d
+  internal/sdk/models/operations/allowcontent.go:
+    last_write_checksum: sha1:5d7f539c6af48590b6b166093fcc3b170a2adff6
+  internal/sdk/models/operations/blockauthor.go:
+    last_write_checksum: sha1:3075049ab586b95c6e4c9cbcaabe8f5f3bf781fe
   internal/sdk/models/operations/createaction.go:
     last_write_checksum: sha1:dafdfd1d349f31ed9de63b05537018b44993be23
   internal/sdk/models/operations/createauthor.go:
@@ -337,7 +351,7 @@ trackedFiles:
   internal/sdk/models/operations/duplicateproject.go:
     last_write_checksum: sha1:f9f3c78f7ee05aa9cc2fa6bcc2f6fcb92611d643
   internal/sdk/models/operations/executeaction.go:
-    last_write_checksum: sha1:974f2701f706a14b6cc7965ecc3c5f5930e28528
+    last_write_checksum: sha1:4dcbe2995f269db017346ba97cc5da07167dbfcb
   internal/sdk/models/operations/getaccount.go:
     last_write_checksum: sha1:7b0caea7bdc17e48f831fdc4388fc4d29989c75c
   internal/sdk/models/operations/getaction.go:
@@ -390,6 +404,8 @@ trackedFiles:
     last_write_checksum: sha1:df754a1f944503f21a1189dcd42099a03d37429e
   internal/sdk/models/operations/options.go:
     last_write_checksum: sha1:48bcab7f3327575bf6309176ee29015cc9477a74
+  internal/sdk/models/operations/rejectcontent.go:
+    last_write_checksum: sha1:37290da59e6131e1b4e766e9213ee8ada70c5060
   internal/sdk/models/operations/removewordlistwords.go:
     last_write_checksum: sha1:3f05a9e7df2be903164ba8bc07835473087b7f64
   internal/sdk/models/operations/resolvequeueitem.go:
@@ -398,6 +414,10 @@ trackedFiles:
     last_write_checksum: sha1:f43daa692b1e8203ce8ebf2adf80b79e9f04b8ae
   internal/sdk/models/operations/submitcontent.go:
     last_write_checksum: sha1:cb670d0bf2fdcd9c7ac68031c7512e2c7d0604bf
+  internal/sdk/models/operations/suspendauthor.go:
+    last_write_checksum: sha1:af885ce2174abc6695e4dbaddd7b468d50d47bdd
+  internal/sdk/models/operations/unblockauthor.go:
+    last_write_checksum: sha1:b3ad277887e69ba140a561cde376dc0d17716ed5
   internal/sdk/models/operations/unresolvequeueitem.go:
     last_write_checksum: sha1:093fc225a3915f232e5fc18512eb0df40cfc956d
   internal/sdk/models/operations/updateaction.go:
@@ -431,7 +451,7 @@ trackedFiles:
   internal/sdk/models/sdkerrors/sdkdefaulterror.go:
     last_write_checksum: sha1:437b3a3eacb54d8648a68f80b3cd38fa5019f006
   internal/sdk/moderationapi.go:
-    last_write_checksum: sha1:5e3a44fff5b0c2ee7bedd9735b7436f24dd0f947
+    last_write_checksum: sha1:23253dcf72960a999e32bf25f7b5bb41c216d3e4
   internal/sdk/optionalnullable/optionalnullable.go:
     last_write_checksum: sha1:b828c94c45116e632925027e4e2c211e971e04e2
   internal/sdk/optionalnullable/optionalnullable_test.go:
@@ -491,9 +511,9 @@ trackedFiles:
   internal/testclient/testclient.go:
     last_write_checksum: sha1:7107e59d336235c44af152c5a61ee3896a7841fa
   internal/usage/bodyschemas.go:
-    last_write_checksum: sha1:e35857ce9ebd1c1ff7a9913f8cdb21a27aff7db3
+    last_write_checksum: sha1:27959b7df8d97c2b4639655c81c330a43114d7d6
   internal/usage/schema.go:
-    last_write_checksum: sha1:83417c8703b1d61777c96648b8db8a955b562791
+    last_write_checksum: sha1:3ca5ea9c7c1891b13d1e360a33e7075bd5db1f0b
   scripts/install.ps1:
     last_write_checksum: sha1:bd3a52c28f647ed881c6e8d72abf2d84216976c9
   scripts/install.sh:
@@ -1457,4 +1477,94 @@ examples:
           application/json: {"type": "authentication_error", "code": "unauthorized", "message": "Authorization not provided", "request_id": "h8fkz6kkzoa446ffve37atys", "doc_url": "https://shameless-excess.net"}
         "429":
           application/json: {"type": "rate_limit_error", "code": "rate_limit_exceeded", "message": "Rate limit exceeded", "request_id": "h8fkz6kkzoa446ffve37atys", "doc_url": "https://breakable-insolence.info"}
+  blockAuthor:
+    speakeasy-default-block-author:
+      parameters:
+        path:
+          id: "<id>"
+      requestBody:
+        application/json: {}
+      responses:
+        "200":
+          application/json: {"success": false}
+        "400":
+          application/json: {"type": "invalid_request_error", "code": "invalid_request", "message": "Invalid input data", "request_id": "h8fkz6kkzoa446ffve37atys", "doc_url": "https://mammoth-appliance.org/"}
+        "401":
+          application/json: {"type": "authentication_error", "code": "unauthorized", "message": "Authorization not provided", "request_id": "h8fkz6kkzoa446ffve37atys", "doc_url": "https://clumsy-ectoderm.com/"}
+        "404":
+          application/json: {"type": "not_found_error", "code": "resource_not_found", "message": "Not found", "request_id": "h8fkz6kkzoa446ffve37atys", "doc_url": "https://square-custody.com"}
+        "429":
+          application/json: {"type": "rate_limit_error", "code": "rate_limit_exceeded", "message": "Rate limit exceeded", "request_id": "h8fkz6kkzoa446ffve37atys", "doc_url": "https://mysterious-dime.name/"}
+  suspendAuthor:
+    speakeasy-default-suspend-author:
+      parameters:
+        path:
+          id: "<id>"
+      requestBody:
+        application/json: {}
+      responses:
+        "200":
+          application/json: {"success": true}
+        "400":
+          application/json: {"type": "invalid_request_error", "code": "invalid_request", "message": "Invalid input data", "request_id": "h8fkz6kkzoa446ffve37atys", "doc_url": "https://cluttered-hubris.name/"}
+        "401":
+          application/json: {"type": "authentication_error", "code": "unauthorized", "message": "Authorization not provided", "request_id": "h8fkz6kkzoa446ffve37atys", "doc_url": "https://far-off-farm.net/"}
+        "404":
+          application/json: {"type": "not_found_error", "code": "resource_not_found", "message": "Not found", "request_id": "h8fkz6kkzoa446ffve37atys", "doc_url": "https://scented-farmer.info"}
+        "429":
+          application/json: {"type": "rate_limit_error", "code": "rate_limit_exceeded", "message": "Rate limit exceeded", "request_id": "h8fkz6kkzoa446ffve37atys", "doc_url": "https://miserly-cuckoo.org/"}
+  unblockAuthor:
+    speakeasy-default-unblock-author:
+      parameters:
+        path:
+          id: "<id>"
+      requestBody:
+        application/json: {}
+      responses:
+        "200":
+          application/json: {"success": false}
+        "400":
+          application/json: {"type": "invalid_request_error", "code": "invalid_request", "message": "Invalid input data", "request_id": "h8fkz6kkzoa446ffve37atys", "doc_url": "https://utter-cornet.org"}
+        "401":
+          application/json: {"type": "authentication_error", "code": "unauthorized", "message": "Authorization not provided", "request_id": "h8fkz6kkzoa446ffve37atys", "doc_url": "https://oddball-bathhouse.biz/"}
+        "404":
+          application/json: {"type": "not_found_error", "code": "resource_not_found", "message": "Not found", "request_id": "h8fkz6kkzoa446ffve37atys", "doc_url": "https://apprehensive-fisherman.info/"}
+        "429":
+          application/json: {"type": "rate_limit_error", "code": "rate_limit_exceeded", "message": "Rate limit exceeded", "request_id": "h8fkz6kkzoa446ffve37atys", "doc_url": "https://unhappy-simple.net/"}
+  rejectContent:
+    speakeasy-default-reject-content:
+      parameters:
+        path:
+          id: "<id>"
+      requestBody:
+        application/json: {}
+      responses:
+        "200":
+          application/json: {"success": true}
+        "400":
+          application/json: {"type": "invalid_request_error", "code": "invalid_request", "message": "Invalid input data", "request_id": "h8fkz6kkzoa446ffve37atys", "doc_url": "https://expert-pasta.com"}
+        "401":
+          application/json: {"type": "authentication_error", "code": "unauthorized", "message": "Authorization not provided", "request_id": "h8fkz6kkzoa446ffve37atys", "doc_url": "https://vibrant-adaptation.name"}
+        "404":
+          application/json: {"type": "not_found_error", "code": "resource_not_found", "message": "Not found", "request_id": "h8fkz6kkzoa446ffve37atys", "doc_url": "https://boiling-gym.com/"}
+        "429":
+          application/json: {"type": "rate_limit_error", "code": "rate_limit_exceeded", "message": "Rate limit exceeded", "request_id": "h8fkz6kkzoa446ffve37atys", "doc_url": "https://spanish-backburn.net"}
+  allowContent:
+    speakeasy-default-allow-content:
+      parameters:
+        path:
+          id: "<id>"
+      requestBody:
+        application/json: {}
+      responses:
+        "200":
+          application/json: {"success": true}
+        "400":
+          application/json: {"type": "invalid_request_error", "code": "invalid_request", "message": "Invalid input data", "request_id": "h8fkz6kkzoa446ffve37atys", "doc_url": "https://earnest-fishery.com"}
+        "401":
+          application/json: {"type": "authentication_error", "code": "unauthorized", "message": "Authorization not provided", "request_id": "h8fkz6kkzoa446ffve37atys", "doc_url": "https://meager-climb.biz/"}
+        "404":
+          application/json: {"type": "not_found_error", "code": "resource_not_found", "message": "Not found", "request_id": "h8fkz6kkzoa446ffve37atys", "doc_url": "https://confused-bell.org"}
+        "429":
+          application/json: {"type": "rate_limit_error", "code": "rate_limit_exceeded", "message": "Rate limit exceeded", "request_id": "h8fkz6kkzoa446ffve37atys", "doc_url": "https://nervous-partridge.org/"}
 examplesVersion: 1.0.2
