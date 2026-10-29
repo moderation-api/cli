@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: f6fec850-ef66-45dd-9a18-cec7cc0801ce
 management:
-  docChecksum: d6bce8a263f0ec11d54bdf026957ba2f
+  docChecksum: 29c7bb10b9655dcfe925eacf9d5f4758
   docVersion: 1.1.0
   speakeasyVersion: internal
   generationVersion: internal
-  releaseVersion: 0.6.0
-  configChecksum: 4cc78732410808a71d9e1e939e1e4dc3
+  releaseVersion: 0.7.0
+  configChecksum: c6470f96a29a41e5ea56355f4ff08bc6
   repoURL: https://github.com/moderation-api/cli
   installationURL: https://github.com/moderation-api/cli
   published: true
@@ -145,15 +145,15 @@ trackedFiles:
   internal/cli/queue/getstats.go:
     last_write_checksum: sha1:dccfb6a53167375a75d7a41b243f93e3938fb475
   internal/cli/queue/items/list.go:
-    last_write_checksum: sha1:9472e50b9528c24b556b64d4acd269dfcbffbde0
+    last_write_checksum: sha1:09acae5af2de89fe61b89ef8658a5cd2685f1fa7
   internal/cli/queue/items/resolve.go:
-    last_write_checksum: sha1:82554a72880ca640f629bd4e37593bd9e638b595
+    last_write_checksum: sha1:a5ac2373401a91ce4acc8e12d6655a87525e68c7
   internal/cli/queue/items/resolvemany.go:
-    last_write_checksum: sha1:6bafd91917a5fa29a12dfa448d2d8d7b72e66517
+    last_write_checksum: sha1:952ff62c546fc4635719a61936c526fa8a96b94a
   internal/cli/queue/items/root.go:
     last_write_checksum: sha1:b90044575e57963575795c052a3e3b20b5bccf1f
   internal/cli/queue/items/unresolve.go:
-    last_write_checksum: sha1:2ca0793ed1596af844d545e617ae27f902f19186
+    last_write_checksum: sha1:6b6f849526d53d2b59446f09126a5fe35a5f28aa
   internal/cli/queue/list.go:
     last_write_checksum: sha1:6c90a4b14db41fdc45b41c4b8a05adb9159e109a
   internal/cli/queue/retrieve.go:
@@ -163,7 +163,7 @@ trackedFiles:
   internal/cli/root.go:
     last_write_checksum: sha1:e5d1b2211d9b4aaa93e95f248ce7db2af0a1844c
   internal/cli/version.go:
-    last_write_checksum: sha1:8ec1fd280177b7de452c747511fd0ad1c8619898
+    last_write_checksum: sha1:058d6ec27532e6d65e428c9d9599289e72281336
   internal/cli/webhooks/create.go:
     last_write_checksum: sha1:98c73266c8954efcf0da2493ae41909df45a38f0
   internal/cli/webhooks/delete.go:
@@ -184,6 +184,8 @@ trackedFiles:
     last_write_checksum: sha1:1cf0058687544cf792329d1944330e3a86b2bb7d
   internal/cli/wordlist/create.go:
     last_write_checksum: sha1:40c5b64716f2bcadf2d668ac1e0d63137780b288
+  internal/cli/wordlist/delete.go:
+    last_write_checksum: sha1:102c9488b7a13d0159ea312fa47ab08e4e572931
   internal/cli/wordlist/getembeddingstatus.go:
     last_write_checksum: sha1:127a47ac52060279377b439b9d53722ff2ce3836
   internal/cli/wordlist/list.go:
@@ -191,7 +193,7 @@ trackedFiles:
   internal/cli/wordlist/retrieve.go:
     last_write_checksum: sha1:12b90a87f77658b316d8f66a8f31159da76e909c
   internal/cli/wordlist/root.go:
-    last_write_checksum: sha1:ad86a0ad77b173379c1d373cf95d33996e2fe88c
+    last_write_checksum: sha1:b98758cc7f7ece90d255cff18f44c61f9c327650
   internal/cli/wordlist/update.go:
     last_write_checksum: sha1:f59d133aa483d707135b86e4239a9d0d962e0170
   internal/cli/wordlist/words/add.go:
@@ -275,7 +277,7 @@ trackedFiles:
   internal/sdk/feedback.go:
     last_write_checksum: sha1:e851165bd315e8c590b4df1a5b6d40d4e2fa4a92
   internal/sdk/items.go:
-    last_write_checksum: sha1:6da4b4e01374a5310ddd040e15cef9ec9c02d58f
+    last_write_checksum: sha1:30cd6aad0ca8f601038acf5c99cf03acc1570534
   internal/sdk/models/components/authenticationerror.go:
     last_write_checksum: sha1:a3e65f0561efe3e332c01c0966f9b34f017e92eb
   internal/sdk/models/components/badrequesterror.go:
@@ -307,7 +309,7 @@ trackedFiles:
   internal/sdk/models/components/queue.go:
     last_write_checksum: sha1:7fbe5aa0d9bf34eacb6eeb3dd1c3621d6c44b1d0
   internal/sdk/models/components/queueitem.go:
-    last_write_checksum: sha1:2cd9946435953cc326610016dee84c1ac5e9ed66
+    last_write_checksum: sha1:bbbbd2a941908c3dcaabde2c3a024d686aac2763
   internal/sdk/models/components/queuewithcounts.go:
     last_write_checksum: sha1:7955e2097d8a045e8c91fc7e95a03ebfe32d6286
   internal/sdk/models/components/ratelimiterror.go:
@@ -346,6 +348,8 @@ trackedFiles:
     last_write_checksum: sha1:f0c5345c149027a90591b4dedf592d321bb00162
   internal/sdk/models/operations/deletewebhook.go:
     last_write_checksum: sha1:ec51074ff96306e513685d48124863e5fe0d7f4d
+  internal/sdk/models/operations/deletewordlist.go:
+    last_write_checksum: sha1:2437abfd126b0f79971794cbd633ab75a460c473
   internal/sdk/models/operations/duplicatechannel.go:
     last_write_checksum: sha1:80fb60a28f7301aae451e519ccdcafb734a92ade
   internal/sdk/models/operations/duplicateproject.go:
@@ -409,17 +413,17 @@ trackedFiles:
   internal/sdk/models/operations/removewordlistwords.go:
     last_write_checksum: sha1:3f05a9e7df2be903164ba8bc07835473087b7f64
   internal/sdk/models/operations/resolvequeueitem.go:
-    last_write_checksum: sha1:eb416c24aa5b611629925fd8caa77f4ce33bd475
+    last_write_checksum: sha1:df2b43fe7abfc79d057a0b15481d6093311b83d7
   internal/sdk/models/operations/resolvequeueitems.go:
-    last_write_checksum: sha1:f43daa692b1e8203ce8ebf2adf80b79e9f04b8ae
+    last_write_checksum: sha1:67cb09a546f1c617a9e239a64776d5d69244bfdd
   internal/sdk/models/operations/submitcontent.go:
-    last_write_checksum: sha1:cb670d0bf2fdcd9c7ac68031c7512e2c7d0604bf
+    last_write_checksum: sha1:9cce6e5ba0a74616d1be4427478571e979ff7a16
   internal/sdk/models/operations/suspendauthor.go:
     last_write_checksum: sha1:af885ce2174abc6695e4dbaddd7b468d50d47bdd
   internal/sdk/models/operations/unblockauthor.go:
     last_write_checksum: sha1:b3ad277887e69ba140a561cde376dc0d17716ed5
   internal/sdk/models/operations/unresolvequeueitem.go:
-    last_write_checksum: sha1:093fc225a3915f232e5fc18512eb0df40cfc956d
+    last_write_checksum: sha1:da5eb701b541f7ef8005acf308623b4ff4e840a2
   internal/sdk/models/operations/updateaction.go:
     last_write_checksum: sha1:bdd668d1dd1d7d164eac482e10050cd4b8a80bf9
   internal/sdk/models/operations/updateauthor.go:
@@ -451,7 +455,7 @@ trackedFiles:
   internal/sdk/models/sdkerrors/sdkdefaulterror.go:
     last_write_checksum: sha1:437b3a3eacb54d8648a68f80b3cd38fa5019f006
   internal/sdk/moderationapi.go:
-    last_write_checksum: sha1:23253dcf72960a999e32bf25f7b5bb41c216d3e4
+    last_write_checksum: sha1:957bdbbe55d80861e078308e112b82cd2bbad463
   internal/sdk/optionalnullable/optionalnullable.go:
     last_write_checksum: sha1:b828c94c45116e632925027e4e2c211e971e04e2
   internal/sdk/optionalnullable/optionalnullable_test.go:
@@ -505,15 +509,15 @@ trackedFiles:
   internal/sdk/webhooksecret.go:
     last_write_checksum: sha1:dba657bf0d16c657a8dbca1ae9f620394a15b83c
   internal/sdk/wordlist.go:
-    last_write_checksum: sha1:3e9a9d7460d5fa4594d078c798d713e1fad2c9dc
+    last_write_checksum: sha1:8ece3f9b112924179c5a80cc5daed35b438e4631
   internal/sdk/words.go:
     last_write_checksum: sha1:444eb505ec11550665c14531b19b6ef451b2f4cf
   internal/testclient/testclient.go:
     last_write_checksum: sha1:7107e59d336235c44af152c5a61ee3896a7841fa
   internal/usage/bodyschemas.go:
-    last_write_checksum: sha1:27959b7df8d97c2b4639655c81c330a43114d7d6
+    last_write_checksum: sha1:b7a71350264254881d21f50b539474c00d1e50f2
   internal/usage/schema.go:
-    last_write_checksum: sha1:3ca5ea9c7c1891b13d1e360a33e7075bd5db1f0b
+    last_write_checksum: sha1:391d00fc76c6b80eb8a33503f07d8889e17c5d9f
   scripts/install.ps1:
     last_write_checksum: sha1:bd3a52c28f647ed881c6e8d72abf2d84216976c9
   scripts/install.sh:
@@ -1567,4 +1571,18 @@ examples:
           application/json: {"type": "not_found_error", "code": "resource_not_found", "message": "Not found", "request_id": "h8fkz6kkzoa446ffve37atys", "doc_url": "https://confused-bell.org"}
         "429":
           application/json: {"type": "rate_limit_error", "code": "rate_limit_exceeded", "message": "Rate limit exceeded", "request_id": "h8fkz6kkzoa446ffve37atys", "doc_url": "https://nervous-partridge.org/"}
+  deleteWordlist:
+    speakeasy-default-delete-wordlist:
+      parameters:
+        path:
+          id: "<id>"
+      responses:
+        "200":
+          application/json: {"id": "<id>", "deleted": true, "detachedChannelIds": ["<value 1>", "<value 2>", "<value 3>"]}
+        "401":
+          application/json: {"type": "authentication_error", "code": "unauthorized", "message": "Authorization not provided", "request_id": "h8fkz6kkzoa446ffve37atys", "doc_url": "https://rotating-exterior.biz/"}
+        "404":
+          application/json: {"type": "not_found_error", "code": "resource_not_found", "message": "Not found", "request_id": "h8fkz6kkzoa446ffve37atys", "doc_url": "https://flickering-airmail.org/"}
+        "429":
+          application/json: {"type": "rate_limit_error", "code": "rate_limit_exceeded", "message": "Rate limit exceeded", "request_id": "h8fkz6kkzoa446ffve37atys", "doc_url": "https://decent-millet.biz"}
 examplesVersion: 1.0.2

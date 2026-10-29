@@ -34,7 +34,7 @@ func initListCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "list [id]",
 		Short:   "List queue items",
-		Long:    "List the items of a review queue, with the filters and the date window of the queue applied. By default only pending items. The list is paginated. Use the item `id` to resolve or unresolve an item.",
+		Long:    "List the items of a review queue, with the filters and the date window of the queue applied. By default only pending items. The list is paginated. Use the item `id` or `contentId` to resolve or unresolve an item.",
 		Example: "  modapi queue items list --id <id>",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runListCmd,

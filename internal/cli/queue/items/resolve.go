@@ -15,7 +15,7 @@ import (
 
 var resolveCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "id", FieldPath: "ID", Kind: flagutil.FlagKindString, Required: true, Description: "The queue ID. [required]"},
-	{FlagName: "item-id", FieldPath: "ItemID", Kind: flagutil.FlagKindString, Required: true, Description: "The item ID to resolve. [required]"},
+	{FlagName: "item-id", FieldPath: "ItemID", Kind: flagutil.FlagKindString, Required: true, Description: "The item to resolve: the item 'id' from 'GET /queue/{id}/items', or the 'contentId' you sent to 'POST /moderate' (webhooks send it as 'item.id'). For a content ID, the newest submission with that content ID is used, as the queue shows it. [required]"},
 	{FlagName: "project-id", Shorthand: "p", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Optional: true, Description: "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error."},
 }
 
@@ -24,7 +24,7 @@ func initResolveCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "resolve",
 		Short:   "Resolve a queue item",
-		Long:    "Mark an item of a queue as resolved. It is the same as a check-off in the dashboard: the item leaves the pending list and a QUEUE_ITEM_COMPLETED webhook is sent. To also take a moderation action, use `POST /actions/execute`.",
+		Long:    "Mark an item of a queue as resolved. It is the same as a check-off in the dashboard: the item leaves the pending list and a QUEUE_ITEM_COMPLETED webhook is sent. `itemId` is the item `id` or your `contentId`. To also take a moderation action, use `POST /actions/execute`.",
 		Example: "  modapi queue items resolve --id <id> --item-id <id>",
 		Args:    cobra.NoArgs,
 		RunE:    runResolveCmd,

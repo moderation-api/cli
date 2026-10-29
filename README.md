@@ -417,6 +417,7 @@ modapi projects list --secret-key "$MODAPI_ORGANIZATION_KEY"
   * [`create`](docs/modapi_wordlist_create.md) - Create wordlist
   * [`retrieve`](docs/modapi_wordlist_retrieve.md) - Get wordlist
   * [`update`](docs/modapi_wordlist_update.md) - Update wordlist
+  * [`delete`](docs/modapi_wordlist_delete.md) - Delete wordlist
   * [`get-embedding-status`](docs/modapi_wordlist_get-embedding-status.md) - Get embedding status
   * [`words`](docs/modapi_wordlist_words.md) - Operations for words
     * [`add`](docs/modapi_wordlist_words_add.md) - Add words to wordlist

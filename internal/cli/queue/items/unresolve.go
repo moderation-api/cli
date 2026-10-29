@@ -15,7 +15,7 @@ import (
 
 var unresolveCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "id", FieldPath: "ID", Kind: flagutil.FlagKindString, Required: true, Description: "The queue ID. [required]"},
-	{FlagName: "item-id", FieldPath: "ItemID", Kind: flagutil.FlagKindString, Required: true, Description: "The item ID to unresolve. [required]"},
+	{FlagName: "item-id", FieldPath: "ItemID", Kind: flagutil.FlagKindString, Required: true, Description: "The item to unresolve: the item 'id' from 'GET /queue/{id}/items', or the 'contentId' you sent to 'POST /moderate' (webhooks send it as 'item.id'). For a content ID, the newest submission with that content ID is used, as the queue shows it. [required]"},
 	{FlagName: "project-id", Shorthand: "p", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Optional: true, Description: "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error."},
 }
 
@@ -24,7 +24,7 @@ func initUnresolveCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "unresolve",
 		Short:   "Unresolve a queue item",
-		Long:    "Mark a resolved item of a queue as pending again. It is the same as removing a check-off in the dashboard: the item comes back in the pending list.",
+		Long:    "Mark a resolved item of a queue as pending again. It is the same as removing a check-off in the dashboard: the item comes back in the pending list. `itemId` is the item `id` or your `contentId`.",
 		Example: "  modapi queue items unresolve --id <id> --item-id <id>",
 		Args:    cobra.NoArgs,
 		RunE:    runUnresolveCmd,
