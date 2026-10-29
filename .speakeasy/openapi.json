@@ -3033,7 +3033,7 @@
       "get": {
         "operationId": "listQueueItems",
         "summary": "List queue items",
-        "description": "List the items of a review queue, with the filters and the date window of the queue applied. By default only pending items. The list is paginated. Use the item `id` to resolve or unresolve an item.",
+        "description": "List the items of a review queue, with the filters and the date window of the queue applied. By default only pending items. The list is paginated. Use the item `id` or `contentId` to resolve or unresolve an item.",
         "tags": [
           "Review queues"
         ],
@@ -3281,7 +3281,7 @@
       "post": {
         "operationId": "resolveQueueItem",
         "summary": "Resolve a queue item",
-        "description": "Mark an item of a queue as resolved. It is the same as a check-off in the dashboard: the item leaves the pending list and a QUEUE_ITEM_COMPLETED webhook is sent. To also take a moderation action, use `POST /actions/execute`.",
+        "description": "Mark an item of a queue as resolved. It is the same as a check-off in the dashboard: the item leaves the pending list and a QUEUE_ITEM_COMPLETED webhook is sent. `itemId` is the item `id` or your `contentId`. To also take a moderation action, use `POST /actions/execute`.",
         "tags": [
           "Review queues"
         ],
@@ -3306,10 +3306,10 @@
             "name": "itemId",
             "schema": {
               "type": "string",
-              "description": "The item ID to resolve."
+              "description": "The item to resolve: the item `id` from `GET /queue/{id}/items`, or the `contentId` you sent to `POST /moderate` (webhooks send it as `item.id`). For a content ID, the newest submission with that content ID is used, as the queue shows it."
             },
             "required": true,
-            "description": "The item ID to resolve."
+            "description": "The item to resolve: the item `id` from `GET /queue/{id}/items`, or the `contentId` you sent to `POST /moderate` (webhooks send it as `item.id`). For a content ID, the newest submission with that content ID is used, as the queue shows it."
           },
           {
             "in": "header",
@@ -3414,7 +3414,7 @@
       "post": {
         "operationId": "resolveQueueItems",
         "summary": "Resolve queue items",
-        "description": "Mark up to 100 items of a queue as resolved in one request. Each item is resolved the same as with `POST /queue/{id}/items/{itemId}/resolve`. IDs that do not exist in the project are skipped and returned in `notFoundIds`.",
+        "description": "Mark up to 100 items of a queue as resolved in one request. Each item is resolved the same as with `POST /queue/{id}/items/{itemId}/resolve`, and each ID is an item `id` or your `contentId`. IDs that match no item in the project are skipped and returned in `notFoundIds`.",
         "tags": [
           "Review queues"
         ],
@@ -3459,7 +3459,7 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "The item IDs to resolve. Up to 100."
+                    "description": "The items to resolve, up to 100. Each is the item `id` from `GET /queue/{id}/items`, or the `contentId` you sent to `POST /moderate` (webhooks send it as `item.id`). For a content ID, the newest submission with that content ID is used, as the queue shows it."
                   }
                 },
                 "required": [
@@ -3492,7 +3492,7 @@
                       "items": {
                         "type": "string"
                       },
-                      "description": "Item IDs that do not exist in the project."
+                      "description": "IDs from `itemIds` that match no item or content ID in the project."
                     }
                   },
                   "required": [
@@ -3571,7 +3571,7 @@
       "post": {
         "operationId": "unresolveQueueItem",
         "summary": "Unresolve a queue item",
-        "description": "Mark a resolved item of a queue as pending again. It is the same as removing a check-off in the dashboard: the item comes back in the pending list.",
+        "description": "Mark a resolved item of a queue as pending again. It is the same as removing a check-off in the dashboard: the item comes back in the pending list. `itemId` is the item `id` or your `contentId`.",
         "tags": [
           "Review queues"
         ],
@@ -3596,10 +3596,10 @@
             "name": "itemId",
             "schema": {
               "type": "string",
-              "description": "The item ID to unresolve."
+              "description": "The item to unresolve: the item `id` from `GET /queue/{id}/items`, or the `contentId` you sent to `POST /moderate` (webhooks send it as `item.id`). For a content ID, the newest submission with that content ID is used, as the queue shows it."
             },
             "required": true,
-            "description": "The item ID to unresolve."
+            "description": "The item to unresolve: the item `id` from `GET /queue/{id}/items`, or the `contentId` you sent to `POST /moderate` (webhooks send it as `item.id`). For a content ID, the newest submission with that content ID is used, as the queue shows it."
           },
           {
             "in": "header",
@@ -8622,6 +8622,116 @@
           "readOnlyHint": false,
           "destructiveHint": true
         }
+      },
+      "delete": {
+        "operationId": "deleteWordlist",
+        "summary": "Delete wordlist",
+        "description": "Delete a wordlist and its words. Channels that use the wordlist do not block the delete: the wordlist is removed from their policies. `detachedChannelIds` lists those channels. This cannot be undone.",
+        "tags": [
+          "Wordlists"
+        ],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "description": "ID of the wordlist to delete"
+            },
+            "required": true,
+            "description": "ID of the wordlist to delete"
+          },
+          {
+            "in": "header",
+            "name": "Project-Id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
+            "x-speakeasy-name-override": "projectId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Wordlist deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "ID of the deleted wordlist"
+                    },
+                    "deleted": {
+                      "type": "boolean",
+                      "description": "Whether the wordlist was deleted"
+                    },
+                    "detachedChannelIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "IDs of the channels that used the wordlist. It was removed from them."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "deleted",
+                    "detachedChannelIds"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests. Retry after the number of seconds in the `Retry-After` header.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitError"
+                }
+              }
+            }
+          }
+        },
+        "x-speakeasy-group": "wordlist",
+        "x-speakeasy-name-override": "delete",
+        "x-speakeasy-mcp": {
+          "title": "Delete wordlist",
+          "scopes": [
+            "destructive"
+          ],
+          "readOnlyHint": false,
+          "destructiveHint": true
+        }
       }
     },
     "/wordlist/{id}/embedding-status": {
@@ -10174,13 +10284,15 @@
                               "const": "unicode_spoofing"
                             },
                             "signals": {
-                              "description": "Per-signal flag toggles. Omitted spoofing signals are enabled; encoding_damage defaults to off because decode damage (U+FFFD) marks a broken pipeline, not an attack. A disabled signal is still detected and reported as a label, but does not by itself flag the policy.",
+                              "description": "Per-signal flag toggles. Omitted spoofing signals are enabled; encoding_damage defaults to off because decode damage (U+FFFD) marks a broken pipeline, not an attack, and hidden_lookalike and leetspeak default to off because they are opt-in. A disabled signal is still detected and reported as a label, but does not by itself flag the policy. Lookalike words are only spelled out in the cleaned text when their signal is enabled.",
                               "type": "object",
                               "propertyNames": {
                                 "type": "string",
                                 "enum": [
                                   "mixed_script",
                                   "confusable_word",
+                                  "hidden_lookalike",
+                                  "leetspeak",
                                   "invisible",
                                   "zalgo",
                                   "illegal",
@@ -13528,11 +13640,11 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "The item ID. Use it to resolve or unresolve the item in this queue."
+            "description": "The item ID: the ID of this submission. Use it, or `contentId`, to resolve or unresolve the item in this queue."
           },
           "contentId": {
             "type": "string",
-            "description": "Your content ID, as you sent it to `POST /moderate`."
+            "description": "Your content ID, as you sent it to `POST /moderate`. Webhooks send it as `item.id`. The resolve endpoints accept it in place of `id`."
           },
           "content": {
             "anyOf": [

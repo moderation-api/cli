@@ -10,7 +10,7 @@ import (
 type UnresolveQueueItemRequest struct {
 	// The queue ID.
 	ID string `pathParam:"style=simple,explode=false,name=id"`
-	// The item ID to unresolve.
+	// The item to unresolve: the item `id` from `GET /queue/{id}/items`, or the `contentId` you sent to `POST /moderate` (webhooks send it as `item.id`). For a content ID, the newest submission with that content ID is used, as the queue shows it.
 	ItemID string `pathParam:"style=simple,explode=false,name=itemId"`
 	// The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.
 	ProjectID *string `header:"style=simple,explode=false,name=Project-Id"`

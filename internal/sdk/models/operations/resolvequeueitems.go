@@ -8,7 +8,7 @@ import (
 )
 
 type ResolveQueueItemsRequestBody struct {
-	// The item IDs to resolve. Up to 100.
+	// The items to resolve, up to 100. Each is the item `id` from `GET /queue/{id}/items`, or the `contentId` you sent to `POST /moderate` (webhooks send it as `item.id`). For a content ID, the newest submission with that content ID is used, as the queue shows it.
 	ItemIds []string `json:"itemIds"`
 }
 
@@ -52,7 +52,7 @@ func (r *ResolveQueueItemsRequest) GetBody() ResolveQueueItemsRequestBody {
 type ResolveQueueItemsResponseBody struct {
 	// Number of items resolved.
 	Resolved int64 `json:"resolved"`
-	// Item IDs that do not exist in the project.
+	// IDs from `itemIds` that match no item or content ID in the project.
 	NotFoundIds []string `json:"notFoundIds"`
 }
 
