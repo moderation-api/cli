@@ -43,6 +43,10 @@ func InitWordlistRoot(parent *cobra.Command) error {
 		return err
 	}
 
+	if err := initDeleteCmd(WordlistCmd); err != nil {
+		return err
+	}
+
 	if err := initGetEmbeddingStatusCmd(WordlistCmd); err != nil {
 		return err
 	}

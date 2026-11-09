@@ -33,7 +33,7 @@ func initCreateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "create",
 		Short:   "Create an action",
-		Long:    "Create an action.",
+		Long:    "Create an action that reviewers and rules can take. `type` sets what it does: a built-in type changes the item or author in Moderation API, and a custom type (`ITEM_CUSTOM`, `AUTHOR_CUSTOM`) only records the decision for the webhooks to deliver. Creating an action does not execute it.",
 		Example: "  modapi actions create --name 'Suspend for 24 hours'",
 		Args:    cobra.NoArgs,
 		RunE:    runCreateCmd,

@@ -17,7 +17,7 @@ import (
 var resolveManyCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "id", Shorthand: "i", FieldPath: "ID", Kind: flagutil.FlagKindString, Required: true, Description: "The queue ID. [required]"},
 	{FlagName: "project-id", Shorthand: "p", FieldPath: "ProjectID", Kind: flagutil.FlagKindString, Optional: true, Description: "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error."},
-	{FlagName: "item-ids", FieldPath: "Body.ItemIds", Kind: flagutil.FlagKindStringArray, Required: true, Description: "The item IDs to resolve. Up to 100. [required]"},
+	{FlagName: "item-ids", FieldPath: "Body.ItemIds", Kind: flagutil.FlagKindStringArray, Required: true, Description: "The items to resolve, up to 100. Each is the item 'id' from 'GET /queue/{id}/items', or the 'contentId' you sent to 'POST /moderate' (webhooks send it as 'item.id'). For a content ID, the newest submission with that content ID is used, as the queue shows it. [required]"},
 }
 
 // initResolveManyCmd initializes the resolve-many command.
@@ -25,7 +25,7 @@ func initResolveManyCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "resolve-many [id]",
 		Short:   "Resolve queue items",
-		Long:    "Mark up to 100 items of a queue as resolved in one request. Each item is resolved the same as with `POST /queue/{id}/items/{itemId}/resolve`. IDs that do not exist in the project are skipped and returned in `notFoundIds`.",
+		Long:    "Mark up to 100 items of a queue as resolved in one request. Each item is resolved the same as with `POST /queue/{id}/items/{itemId}/resolve`, and each ID is an item `id` or your `contentId`. IDs that match no item in the project are skipped and returned in `notFoundIds`.",
 		Example: "  modapi queue items resolve-many --id <id> --item-ids clx8k2v0e000108l4a9bz3f7q --item-ids clx8k2v0e000208l4h2mc6d1r",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runResolveManyCmd,

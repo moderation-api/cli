@@ -394,7 +394,8 @@
             "read"
           ],
           "readOnlyHint": true,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         }
       }
     },
@@ -591,7 +592,8 @@
             "read"
           ],
           "readOnlyHint": true,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         }
       }
     },
@@ -790,7 +792,8 @@
             "read"
           ],
           "readOnlyHint": true,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         }
       }
     },
@@ -972,7 +975,8 @@
             "read"
           ],
           "readOnlyHint": true,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         }
       }
     },
@@ -1179,7 +1183,8 @@
             "read"
           ],
           "readOnlyHint": true,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         }
       }
     },
@@ -1433,7 +1438,8 @@
             "read"
           ],
           "readOnlyHint": true,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         }
       }
     },
@@ -1624,7 +1630,8 @@
             "read"
           ],
           "readOnlyHint": true,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         },
         "x-speakeasy-pagination": {
           "type": "offsetLimit",
@@ -1874,7 +1881,8 @@
             "write"
           ],
           "readOnlyHint": false,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         }
       }
     },
@@ -1993,7 +2001,8 @@
             "read"
           ],
           "readOnlyHint": true,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         }
       },
       "put": {
@@ -2234,7 +2243,8 @@
             "destructive"
           ],
           "readOnlyHint": false,
-          "destructiveHint": true
+          "destructiveHint": true,
+          "openWorldHint": false
         }
       },
       "delete": {
@@ -2360,7 +2370,8 @@
             "destructive"
           ],
           "readOnlyHint": false,
-          "destructiveHint": true
+          "destructiveHint": true,
+          "openWorldHint": false
         }
       }
     },
@@ -2510,7 +2521,8 @@
             "write"
           ],
           "readOnlyHint": false,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         }
       }
     },
@@ -2658,7 +2670,8 @@
             "read"
           ],
           "readOnlyHint": true,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         },
         "x-speakeasy-pagination": {
           "type": "offsetLimit",
@@ -2805,7 +2818,8 @@
             "read"
           ],
           "readOnlyHint": true,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         }
       }
     },
@@ -3025,7 +3039,8 @@
             "read"
           ],
           "readOnlyHint": true,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         }
       }
     },
@@ -3033,7 +3048,7 @@
       "get": {
         "operationId": "listQueueItems",
         "summary": "List queue items",
-        "description": "List the items of a review queue, with the filters and the date window of the queue applied. By default only pending items. The list is paginated. Use the item `id` to resolve or unresolve an item.",
+        "description": "List the items of a review queue, with the filters and the date window of the queue applied. By default only pending items. The list is paginated. Use the item `id` or `contentId` to resolve or unresolve an item.",
         "tags": [
           "Review queues"
         ],
@@ -3254,7 +3269,8 @@
             "read"
           ],
           "readOnlyHint": true,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         },
         "x-speakeasy-pagination": {
           "type": "offsetLimit",
@@ -3281,7 +3297,7 @@
       "post": {
         "operationId": "resolveQueueItem",
         "summary": "Resolve a queue item",
-        "description": "Mark an item of a queue as resolved. It is the same as a check-off in the dashboard: the item leaves the pending list and a QUEUE_ITEM_COMPLETED webhook is sent. To also take a moderation action, use `POST /actions/execute`.",
+        "description": "Mark an item of a queue as resolved. It is the same as a check-off in the dashboard: the item leaves the pending list and a QUEUE_ITEM_COMPLETED webhook is sent. `itemId` is the item `id` or your `contentId`. To also take a moderation action, use `POST /actions/execute`.",
         "tags": [
           "Review queues"
         ],
@@ -3306,10 +3322,10 @@
             "name": "itemId",
             "schema": {
               "type": "string",
-              "description": "The item ID to resolve."
+              "description": "The item to resolve: the item `id` from `GET /queue/{id}/items`, or the `contentId` you sent to `POST /moderate` (webhooks send it as `item.id`). For a content ID, the newest submission with that content ID is used, as the queue shows it."
             },
             "required": true,
-            "description": "The item ID to resolve."
+            "description": "The item to resolve: the item `id` from `GET /queue/{id}/items`, or the `contentId` you sent to `POST /moderate` (webhooks send it as `item.id`). For a content ID, the newest submission with that content ID is used, as the queue shows it."
           },
           {
             "in": "header",
@@ -3406,7 +3422,8 @@
             "write"
           ],
           "readOnlyHint": false,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": true
         }
       }
     },
@@ -3414,7 +3431,7 @@
       "post": {
         "operationId": "resolveQueueItems",
         "summary": "Resolve queue items",
-        "description": "Mark up to 100 items of a queue as resolved in one request. Each item is resolved the same as with `POST /queue/{id}/items/{itemId}/resolve`. IDs that do not exist in the project are skipped and returned in `notFoundIds`.",
+        "description": "Mark up to 100 items of a queue as resolved in one request. Each item is resolved the same as with `POST /queue/{id}/items/{itemId}/resolve`, and each ID is an item `id` or your `contentId`. IDs that match no item in the project are skipped and returned in `notFoundIds`.",
         "tags": [
           "Review queues"
         ],
@@ -3459,7 +3476,7 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "The item IDs to resolve. Up to 100."
+                    "description": "The items to resolve, up to 100. Each is the item `id` from `GET /queue/{id}/items`, or the `contentId` you sent to `POST /moderate` (webhooks send it as `item.id`). For a content ID, the newest submission with that content ID is used, as the queue shows it."
                   }
                 },
                 "required": [
@@ -3492,7 +3509,7 @@
                       "items": {
                         "type": "string"
                       },
-                      "description": "Item IDs that do not exist in the project."
+                      "description": "IDs from `itemIds` that match no item or content ID in the project."
                     }
                   },
                   "required": [
@@ -3563,7 +3580,8 @@
             "write"
           ],
           "readOnlyHint": false,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": true
         }
       }
     },
@@ -3571,7 +3589,7 @@
       "post": {
         "operationId": "unresolveQueueItem",
         "summary": "Unresolve a queue item",
-        "description": "Mark a resolved item of a queue as pending again. It is the same as removing a check-off in the dashboard: the item comes back in the pending list.",
+        "description": "Mark a resolved item of a queue as pending again. It is the same as removing a check-off in the dashboard: the item comes back in the pending list. `itemId` is the item `id` or your `contentId`.",
         "tags": [
           "Review queues"
         ],
@@ -3596,10 +3614,10 @@
             "name": "itemId",
             "schema": {
               "type": "string",
-              "description": "The item ID to unresolve."
+              "description": "The item to unresolve: the item `id` from `GET /queue/{id}/items`, or the `contentId` you sent to `POST /moderate` (webhooks send it as `item.id`). For a content ID, the newest submission with that content ID is used, as the queue shows it."
             },
             "required": true,
-            "description": "The item ID to unresolve."
+            "description": "The item to unresolve: the item `id` from `GET /queue/{id}/items`, or the `contentId` you sent to `POST /moderate` (webhooks send it as `item.id`). For a content ID, the newest submission with that content ID is used, as the queue shows it."
           },
           {
             "in": "header",
@@ -3705,7 +3723,8 @@
             "write"
           ],
           "readOnlyHint": false,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         }
       }
     },
@@ -3713,7 +3732,7 @@
       "get": {
         "operationId": "listActions",
         "summary": "List moderation actions",
-        "description": "List the moderation actions of the project. The list is paginated.",
+        "description": "List the moderation actions of the project, with their webhooks. An action is a decision that a reviewer or a rule can take on content or an author. Built-in actions (for example reject an item or block an author) change the item or author in Moderation API. Custom actions record the decision and send it to the webhooks of the action, where the customer platform acts on it. The list is paginated.",
         "tags": [
           "Actions"
         ],
@@ -3988,7 +4007,8 @@
             "read"
           ],
           "readOnlyHint": true,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         },
         "x-speakeasy-pagination": {
           "type": "offsetLimit",
@@ -4013,7 +4033,7 @@
       "post": {
         "operationId": "createAction",
         "summary": "Create an action",
-        "description": "Create an action.",
+        "description": "Create an action that reviewers and rules can take. `type` sets what it does: a built-in type changes the item or author in Moderation API, and a custom type (`ITEM_CUSTOM`, `AUTHOR_CUSTOM`) only records the decision for the webhooks to deliver. Creating an action does not execute it.",
         "tags": [
           "Actions"
         ],
@@ -4347,7 +4367,8 @@
             "write"
           ],
           "readOnlyHint": false,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         }
       }
     },
@@ -4355,7 +4376,7 @@
       "get": {
         "operationId": "getAction",
         "summary": "Get an action",
-        "description": "Get an action by ID.",
+        "description": "Get an action by ID: its type, where it shows in the review queues, the values it takes and its webhooks.",
         "tags": [
           "Actions"
         ],
@@ -4574,13 +4595,14 @@
             "read"
           ],
           "readOnlyHint": true,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         }
       },
       "put": {
         "operationId": "updateAction",
         "summary": "Update an action",
-        "description": "Update an action.",
+        "description": "Update the settings of an action: its name, type, queues and values. The new settings apply the next time the action is executed. Updating an action does not execute it.",
         "tags": [
           "Actions"
         ],
@@ -4925,7 +4947,8 @@
             "destructive"
           ],
           "readOnlyHint": false,
-          "destructiveHint": true
+          "destructiveHint": true,
+          "openWorldHint": false
         }
       },
       "delete": {
@@ -5037,7 +5060,8 @@
             "destructive"
           ],
           "readOnlyHint": false,
-          "destructiveHint": true
+          "destructiveHint": true,
+          "openWorldHint": false
         }
       }
     },
@@ -5045,7 +5069,7 @@
       "post": {
         "operationId": "executeAction",
         "summary": "Execute moderation action",
-        "description": "Execute a moderation action on one or more content items.",
+        "description": "Execute one action of the project, by ID or key, on content items or authors. A built-in action changes them in Moderation API (for example rejects the items or blocks the authors). Every executed action is recorded, and the project sends it to the webhooks of the action and to its other webhook endpoints, where the customer platform can act on it. List the actions first to see what each one does.",
         "tags": [
           "Actions"
         ],
@@ -5198,7 +5222,8 @@
             "destructive"
           ],
           "readOnlyHint": false,
-          "destructiveHint": true
+          "destructiveHint": true,
+          "openWorldHint": true
         }
       }
     },
@@ -5206,7 +5231,7 @@
       "post": {
         "operationId": "executeActionById",
         "summary": "Execute an action",
-        "description": "Execute an action on a set of content items in a queue.",
+        "description": "Execute an action on a set of content items in a queue. The project sends the result to the webhooks of the action. Use `POST /actions/execute` instead.",
         "tags": [
           "Actions"
         ],
@@ -5487,7 +5512,8 @@
             "destructive"
           ],
           "readOnlyHint": false,
-          "destructiveHint": true
+          "destructiveHint": true,
+          "openWorldHint": true
         }
       }
     },
@@ -5625,7 +5651,8 @@
             "write"
           ],
           "readOnlyHint": false,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": true
         }
       }
     },
@@ -5751,7 +5778,8 @@
             "destructive"
           ],
           "readOnlyHint": false,
-          "destructiveHint": true
+          "destructiveHint": true,
+          "openWorldHint": true
         }
       }
     },
@@ -5886,7 +5914,8 @@
             "destructive"
           ],
           "readOnlyHint": false,
-          "destructiveHint": true
+          "destructiveHint": true,
+          "openWorldHint": true
         }
       }
     },
@@ -6012,7 +6041,8 @@
             "write"
           ],
           "readOnlyHint": false,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": true
         }
       }
     },
@@ -6183,7 +6213,8 @@
             "read"
           ],
           "readOnlyHint": true,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         },
         "x-speakeasy-pagination": {
           "type": "offsetLimit",
@@ -6405,7 +6436,8 @@
             "write"
           ],
           "readOnlyHint": false,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": true
         }
       }
     },
@@ -6557,7 +6589,8 @@
             "read"
           ],
           "readOnlyHint": true,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         }
       },
       "put": {
@@ -6767,7 +6800,8 @@
             "destructive"
           ],
           "readOnlyHint": false,
-          "destructiveHint": true
+          "destructiveHint": true,
+          "openWorldHint": true
         }
       },
       "delete": {
@@ -6869,7 +6903,8 @@
             "destructive"
           ],
           "readOnlyHint": false,
-          "destructiveHint": true
+          "destructiveHint": true,
+          "openWorldHint": false
         }
       }
     },
@@ -7664,7 +7699,8 @@
             "read"
           ],
           "readOnlyHint": true,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         }
       }
     },
@@ -8066,7 +8102,8 @@
             "read"
           ],
           "readOnlyHint": true,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         },
         "x-speakeasy-pagination": {
           "type": "offsetLimit",
@@ -8255,7 +8292,8 @@
             "write"
           ],
           "readOnlyHint": false,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         }
       }
     },
@@ -8431,7 +8469,8 @@
             "read"
           ],
           "readOnlyHint": true,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         }
       },
       "put": {
@@ -8620,7 +8659,119 @@
             "destructive"
           ],
           "readOnlyHint": false,
-          "destructiveHint": true
+          "destructiveHint": true,
+          "openWorldHint": false
+        }
+      },
+      "delete": {
+        "operationId": "deleteWordlist",
+        "summary": "Delete wordlist",
+        "description": "Delete a wordlist and its words. Channels that use the wordlist do not block the delete: the wordlist is removed from their policies. `detachedChannelIds` lists those channels. This cannot be undone.",
+        "tags": [
+          "Wordlists"
+        ],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "description": "ID of the wordlist to delete"
+            },
+            "required": true,
+            "description": "ID of the wordlist to delete"
+          },
+          {
+            "in": "header",
+            "name": "Project-Id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.",
+            "x-speakeasy-name-override": "projectId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Wordlist deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "ID of the deleted wordlist"
+                    },
+                    "deleted": {
+                      "type": "boolean",
+                      "description": "Whether the wordlist was deleted"
+                    },
+                    "detachedChannelIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "IDs of the channels that used the wordlist. It was removed from them."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "deleted",
+                    "detachedChannelIds"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests. Retry after the number of seconds in the `Retry-After` header.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitError"
+                }
+              }
+            }
+          }
+        },
+        "x-speakeasy-group": "wordlist",
+        "x-speakeasy-name-override": "delete",
+        "x-speakeasy-mcp": {
+          "title": "Delete wordlist",
+          "scopes": [
+            "destructive"
+          ],
+          "readOnlyHint": false,
+          "destructiveHint": true,
+          "openWorldHint": false
         }
       }
     },
@@ -8760,7 +8911,8 @@
             "read"
           ],
           "readOnlyHint": true,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         }
       }
     },
@@ -8910,7 +9062,8 @@
             "write"
           ],
           "readOnlyHint": false,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         }
       },
       "delete": {
@@ -9043,7 +9196,8 @@
             "destructive"
           ],
           "readOnlyHint": false,
-          "destructiveHint": true
+          "destructiveHint": true,
+          "openWorldHint": false
         }
       }
     },
@@ -9051,6 +9205,7 @@
       "post": {
         "operationId": "submitContent",
         "summary": "Submit content",
+        "description": "Moderate one piece of content: text, an image, a video, audio or an object with several fields. The project checks it against the policies of its channel and returns the result. Act on `recommendation.action` (allow, review or reject). The content is stored in the project unless `doNotStore` is set, and items to review go to the review queue. The project can send the result to its webhook endpoints.",
         "tags": [
           "Content"
         ],
@@ -10174,13 +10329,15 @@
                               "const": "unicode_spoofing"
                             },
                             "signals": {
-                              "description": "Per-signal flag toggles. Omitted spoofing signals are enabled; encoding_damage defaults to off because decode damage (U+FFFD) marks a broken pipeline, not an attack. A disabled signal is still detected and reported as a label, but does not by itself flag the policy.",
+                              "description": "Per-signal flag toggles. Omitted spoofing signals are enabled; encoding_damage defaults to off because decode damage (U+FFFD) marks a broken pipeline, not an attack, and hidden_lookalike and leetspeak default to off because they are opt-in. A disabled signal is still detected and reported as a label, but does not by itself flag the policy. Lookalike words are only spelled out in the cleaned text when their signal is enabled.",
                               "type": "object",
                               "propertyNames": {
                                 "type": "string",
                                 "enum": [
                                   "mixed_script",
                                   "confusable_word",
+                                  "hidden_lookalike",
+                                  "leetspeak",
                                   "invisible",
                                   "zalgo",
                                   "illegal",
@@ -11440,7 +11597,8 @@
             "write"
           ],
           "readOnlyHint": false,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": true
         }
       }
     },
@@ -11548,7 +11706,8 @@
             "read"
           ],
           "readOnlyHint": true,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         },
         "x-speakeasy-pagination": {
           "type": "offsetLimit",
@@ -11684,7 +11843,8 @@
             "write"
           ],
           "readOnlyHint": false,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         }
       }
     },
@@ -11773,7 +11933,8 @@
             "read"
           ],
           "readOnlyHint": true,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         }
       },
       "put": {
@@ -11940,7 +12101,8 @@
             "destructive"
           ],
           "readOnlyHint": false,
-          "destructiveHint": true
+          "destructiveHint": true,
+          "openWorldHint": false
         }
       },
       "delete": {
@@ -12042,7 +12204,8 @@
             "destructive"
           ],
           "readOnlyHint": false,
-          "destructiveHint": true
+          "destructiveHint": true,
+          "openWorldHint": false
         }
       }
     },
@@ -12159,7 +12322,8 @@
             "write"
           ],
           "readOnlyHint": false,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         }
       }
     },
@@ -12277,7 +12441,8 @@
             "write"
           ],
           "readOnlyHint": false,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         }
       }
     },
@@ -12405,7 +12570,8 @@
             "read"
           ],
           "readOnlyHint": true,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         },
         "x-speakeasy-pagination": {
           "type": "offsetLimit",
@@ -12569,7 +12735,8 @@
             "write"
           ],
           "readOnlyHint": false,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         }
       }
     },
@@ -12658,7 +12825,8 @@
             "read"
           ],
           "readOnlyHint": true,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         }
       },
       "put": {
@@ -12868,7 +13036,8 @@
             "destructive"
           ],
           "readOnlyHint": false,
-          "destructiveHint": true
+          "destructiveHint": true,
+          "openWorldHint": false
         }
       },
       "delete": {
@@ -12980,7 +13149,8 @@
             "destructive"
           ],
           "readOnlyHint": false,
-          "destructiveHint": true
+          "destructiveHint": true,
+          "openWorldHint": false
         }
       }
     },
@@ -13104,7 +13274,8 @@
             "write"
           ],
           "readOnlyHint": false,
-          "destructiveHint": false
+          "destructiveHint": false,
+          "openWorldHint": false
         }
       }
     },
@@ -13528,11 +13699,11 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "The item ID. Use it to resolve or unresolve the item in this queue."
+            "description": "The item ID: the ID of this submission. Use it, or `contentId`, to resolve or unresolve the item in this queue."
           },
           "contentId": {
             "type": "string",
-            "description": "Your content ID, as you sent it to `POST /moderate`."
+            "description": "Your content ID, as you sent it to `POST /moderate`. Webhooks send it as `item.id`. The resolve endpoints accept it in place of `id`."
           },
           "content": {
             "anyOf": [

@@ -24,7 +24,7 @@ func initRetrieveCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "retrieve [id]",
 		Short:   "Get an action",
-		Long:    "Get an action by ID.",
+		Long:    "Get an action by ID: its type, where it shows in the review queues, the values it takes and its webhooks.",
 		Example: "  modapi actions retrieve --id <id>",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runRetrieveCmd,
