@@ -32,7 +32,7 @@ func newActions(rootSDK *ModerationAPI, sdkConfig config.SDKConfiguration, hooks
 }
 
 // List moderation actions
-// List the moderation actions of the project. The list is paginated.
+// List the moderation actions of the project, with their webhooks. An action is a decision that a reviewer or a rule can take on content or an author. Built-in actions (for example reject an item or block an author) change the item or author in Moderation API. Custom actions record the decision and send it to the webhooks of the action, where the customer platform acts on it. The list is paginated.
 func (s *Actions) List(ctx context.Context, request *operations.ListActionsRequest, opts ...operations.Option) (*operations.ListActionsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -408,7 +408,7 @@ func (s *Actions) List(ctx context.Context, request *operations.ListActionsReque
 }
 
 // Create an action
-// Create an action.
+// Create an action that reviewers and rules can take. `type` sets what it does: a built-in type changes the item or author in Moderation API, and a custom type (`ITEM_CUSTOM`, `AUTHOR_CUSTOM`) only records the decision for the webhooks to deliver. Creating an action does not execute it.
 func (s *Actions) Create(ctx context.Context, request operations.CreateActionRequest, opts ...operations.Option) (*operations.CreateActionResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -672,7 +672,7 @@ func (s *Actions) Create(ctx context.Context, request operations.CreateActionReq
 }
 
 // Retrieve - Get an action
-// Get an action by ID.
+// Get an action by ID: its type, where it shows in the review queues, the values it takes and its webhooks.
 func (s *Actions) Retrieve(ctx context.Context, request operations.GetActionRequest, opts ...operations.Option) (*operations.GetActionResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -929,7 +929,7 @@ func (s *Actions) Retrieve(ctx context.Context, request operations.GetActionRequ
 }
 
 // Update an action
-// Update an action.
+// Update the settings of an action: its name, type, queues and values. The new settings apply the next time the action is executed. Updating an action does not execute it.
 func (s *Actions) Update(ctx context.Context, request operations.UpdateActionRequest, opts ...operations.Option) (*operations.UpdateActionResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1475,7 +1475,7 @@ func (s *Actions) Delete(ctx context.Context, request operations.DeleteActionReq
 }
 
 // Execute moderation action
-// Execute a moderation action on one or more content items.
+// Execute one action of the project, by ID or key, on content items or authors. A built-in action changes them in Moderation API (for example rejects the items or blocks the authors). Every executed action is recorded, and the project sends it to the webhooks of the action and to its other webhook endpoints, where the customer platform can act on it. List the actions first to see what each one does.
 func (s *Actions) Execute(ctx context.Context, request operations.ExecuteActionRequest, opts ...operations.Option) (*operations.ExecuteActionResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

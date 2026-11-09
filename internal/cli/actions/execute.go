@@ -30,7 +30,7 @@ func initExecuteCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "execute",
 		Short:   "Execute moderation action",
-		Long:    "Execute a moderation action on one or more content items.",
+		Long:    "Execute one action of the project, by ID or key, on content items or authors. A built-in action changes them in Moderation API (for example rejects the items or blocks the authors). Every executed action is recorded, and the project sends it to the webhooks of the action and to its other webhook endpoints, where the customer platform can act on it. List the actions first to see what each one does.",
 		Example: "  modapi actions execute --action-key suspend-24h",
 		Args:    cobra.NoArgs,
 		RunE:    runExecuteCmd,

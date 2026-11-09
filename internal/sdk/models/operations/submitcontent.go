@@ -1049,7 +1049,7 @@ type UnicodeSpoofing struct {
 	Threshold *float64 `json:"threshold,omitzero"`
 	//lint:ignore U1000 accessed via reflection for JSON marshaling
 	id string `const:"unicode_spoofing" json:"id"`
-	// Per-signal flag toggles. Omitted spoofing signals are enabled; encoding_damage defaults to off because decode damage (U+FFFD) marks a broken pipeline, not an attack. A disabled signal is still detected and reported as a label, but does not by itself flag the policy.
+	// Per-signal flag toggles. Omitted spoofing signals are enabled; encoding_damage defaults to off because decode damage (U+FFFD) marks a broken pipeline, not an attack, and hidden_lookalike and leetspeak default to off because they are opt-in. A disabled signal is still detected and reported as a label, but does not by itself flag the policy. Lookalike words are only spelled out in the cleaned text when their signal is enabled.
 	Signals map[string]SignalsRequest `json:"signals,omitzero"`
 }
 

@@ -932,9 +932,9 @@ func (e *QueueItemStatus) IsExact() bool {
 }
 
 type QueueItem struct {
-	// The item ID. Use it to resolve or unresolve the item in this queue.
+	// The item ID: the ID of this submission. Use it, or `contentId`, to resolve or unresolve the item in this queue.
 	ID string `json:"id"`
-	// Your content ID, as you sent it to `POST /moderate`.
+	// Your content ID, as you sent it to `POST /moderate`. Webhooks send it as `item.id`. The resolve endpoints accept it in place of `id`.
 	ContentID string `json:"contentId"`
 	// The submitted content.
 	Content *QueueItemContent `json:"content"`

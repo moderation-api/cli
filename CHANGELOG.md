@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.6.1 (2026-11-09)
+
+Full Changelog: [v0.6.0...v0.6.1](https://github.com/moderation-api/cli/compare/v0.6.0...v0.6.1)
+
+### API changes
+
+- `POST /moderate`: added the new `hidden_lookalike` enum value to the request property `policies/items/oneOf[subschema #36: Unicode Spoofing]/signals/propertyNames/`
+- `POST /moderate`: added the new `leetspeak` enum value to the request property `policies/items/oneOf[subschema #36: Unicode Spoofing]/signals/propertyNames/`
+- `DELETE /wordlist/{id}`: endpoint added
+
 ## 0.6.0 (2026-10-28)
 
 Full Changelog: [v0.5.0...v0.6.0](https://github.com/moderation-api/cli/compare/v0.5.0...v0.6.0)

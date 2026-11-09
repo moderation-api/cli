@@ -35,7 +35,7 @@ func initUpdateCmd(parent *cobra.Command) error {
 	var cmd = &cobra.Command{
 		Use:     "update [id]",
 		Short:   "Update an action",
-		Long:    "Update an action.",
+		Long:    "Update the settings of an action: its name, type, queues and values. The new settings apply the next time the action is executed. Updating an action does not execute it.",
 		Example: "  modapi actions update --id <id>",
 		Args:    flagutil.PositionalFlagArgs,
 		RunE:    runUpdateCmd,
