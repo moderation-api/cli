@@ -4,7 +4,7 @@ Create an action
 
 ### Synopsis
 
-Create an action.
+Create an action that reviewers and rules can take. `type` sets what it does: a built-in type changes the item or author in Moderation API, and a custom type (`ITEM_CUSTOM`, `AUTHOR_CUSTOM`) only records the decision for the webhooks to deliver. Creating an action does not execute it.
 
 ```
 modapi actions create [flags]

@@ -4,7 +4,7 @@ Resolve a queue item
 
 ### Synopsis
 
-Mark an item of a queue as resolved. It is the same as a check-off in the dashboard: the item leaves the pending list and a QUEUE_ITEM_COMPLETED webhook is sent. To also take a moderation action, use `POST /actions/execute`.
+Mark an item of a queue as resolved. It is the same as a check-off in the dashboard: the item leaves the pending list and a QUEUE_ITEM_COMPLETED webhook is sent. `itemId` is the item `id` or your `contentId`. To also take a moderation action, use `POST /actions/execute`.
 
 ```
 modapi queue items resolve [flags]
@@ -21,7 +21,7 @@ modapi queue items resolve [flags]
 ```
   -h, --help                help for resolve
       --id string           The queue ID. [required]
-      --item-id string      The item ID to resolve. [required]
+      --item-id string      The item to resolve: the item 'id' from 'GET /queue/{id}/items', or the 'contentId' you sent to 'POST /moderate' (webhooks send it as 'item.id'). For a content ID, the newest submission with that content ID is used, as the queue shows it. [required]
   -p, --project-id string   The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.
 ```
 

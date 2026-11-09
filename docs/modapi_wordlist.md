@@ -42,6 +42,7 @@ modapi wordlist [flags]
 
 * [modapi](modapi.md)	 - Moderation API: Moderate text, images, video and audio in real time, manage authors, review queues and actions, and receive webhooks
 * [modapi wordlist create](modapi_wordlist_create.md)	 - Create wordlist
+* [modapi wordlist delete](modapi_wordlist_delete.md)	 - Delete wordlist
 * [modapi wordlist get-embedding-status](modapi_wordlist_get-embedding-status.md)	 - Get embedding status
 * [modapi wordlist list](modapi_wordlist_list.md)	 - List wordlists
 * [modapi wordlist retrieve](modapi_wordlist_retrieve.md)	 - Get wordlist

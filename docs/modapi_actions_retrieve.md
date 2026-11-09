@@ -4,7 +4,7 @@ Get an action
 
 ### Synopsis
 
-Get an action by ID.
+Get an action by ID: its type, where it shows in the review queues, the values it takes and its webhooks.
 
 ```
 modapi actions retrieve [id] [flags]

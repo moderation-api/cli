@@ -4,7 +4,7 @@ Update an action
 
 ### Synopsis
 
-Update an action.
+Update the settings of an action: its name, type, queues and values. The new settings apply the next time the action is executed. Updating an action does not execute it.
 
 ```
 modapi actions update [id] [flags]

@@ -4,7 +4,7 @@ List moderation actions
 
 ### Synopsis
 
-List the moderation actions of the project. The list is paginated.
+List the moderation actions of the project, with their webhooks. An action is a decision that a reviewer or a rule can take on content or an author. Built-in actions (for example reject an item or block an author) change the item or author in Moderation API. Custom actions record the decision and send it to the webhooks of the action, where the customer platform acts on it. The list is paginated.
 
 ```
 modapi actions list [flags]

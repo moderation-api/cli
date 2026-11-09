@@ -4,7 +4,7 @@ Resolve queue items
 
 ### Synopsis
 
-Mark up to 100 items of a queue as resolved in one request. Each item is resolved the same as with `POST /queue/{id}/items/{itemId}/resolve`. IDs that do not exist in the project are skipped and returned in `notFoundIds`.
+Mark up to 100 items of a queue as resolved in one request. Each item is resolved the same as with `POST /queue/{id}/items/{itemId}/resolve`, and each ID is an item `id` or your `contentId`. IDs that match no item in the project are skipped and returned in `notFoundIds`.
 
 ```
 modapi queue items resolve-many [id] [flags]
@@ -22,7 +22,7 @@ modapi queue items resolve-many [id] [flags]
       --body string            Request body as JSON (alternative to individual flags). Can also be provided via stdin; @path reads a file, @- reads stdin to EOF. Use --schema to print the exact JSON Schema.
   -h, --help                   help for resolve-many
   -i, --id string              The queue ID. (or pass it as the [id] argument)
-      --item-ids stringArray   The item IDs to resolve. Up to 100. [required]
+      --item-ids stringArray   The items to resolve, up to 100. Each is the item 'id' from 'GET /queue/{id}/items', or the 'contentId' you sent to 'POST /moderate' (webhooks send it as 'item.id'). For a content ID, the newest submission with that content ID is used, as the queue shows it. [required]
   -p, --project-id string      The project to act on, by ID or name. Required with an organization key unless the key reaches only one project; list projects with GET /projects. A project key acts on its own project and needs no value: naming another one is an error.
       --schema                 Print the exact JSON Schema of the request body and exit
 ```

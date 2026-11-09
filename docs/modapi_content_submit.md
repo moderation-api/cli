@@ -4,7 +4,7 @@ Submit content
 
 ### Synopsis
 
-Submit content
+Moderate one piece of content: text, an image, a video, audio or an object with several fields. The project checks it against the policies of its channel and returns the result. Act on `recommendation.action` (allow, review or reject). The content is stored in the project unless `doNotStore` is set, and items to review go to the review queue. The project can send the result to its webhook endpoints.
 
 ```
 modapi content submit [flags]
