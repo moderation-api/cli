@@ -16,6 +16,7 @@ const (
 	SortLifo         Sort = "LIFO"
 	SortRandom       Sort = "RANDOM"
 	SortSeverityDesc Sort = "SEVERITY_DESC"
+	SortRobocallDesc Sort = "ROBOCALL_DESC"
 )
 
 func (e Sort) ToPointer() *Sort {
@@ -34,6 +35,8 @@ func (e *Sort) UnmarshalJSON(data []byte) error {
 	case "RANDOM":
 		fallthrough
 	case "SEVERITY_DESC":
+		fallthrough
+	case "ROBOCALL_DESC":
 		*e = Sort(v)
 		return nil
 	default:

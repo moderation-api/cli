@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.0 (2026-11-12)
+
+Full Changelog: [v0.6.1...v0.7.0](https://github.com/moderation-api/cli/compare/v0.6.1...v0.7.0)
+
+### API changes
+
+- `GET /queue/{id}/items`: added the new enum value `ROBOCALL_DESC` to the `query` request parameter `sort`
+
 ## 0.6.1 (2026-11-09)
 
 Full Changelog: [v0.6.0...v0.6.1](https://github.com/moderation-api/cli/compare/v0.6.0...v0.6.1)

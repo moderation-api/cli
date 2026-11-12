@@ -18,7 +18,7 @@ var listCmdMeta = []flagutil.FlagMeta{
 	{FlagName: "id", Shorthand: "i", FieldPath: "ID", Kind: flagutil.FlagKindString, Required: true, Description: "The queue ID. [required]"},
 	{FlagName: "page", FieldPath: "Page", Kind: flagutil.FlagKindInt64, Optional: true, HasDefault: true, DefaultInt: 1, HasMinimum: true, Minimum: 1, HasMaximum: true, Maximum: 100000, Description: "integer value"},
 	{FlagName: "page-size", FieldPath: "PageSize", Kind: flagutil.FlagKindInt64, Optional: true, HasDefault: true, DefaultInt: 20, HasMinimum: true, Minimum: 1, HasMaximum: true, Maximum: 100, Description: "integer value"},
-	{FlagName: "sort", Shorthand: "s", FieldPath: "Sort", Kind: flagutil.FlagKindEnum, Optional: true, EnumValues: []string{"FIFO", "LIFO", "RANDOM", "SEVERITY_DESC"}, Description: "options: FIFO, LIFO, RANDOM, SEVERITY_DESC"},
+	{FlagName: "sort", Shorthand: "s", FieldPath: "Sort", Kind: flagutil.FlagKindEnum, Optional: true, EnumValues: []string{"FIFO", "LIFO", "RANDOM", "SEVERITY_DESC", "ROBOCALL_DESC"}, Description: "options: FIFO, LIFO, RANDOM, SEVERITY_DESC, ROBOCALL_DESC"},
 	{FlagName: "include-resolved", FieldPath: "IncludeResolved", Kind: flagutil.FlagKindBool, Optional: true, Description: "boolean flag"},
 	{FlagName: "conversation-ids", Shorthand: "c", FieldPath: "ConversationIds", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "list of values"},
 	{FlagName: "labels", Shorthand: "l", FieldPath: "Labels", Kind: flagutil.FlagKindStringArray, Optional: true, Description: "list of values"},

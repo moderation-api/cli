@@ -3099,7 +3099,8 @@
                 "FIFO",
                 "LIFO",
                 "RANDOM",
-                "SEVERITY_DESC"
+                "SEVERITY_DESC",
+                "ROBOCALL_DESC"
               ]
             }
           },
